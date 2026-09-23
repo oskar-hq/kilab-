@@ -102,12 +102,20 @@
   });
 
   /* ---------- Canvas scenes ---------- */
-  const fill = (ctx, color, x, y, s) => { ctx.fillStyle = color; ctx.fillRect(x, y, s, s); };
+  // Draw one pixel snapped to the device-pixel grid, so edges are never
+  // anti-aliased into half-transparent colours (e.g. at 125 % / 150 % zoom).
+  const fill = (ctx, color, x, y, s) => {
+    const d = ctx.dpr || 1;
+    const x0 = Math.round(x * d), y0 = Math.round(y * d);
+    ctx.fillStyle = color;
+    ctx.fillRect(x0, y0, Math.round((x + s) * d) - x0, Math.round((y + s) * d) - y0);
+  };
   const mouse = { x: -1, y: -1, tx: -1, ty: -1, amp: 0, tamp: 0 };
 
   const SCENES = {
     // A living pixel organism: a domain-warped noise field grows, splits and
-    // re-forms along a diagonal. Scrolling away dissolves it.
+    // re-forms along a diagonal. Scrolling away dissolves it. Every pixel is
+    // strictly on or off: full size, full colour, never translucent.
     hero: {
       time: true,
       draw(ctx, w, h, t, el) {
@@ -138,17 +146,14 @@
             if (F < th) {
               // spores drifting around the body
               if (F > th - 0.22 && hash(c, r + Math.floor(t * 5) * 17) < 0.018 + nx * 0.02) {
-                fill(ctx, hash(r, c) > 0.5 ? C.accent : C.grey1, px + 4, py + 4, S - 8);
+                fill(ctx, hash(r, c) > 0.5 ? C.accent : C.grey1, px, py, S - 2);
               }
               continue;
             }
             const level = (F - th) / 0.55;
             const pal = vnoise(c * 0.045, ry * 0.045, t * 0.08 + 9) > 0.68 ? GREY : BLUE;
             const idx = Math.min(3, Math.max(0, Math.floor(level * 4 + (bayer(c, r) - 0.5) * 0.9)));
-            // cells near the membrane are smaller, the core is solid
-            const size = Math.max(3, Math.round((S - 2) * Math.min(1, 0.35 + level * 2.2)));
-            const off = Math.floor((S - 2 - size) / 2);
-            fill(ctx, pal[idx], px + off, py + off, size);
+            fill(ctx, pal[idx], px, py, S - 2);
           }
         }
       }
@@ -254,7 +259,6 @@
           if (q <= 0) return;
           const sx = (hash(x, y + seed) - 0.5) * cols * 1.4, sy = (hash(y + seed, x) - 0.5) * rows * 1.4 - rows * 0.4;
           const cx = Math.round(ox + x + sx * (1 - q)), cy = Math.round(oy + y + sy * (1 - q));
-          if (q > 0.98) fill(ctx, 'rgba(29,33,38,.12)', (cx + 1) * S, (cy + 1) * S, s);
           fill(ctx, ch === '#' ? C.ink : (q > 0.98 ? C.paper : C.accent), cx * S, cy * S, s);
         }));
       }
@@ -302,7 +306,7 @@
     sc.el.width = Math.max(1, Math.round(r.width * dpr));
     sc.el.height = Math.max(1, Math.round(r.height * dpr));
     sc.ctx = sc.el.getContext('2d');
-    sc.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sc.ctx.dpr = sc.el.width / Math.max(1, r.width);
     sc.w = r.width; sc.h = r.height;
     sc.lastP = -1;
   }
@@ -314,7 +318,7 @@
     const p = sc.def.scroll ? sceneProgress(sc) : 1;
     if (!force && !sc.def.time && Math.abs(p - sc.lastP) < 0.002) return;
     sc.lastP = p;
-    sc.ctx.clearRect(0, 0, sc.w, sc.h);
+    sc.ctx.clearRect(0, 0, sc.el.width, sc.el.height);
     sc.def.draw(sc.ctx, sc.w, sc.h, t, sc.el, p);
   }
   function resizeAll() { scenes.forEach(sc => { setup(sc); render(sc, now(), true); }); drawProgress(true); }
@@ -334,14 +338,14 @@
       const dpr = Math.min(devicePixelRatio || 1, 2);
       barW = innerWidth;
       bar.width = Math.round(barW * dpr); bar.height = Math.round(6 * dpr);
-      barCtx = bar.getContext('2d'); barCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      barCtx = bar.getContext('2d'); barCtx.dpr = dpr;
     }
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? clamp01(scrollY / max) : 0;
     if (!force && Math.abs(p - lastBarP) < 0.0005) return;
     lastBarP = p;
     const S = 6, cols = Math.ceil(barW / S), filled = Math.round(p * cols);
-    barCtx.clearRect(0, 0, barW, 6);
+    barCtx.clearRect(0, 0, bar.width, bar.height);
     for (let c = 0; c < filled; c++) {
       const tail = filled - c;
       if (tail > 24 && hash(c, 5) < 0.5) fill(barCtx, C.pale, c * S, 0, S - 1);
