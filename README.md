@@ -7,10 +7,12 @@ Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeign
 
 ```
 index.html        Startseite
+brand.html        Brand Guidelines (Logo, Farbe, Typo, Pixel, Visitenkarte, Social)
 impressum.html    Platzhalter – vor Livegang ausfüllen
 datenschutz.html  Platzhalter – vor Livegang ausfüllen
 404.html          Fehlerseite (GitHub Pages nutzt sie automatisch)
 assets/style.css  Design-Tokens & Layout (siehe DESIGN.md)
+assets/brand.js   Pixel-Raster für brand.html
 assets/main.js    Pixel-Szenen (Hero-Band, Flow, Protokoll-Band, Kartenbilder, Footer-Balken)
 .nojekyll         GitHub Pages liefert die Dateien unverändert aus
 ```

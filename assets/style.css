@@ -56,7 +56,9 @@ svg rect{fill:var(--px)}
 .top-nav .mono{font-size:11px;color:var(--muted)}
 .top-note{grid-column:8/13;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-top:14px;font-size:11px;line-height:1.35;text-align:right}
 .px-logo{width:22px;color:var(--ink)}
-.px-logo svg,.face svg{display:block;width:100%;height:auto}
+.face svg{display:block;width:100%;height:auto}
+.mark{display:grid;grid-template-columns:repeat(4,1fr)}
+.mark > i{aspect-ratio:1;transform:scale(.9)}
 
 /* ---------- Hero band ---------- */
 .band-hero{height:clamp(220px,34vw,520px)}
