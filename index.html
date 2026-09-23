@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI Lab — Angewandte Künstliche Intelligenz</title>
+<meta name="description" content="KI Lab entwickelt, testet und betreibt KI-Systeme für Unternehmen. Von der Idee zum produktiven Modell.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --ink:#0A0A0A;
+  --muted:#8b8b8b;
+  --line:rgba(10,10,10,.12);
+  --line-2:rgba(10,10,10,.06);
+  --neon:#d8ff00;
+  --red:#e0492a;
+  --radius:26px;
+  --maxw:1176px;
+  --gutter:56px;
+  --cell:14px;
+  --readw:34ch;
+  --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"Sneak","Inter Tight",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img,canvas{display:block}
+::selection{background:var(--neon);color:var(--ink)}
+
+.wrap{max-width:calc(var(--maxw) + var(--gutter)*2);margin:0 auto;padding:0 var(--gutter)}
+.label{font:400 11px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.muted{color:var(--muted)}
+.rule{border-top:1px solid var(--line)}
+
+/* ---------- Nav ---------- */
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.86);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line-2)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;letter-spacing:-.02em}
+.logo i{width:14px;height:14px;background:var(--ink);display:inline-block;box-shadow:14px 0 0 var(--neon),0 14px 0 var(--neon),14px 14px 0 var(--ink);margin-right:14px;margin-bottom:14px}
+.nav ul{list-style:none;display:flex;gap:35px;margin:0;padding:0}
+.nav ul a{position:relative}
+.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.nav ul a:hover::after{transform:scaleX(1)}
+.btn{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 18px;border-radius:6px;background:var(--ink);color:var(--paper);font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;transition:background .2s,color .2s}
+.btn:hover{background:var(--neon);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--ink);background:transparent}
+.btn .dot{width:6px;height:6px;background:var(--neon)}
+.btn:hover .dot{background:var(--ink)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;padding-top:98px}
+.hero-top{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-items:end}
+.hero h1{grid-column:1/10;margin:0;font-weight:500;font-size:clamp(46px,7.2vw,104px);line-height:.92;letter-spacing:-.035em}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--neon) 62%,var(--neon) 92%,transparent 92%)}
+.hero-side{grid-column:10/13;padding-bottom:10px}
+.hero-side p{margin:0 0 20px;max-width:var(--readw)}
+.hero-meta{display:flex;justify-content:space-between;margin-top:98px;padding:14px 0;border-top:1px solid var(--line)}
+.hero-meta span b{color:var(--ink);font-weight:400}
+.wave{position:relative;height:clamp(280px,42vw,560px);margin-top:0}
+.wave canvas{position:absolute;inset:0;width:100%;height:100%}
+.wave .coord{position:absolute;right:var(--gutter);top:14px;color:var(--muted)}
+
+/* ---------- Marquee ---------- */
+.marquee{background:var(--ink);color:var(--paper);overflow:hidden;border-top:1px solid var(--ink)}
+.marquee-track{display:flex;width:max-content;animation:marquee 40s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee span{display:flex;align-items:center;gap:35px;padding:22px 0 22px 35px;font-size:clamp(28px,3.4vw,46px);line-height:1.06;letter-spacing:-.02em;white-space:nowrap}
+.marquee span::after{content:"";width:14px;height:14px;background:var(--neon)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ---------- Sections ---------- */
+section{padding:126px 0}
+.sec-head{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:98px}
+.sec-head .label{grid-column:1/4;padding-top:12px}
+.sec-head h2{grid-column:4/13;margin:0;font-weight:500;font-size:clamp(32px,4vw,56px);line-height:1.06;letter-spacing:-.02em;max-width:18ch}
+
+/* Services */
+.services{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.svc{position:relative;padding:35px 28px 42px 0;border-right:1px solid var(--line);min-height:340px;display:flex;flex-direction:column}
+.svc + .svc{padding-left:28px}
+.svc:last-child{border-right:0}
+.svc .num{color:var(--muted)}
+.svc h3{margin:98px 0 14px;font-weight:500;font-size:24px;line-height:1.1;letter-spacing:-.015em}
+.svc p{margin:0;color:#444;font-size:15px}
+.svc .px{position:absolute;top:35px;right:28px;width:28px;height:28px;display:grid;grid-template-columns:repeat(2,14px)}
+.svc .px b{background:var(--ink)}
+.svc .px b:nth-child(2n){background:transparent}
+.svc:hover .px b{background:var(--neon)}
+.svc:hover .px b:nth-child(2n){background:var(--ink)}
+
+/* Work */
+.work-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.work-list li a{display:grid;grid-template-columns:3fr 6fr 2fr 1fr;gap:14px;align-items:baseline;padding:28px 0;border-bottom:1px solid var(--line);transition:padding .3s,background .3s}
+.work-list li a:hover{background:var(--neon);padding-left:14px;padding-right:14px}
+.work-list .t{font-size:clamp(24px,2.6vw,34px);letter-spacing:-.02em;line-height:1.1;font-weight:500}
+.work-list .d{color:#444;max-width:48ch}
+.work-list .arr{text-align:right;font-family:var(--mono)}
+
+/* Stats */
+.stats{background:#f4f4f2}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{border-top:1px solid var(--ink);padding-top:14px}
+.stat .v{font-size:clamp(46px,6vw,88px);font-weight:500;letter-spacing:-.04em;line-height:1;margin:35px 0 14px}
+.stat .v sup{font-size:.4em;vertical-align:top;margin-left:4px;letter-spacing:0}
+
+/* Process */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step{border-radius:var(--radius);border:1px solid var(--line);padding:35px;min-height:320px;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
+.step:hover{border-color:var(--ink)}
+.step h3{margin:0 0 14px;font-weight:500;font-size:28px;letter-spacing:-.02em;line-height:1.06}
+.step p{margin:0;color:#444;max-width:var(--readw)}
+.step.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.step.dark p{color:#bdbdbd}
+.step.dark .label{color:var(--neon)}
+.bar{display:flex;gap:3px;margin-bottom:35px}
+.bar i{width:14px;height:14px;background:var(--line)}
+.bar i.on{background:var(--ink)}
+.step.dark .bar i{background:#2a2a2a}
+.step.dark .bar i.on{background:var(--neon)}
+
+/* CTA */
+.cta{padding:168px 0 126px;border-top:1px solid var(--line)}
+.cta h2{margin:0;font-weight:500;font-size:clamp(52px,10vw,150px);line-height:.9;letter-spacing:-.045em}
+.cta h2 a{display:inline-flex;align-items:center;gap:.2em;border-bottom:.06em solid var(--ink);transition:color .2s}
+.cta h2 a:hover{color:var(--red);border-color:var(--red)}
+.cta-row{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:98px}
+.cta-row > div{grid-column:span 3}
+.cta-row p{margin:8px 0 0}
+
+/* Footer */
+footer{border-top:1px solid var(--line);padding:35px 0 42px}
+footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+  :root{--gutter:35px}
+  .hero h1{grid-column:1/13}
+  .hero-side{grid-column:1/9;padding-top:35px}
+  .services{grid-template-columns:repeat(2,1fr)}
+  .svc:nth-child(2){border-right:0}
+  .svc:nth-child(3){padding-left:0}
+  .svc:nth-child(n+3){border-top:1px solid var(--line)}
+  .stat-grid{grid-template-columns:repeat(2,1fr);row-gap:56px}
+  .steps{grid-template-columns:1fr}
+  .step{min-height:240px}
+  .cta-row > div{grid-column:span 6}
+}
+@media (max-width:720px){
+  :root{--gutter:16px}
+  .nav ul{display:none}
+  .hero{padding-top:56px}
+  .hero-side{grid-column:1/13}
+  .hero-meta{margin-top:56px;flex-wrap:wrap;gap:6px 14px}
+  section{padding:84px 0}
+  .sec-head{margin-bottom:56px}
+  .sec-head .label,.sec-head h2{grid-column:1/13}
+  .services{grid-template-columns:1fr}
+  .svc,.svc + .svc{padding:28px 0 35px;border-right:0;min-height:0}
+  .svc:nth-child(n+2){border-top:1px solid var(--line)}
+  .svc h3{margin-top:42px}
+  .svc .px{right:0;top:28px}
+  .work-list li a{grid-template-columns:1fr auto;row-gap:6px}
+  .work-list .d{grid-column:1/-1;grid-row:2}
+  .work-list .y{display:none}
+  .cta{padding:112px 0 84px}
+  .cta-row{margin-top:56px;row-gap:28px}
+  .cta-row > div{grid-column:1/13}
+  .wave .coord{right:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .marquee-track{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="#" class="logo" aria-label="KI Lab Startseite"><i aria-hidden="true"></i>KI&nbsp;Lab</a>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#leistungen">Leistungen</a></li>
+        <li><a href="#projekte">Projekte</a></li>
+        <li><a href="#prozess">Prozess</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+    <a href="#kontakt" class="btn"><span class="dot"></span>Projekt starten</a>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="hero-top">
+        <h1>Wir bauen <em>Künstliche Intelligenz</em>, die im Alltag funktioniert.</h1>
+        <div class="hero-side">
+          <p>KI&nbsp;Lab ist ein unabhängiges Studio für angewandte KI. Wir entwickeln, testen und betreiben Systeme, die messbar Arbeit abnehmen.</p>
+          <a href="#projekte" class="btn ghost">Arbeiten ansehen ↓</a>
+        </div>
+      </div>
+      <div class="hero-meta label muted">
+        <span>Est. <b>2024</b></span>
+        <span>Standort <b>Berlin / Remote</b></span>
+        <span>Fokus <b>LLMs, Agents, Vision</b></span>
+        <span>Status <b>● Offen für Projekte</b></span>
+      </div>
+    </div>
+    <div class="wave" aria-hidden="true">
+      <canvas id="wave"></canvas>
+      <span class="coord label" id="coord">x 000 · y 000</span>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee" aria-label="Themen">
+    <div class="marquee-track">
+      <span>Sprachmodelle</span><span>Autonome Agenten</span><span>Computer Vision</span><span>Retrieval &amp; Suche</span><span>Evaluation</span><span>MLOps</span><span>Prototyping</span>
+      <span aria-hidden="true">Sprachmodelle</span><span aria-hidden="true">Autonome Agenten</span><span aria-hidden="true">Computer Vision</span><span aria-hidden="true">Retrieval &amp; Suche</span><span aria-hidden="true">Evaluation</span><span aria-hidden="true">MLOps</span><span aria-hidden="true">Prototyping</span>
+    </div>
+  </div>
+
+  <!-- Leistungen -->
+  <section id="leistungen">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label muted">(01) Leistungen</span>
+        <h2>Vom ersten Experiment bis zum System, das jeden Tag läuft.</h2>
+      </div>
+      <div class="services">
+        <article class="svc reveal">
+          <span class="num label">01</span><span class="px"><b></b><b></b><b></b><b></b></span>
+          <h3>Strategie &amp; Discovery</h3>
+          <p>Wo lohnt sich KI wirklich? Wir identifizieren Anwendungsfälle, bewerten Daten und rechnen den Nutzen ehrlich durch.</p>
+        </article>
+        <article class="svc reveal">
+          <span class="num label">02</span><span class="px"><b></b><b></b><b></b><b></b></span>
+          <h3>Prototypen in Wochen</h3>
+          <p>Klickbare Prototypen mit echten Modellen und echten Daten. Schnell genug zum Lernen, solide genug zum Weiterbauen.</p>
+        </article>
+        <article class="svc reveal">
+          <span class="num label">03</span><span class="px"><b></b><b></b><b></b><b></b></span>
+          <h3>Agenten &amp; Integration</h3>
+          <p>KI-Agenten, die sich in bestehende Tools einfügen: CRM, ERP, Ticketsysteme, interne Wissensdatenbanken.</p>
+        </article>
+        <article class="svc reveal">
+          <span class="num label">04</span><span class="px"><b></b><b></b><b></b><b></b></span>
+          <h3>Betrieb &amp; Evaluation</h3>
+          <p>Monitoring, Tests und Guardrails. Wir messen Qualität kontinuierlich, statt uns auf Bauchgefühl zu verlassen.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projekte -->
+  <section id="projekte" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label muted">(02) Ausgewählte Projekte</span>
+        <h2>Kleine Teams, klare Ziele, messbare Ergebnisse.</h2>
+      </div>
+      <ul class="work-list">
+        <li class="reveal"><a href="#kontakt"><span class="t">Nordlicht Logistik</span><span class="d">Dokumenten-Agent, der Frachtpapiere liest, prüft und ins ERP überträgt.</span><span class="y label muted">Agent · 2026</span><span class="arr">→</span></a></li>
+        <li class="reveal"><a href="#kontakt"><span class="t">Stadtwerke Assist</span><span class="d">Kundenservice-Assistent mit Retrieval über 40.000 interne Dokumente.</span><span class="y label muted">RAG · 2025</span><span class="arr">→</span></a></li>
+        <li class="reveal"><a href="#kontakt"><span class="t">Fabrik Vision</span><span class="d">Visuelle Qualitätskontrolle an der Linie, trainiert mit weniger als 500 Bildern.</span><span class="y label muted">Vision · 2025</span><span class="arr">→</span></a></li>
+        <li class="reveal"><a href="#kontakt"><span class="t">Kanzlei Copilot</span><span class="d">Recherche- und Entwurfswerkzeug für Vertragsprüfung mit lückenloser Quellenangabe.</span><span class="y label muted">LLM · 2024</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Zahlen -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label muted">(03) In Zahlen</span>
+        <h2>Was zählt, ist, was nach dem Launch passiert.</h2>
+      </div>
+      <div class="stat-grid">
+        <div class="stat reveal"><span class="label muted">Projekte live</span><div class="v" data-count="38">0</div><p class="muted">In Produktion, nicht in der Schublade.</p></div>
+        <div class="stat reveal"><span class="label muted">Ø Zeit bis Prototyp</span><div class="v" data-count="3">0<sup>Wo.</sup></div><p class="muted">Von Kick-off bis zur ersten Demo.</p></div>
+        <div class="stat reveal"><span class="label muted">Eingesparte Stunden</span><div class="v" data-count="120" data-suffix="k">0</div><p class="muted">Pro Jahr, über alle Kunden.</p></div>
+        <div class="stat reveal"><span class="label muted">Hosting in der EU</span><div class="v" data-count="100" data-suffix="%">0</div><p class="muted">DSGVO-konform, auf Wunsch on-prem.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prozess -->
+  <section id="prozess">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="label muted">(04) Prozess</span>
+        <h2>Drei Phasen. Keine Folienschlachten.</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div><div class="bar"><i class="on"></i><i></i><i></i></div><span class="label muted">Woche 1–2</span></div>
+          <div><h3>Verstehen</h3><p>Workshops mit den Menschen, die die Arbeit heute machen. Daten sichten, Ziele festlegen, Erfolg messbar machen.</p></div>
+        </div>
+        <div class="step reveal">
+          <div><div class="bar"><i class="on"></i><i class="on"></i><i></i></div><span class="label muted">Woche 3–6</span></div>
+          <div><h3>Bauen</h3><p>Iterativer Prototyp mit wöchentlichen Demos. Evaluation von Anfang an, damit Qualität kein Zufall ist.</p></div>
+        </div>
+        <div class="step dark reveal">
+          <div><div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i></div><span class="label">Ab Woche 7</span></div>
+          <div><h3>Betreiben</h3><p>Rollout, Schulung, Monitoring. Wir bleiben an Bord, bis das System ohne uns läuft.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="kontakt">
+    <div class="wrap">
+      <span class="label muted reveal">(05) Kontakt</span>
+      <h2 class="reveal" style="margin-top:35px">Lass uns<br><a href="mailto:hallo@kilab.de">sprechen&nbsp;→</a></h2>
+      <div class="cta-row">
+        <div class="reveal"><span class="label muted">E-Mail</span><p><a href="mailto:hallo@kilab.de">hallo@kilab.de</a></p></div>
+        <div class="reveal"><span class="label muted">Telefon</span><p>+49 30 000 000 00</p></div>
+        <div class="reveal"><span class="label muted">Studio</span><p>Torstraße 00<br>10119 Berlin</p></div>
+        <div class="reveal"><span class="label muted">Erstgespräch</span><p>30 Minuten, kostenlos,<br>unverbindlich.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap label muted">
+    <span>© <span id="year">2026</span> KI Lab</span>
+    <span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span>
+    <span>Gebaut mit Sorgfalt in Berlin</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Generative pixel wave ---------- */
+  const canvas = document.getElementById('wave');
+  const ctx = canvas.getContext('2d');
+  const coord = document.getElementById('coord');
+  const CELL = 14, GAP = 2;
+  const INK = '#0A0A0A', NEON = '#d8ff00', LINE = 'rgba(10,10,10,.12)';
+  let W = 0, H = 0, cols = 0, rows = 0, dpr = 1;
+  let mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
+  let visible = true;
+
+  // deterministic per-cell noise for dithering
+  const hash = (x, y) => {
+    let h = x * 374761393 + y * 668265263;
+    h = (h ^ (h >>> 13)) * 1274126177;
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  };
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL);
+  }
+
+  function height(c, t) {
+    const x = c / cols;
+    let h = 0.46
+      + 0.16 * Math.sin(x * 5.2 + t * 0.55)
+      + 0.08 * Math.sin(x * 11.7 - t * 0.9 + 1.3)
+      + 0.04 * Math.sin(x * 23.0 + t * 1.6);
+    // cursor pushes a swell upward
+    const dx = (c * CELL - mouse.x) / 160;
+    h += 0.22 * Math.exp(-dx * dx) * (mouse.y > -1e3 ? 1 : 0);
+    return h;
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    const s = CELL - GAP;
+    for (let c = 0; c < cols; c++) {
+      const crest = rows - Math.round(height(c, t) * rows);
+      for (let r = 0; r < rows; r++) {
+        const x = c * CELL, y = r * CELL;
+        const d = r - crest; // depth below crest
+        if (d < -2) {
+          // faint grid above the wave
+          if ((c + r) % 4 === 0 && r % 2 === 0) { ctx.fillStyle = LINE; ctx.fillRect(x + s / 2 - 1, y + s / 2 - 1, 2, 2); }
+          continue;
+        }
+        const n = hash(c, r);
+        if (d < 0) {
+          // spray above the crest
+          if (n > 0.82) { ctx.fillStyle = NEON; ctx.fillRect(x, y, s, s); }
+          continue;
+        }
+        if (d < 2) { ctx.fillStyle = NEON; ctx.fillRect(x, y, s, s); continue; }
+        // dithered density that grows with depth
+        const density = Math.min(1, 0.35 + d / 10);
+        if (n < density) {
+          ctx.fillStyle = (d < 4 && n > 0.6) ? NEON : INK;
+          ctx.fillRect(x, y, s, s);
+        }
+      }
+    }
+  }
+
+  let t0 = performance.now();
+  function loop(now) {
+    mouse.x += (mouse.tx - mouse.x) * 0.08;
+    mouse.y += (mouse.ty - mouse.y) * 0.08;
+    if (visible) draw((now - t0) / 1000);
+    requestAnimationFrame(loop);
+  }
+
+  canvas.parentElement.addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (mouse.tx < -1e3) { mouse.x = x; mouse.y = y; }
+    mouse.tx = x; mouse.ty = y;
+    coord.textContent = `x ${String(Math.floor(x / CELL)).padStart(3, '0')} · y ${String(Math.floor(y / CELL)).padStart(3, '0')}`;
+  });
+  canvas.parentElement.addEventListener('pointerleave', () => { mouse.tx = mouse.ty = -1e4; mouse.x = mouse.y = -1e4; });
+
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
+  addEventListener('resize', () => { resize(); if (reduce) draw(0); });
+  resize();
+  if (reduce) draw(0); else requestAnimationFrame(loop);
+
+  /* ---------- Scroll reveal + counters ---------- */
+  const countUp = el => {
+    const target = +el.dataset.count, suffix = el.dataset.suffix || '';
+    const sup = el.querySelector('sup');
+    const render = v => { el.textContent = v + suffix; if (sup) el.appendChild(sup); };
+    if (reduce) return render(target);
+    const start = performance.now(), dur = 1400;
+    const step = now => {
+      const p = Math.min(1, (now - start) / dur);
+      render(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(countUp);
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 70 + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
