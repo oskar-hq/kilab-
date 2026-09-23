@@ -1,4 +1,4 @@
-# KI-Lab SH (Arbeitstitel)
+# Ylva Labs
 
 Landingpage für ein regionales KI-Innovation-Lab / Venture Builder in Schleswig-Holstein.
 Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeignet.
@@ -33,7 +33,7 @@ Alle Pfade sind relativ, die Seite funktioniert also auch im Unterordner `/<repo
 
 ## Vor dem Livegang
 
-- [ ] **Namen festlegen** und `KI-Lab SH` in allen `.html`-Dateien ersetzen (Suchen & Ersetzen).
+- [x] Name: **Ylva Labs**
 - [ ] **E-Mail** `kontakt@example.de` durch die echte Adresse ersetzen.
 - [ ] **Impressum & Datenschutz** ausfüllen (in Deutschland Pflicht).
 - [ ] Optional: Google Fonts lokal hosten (Datenschutz) – Schrift nach `assets/fonts/` legen und `@font-face` in `style.css` ergänzen.
