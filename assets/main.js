@@ -5,7 +5,11 @@
 
   const C = { paper: '#FFFFFF' };
   // The one and only pixel colour (CSS custom property --px). A pixel is on or off.
-  const ON = (getComputedStyle(document.documentElement).getPropertyValue('--px') || '').trim() || '#5aa9e6';
+  const css = name => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim();
+  const ON = css('--px') || '#5aa9e6';
+  // Hero only: a few flat colour zones (each pixel still one solid colour, never blended).
+  const HERO = (css('--hero-colors') || '#9fd4ff,#5aa9e6,#2f5bd3,#1d2126,#8a929c').split(',').map(v => v.trim());
+  const SPORE = css('--hero-spore') || '#f6d36d';
 
   /* ---------- Math helpers ---------- */
   // 4x4 Bayer matrix for ordered dithering, plus a cheap deterministic hash.
@@ -124,7 +128,7 @@
         const th = 0.36 + scroll * 0.35;
         // evaluate the noise field on a coarse grid (every G cells), interpolate between
         const G = 2, gc = Math.ceil(cols / G) + 2, gr = Math.ceil(rows / G) + 2;
-        const F = new Float32Array(gc * gr);
+        const F = new Float32Array(gc * gr), Z = new Float32Array(gc * gr);
         for (let j = 0; j < gr; j++) for (let i = 0; i < gc; i++) {
           const c = i * G, ry = j * G + lift;
           const nx = c / cols, ny = ry / rows;
@@ -139,9 +143,12 @@
             f += 0.55 * mouse.amp * Math.exp(-(dx * dx + dy * dy));
           }
           F[j * gc + i] = f;
+          // zone coordinate: position across the body, warped by the same noise,
+          // drifting slowly so the colour bands travel through the organism
+          Z[j * gc + i] = d * 0.55 + (q - 0.5) * 2.2 + Math.sin(t * 0.2 + nx * 2) * 0.25;
         }
         const spore = Math.floor(t * 5) * 17;
-        ctx.fillStyle = ON;
+        const N = HERO.length;
         for (let r = 0; r < rows; r++) {
           const gy = r / G, j = Math.floor(gy), fy = gy - j;
           for (let c = 0; c < cols; c++) {
@@ -149,10 +156,14 @@
             const k = j * gc + i;
             const f = (F[k] * (1 - fx) + F[k + 1] * fx) * (1 - fy) + (F[k + gc] * (1 - fx) + F[k + gc + 1] * fx) * fy;
             const level = (f - th) / 0.35;               // <0 outside, >1 solid core
-            const on = level > 0
-              ? level * 1.4 > bayer(c, r)                // dithered membrane, solid core
-              : level > -0.6 && hash(c, r + spore) < 0.012; // spores around the body
-            if (on) fill(ctx, null, c * S, r * S, s);
+            if (level > 0) {
+              if (level * 1.4 <= bayer(c, r)) continue;  // dithered membrane, solid core
+              const z = (Z[k] * (1 - fx) + Z[k + 1] * fx) * (1 - fy) + (Z[k + gc] * (1 - fx) + Z[k + gc + 1] * fx) * fy;
+              const zone = Math.max(0, Math.min(N - 1, Math.floor((z + 1) / 2 * N)));
+              fill(ctx, HERO[zone], c * S, r * S, s);  // hard zone edges, no blending
+            } else if (level > -0.6 && hash(c, r + spore) < 0.012) {
+              fill(ctx, SPORE, c * S, r * S, s);         // spores around the body
+            }
           }
         }
       }

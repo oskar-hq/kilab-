@@ -12,6 +12,9 @@
   --accent:#8fd0ff;
   --accent-2:#d4ecff;
   --px:#5aa9e6;            /* the single pixel colour: pixels are on (this) or off */
+  /* hero organism: flat colour zones + spore colour (pixels still strictly on/off) */
+  --hero-colors:#9fd4ff,#5aa9e6,#2f5bd3,#1d2126,#8a929c;
+  --hero-spore:#f6d36d;
   --maxw:1176px;
   --gutter:56px;
   --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
