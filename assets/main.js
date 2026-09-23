@@ -383,6 +383,74 @@
     addEventListener('scroll', () => drawProgress(false), { passive: true });
   }
 
+  /* ---------- Contact address (set once on <body data-contact>) ---------- */
+  const CONTACT = document.body.dataset.contact || 'kontakt@example.de';
+  const mailto = (subject, body) =>
+    `mailto:${CONTACT}?subject=${encodeURIComponent(subject)}${body ? '&body=' + encodeURIComponent(body) : ''}`;
+  document.querySelectorAll('[data-mailto]').forEach(a => { a.href = mailto(a.dataset.mailto); });
+  document.querySelectorAll('[data-contact-text]').forEach(a => { a.href = `mailto:${CONTACT}`; a.textContent = CONTACT; });
+
+  /* ---------- Problem finder: pick pains, get a pre-written enquiry ---------- */
+  const finder = document.getElementById('finder');
+  if (finder) {
+    const tabs = [...finder.querySelectorAll('[role="tab"]')];
+    const sets = [...finder.querySelectorAll('.pains')];
+    const other = document.getElementById('finder-other');
+    const send = document.getElementById('finder-send');
+    const count = document.getElementById('finder-count');
+    const pxBox = document.getElementById('finder-px');
+    const MAX = 6;
+    for (let i = 0; i < MAX; i++) pxBox.appendChild(document.createElement('i'));
+    let branche = tabs[0].dataset.branche;
+
+    const update = () => {
+      const picked = [...finder.querySelectorAll(`.pains[data-for="${branche}"] input:checked`)].map(i => i.value);
+      const free = other.value.trim();
+      const n = picked.length + (free ? 1 : 0);
+      [...pxBox.children].forEach((px, i) => px.classList.toggle('on', i < n));
+      count.textContent = n === 0 ? 'Noch nichts ausgewählt' : n === 1 ? '1 Zeitfresser ausgewählt' : `${n} Zeitfresser ausgewählt`;
+      const lines = [
+        'Hallo Ylva Labs,', '',
+        `wir sind ein Betrieb aus dem Bereich ${branche} und interessieren uns für ein kostenloses Erstgespräch.`, ''
+      ];
+      if (n) {
+        lines.push('Das kostet uns im Alltag am meisten Zeit:');
+        picked.forEach(v => lines.push(`- ${v}`));
+        if (free) lines.push(`- ${free}`);
+        lines.push('');
+      }
+      lines.push('Betrieb:', 'Ort:', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
+      send.href = mailto(`Pilotbetrieb ${branche}: Erstgespräch`, lines.join('\n'));
+      send.lastChild.textContent = n ? 'Anfrage mit Auswahl vorbereiten' : 'Anfrage vorbereiten';
+    };
+
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      branche = tab.dataset.branche;
+      tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+      sets.forEach(f => { f.hidden = f.dataset.for !== branche; });
+      update();
+    }));
+    finder.addEventListener('change', update);
+    other.addEventListener('input', update);
+    update();
+  }
+
+  /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */
+  const sticky = document.getElementById('sticky-cta');
+  const heroCopy = document.querySelector('.hero-copy');
+  const contactSec = document.getElementById('kontakt');
+  if (sticky && heroCopy) {
+    let pastHero = false, atContact = false;
+    const sync = () => {
+      const on = pastHero && !atContact;
+      sticky.classList.toggle('show', on);
+      sticky.setAttribute('aria-hidden', String(!on));
+      sticky.querySelector('a').tabIndex = on ? 0 : -1;
+    };
+    new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting && e.boundingClientRect.top < 0; sync(); }).observe(heroCopy);
+    if (contactSec) new IntersectionObserver(([e]) => { atContact = e.isIntersecting; sync(); }).observe(contactSec);
+  }
+
   /* ---------- Scroll reveal ---------- */
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {

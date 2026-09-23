@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ylva Labs – Angewandte KI für den Mittelstand in Schleswig-Holstein</title>
-<meta name="description" content="Ylva Labs ist ein regionales KI-Innovation-Lab und Venture Builder in Schleswig-Holstein: Wir bauen angewandte KI, Automationen und Branchensoftware mit Betrieben aus Handwerk, Pflege und Landwirtschaft.">
-<meta property="og:title" content="Ylva Labs – Angewandte KI für den Mittelstand">
-<meta property="og:description" content="Viele Ideen ausprobieren, mit echten Betrieben testen, die besten als eigene Firmen ausgründen.">
+<title>Ylva Labs – KI für Handwerk, Pflege &amp; Landwirtschaft in Schleswig-Holstein</title>
+<meta name="description" content="Wir entwickeln mit Betrieben aus Schleswig-Holstein KI-Werkzeuge, die Papierkram, Anfragen und Dokumentation abnehmen. Jetzt Pilotbetrieb werden: kostenloses Erstgespräch.">
+<meta property="og:title" content="Ylva Labs – KI, die im Betrieb mitarbeitet">
+<meta property="og:description" content="Wir suchen Pilotbetriebe aus Schleswig-Holstein: Ihr bringt das Problem, wir bauen das Werkzeug.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ylva Labs">
 <meta property="og:locale" content="de_DE">
@@ -24,8 +24,12 @@
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="assets/style.css">
 <script>document.documentElement.classList.replace('no-js','js')</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Ylva Labs","description":"KI-Lab und Venture Builder: angewandte KI, Automationen und Branchensoftware für den Mittelstand in Schleswig-Holstein.","areaServed":{"@type":"State","name":"Schleswig-Holstein"},"knowsAbout":["Künstliche Intelligenz","Automatisierung","Handwerk","Pflege","Landwirtschaft"]}
+</script>
 </head>
-<body>
+<!-- The contact address lives here once; every mailto link and the problem finder use it. -->
+<body data-contact="kontakt@example.de">
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <canvas class="px-progress" aria-hidden="true"></canvas>
 
@@ -33,192 +37,266 @@
   <div class="wrap top-grid">
     <a href="./" class="brand" aria-label="Ylva Labs, Startseite"><img class="brand-mark" src="assets/icons/mark.svg" alt="">Ylva Labs</a>
     <nav class="top-nav" aria-label="Hauptnavigation">
-      <a href="#ansatz"><span class="mono">A</span><span>Ansatz<small>Wie wir arbeiten</small></span></a>
-      <a href="#modell"><span class="mono">&amp;</span><span>Modell<small>HoldCo · Spinoffs</small></span></a>
-      <a href="#mitmachen"><span class="mono">→</span><span>Mitmachen<small>Betriebe · Talente</small></span></a>
+      <a href="#zeitfresser"><span class="mono">01</span><span>Für Betriebe<small>Was wir lösen</small></span></a>
+      <a href="#ablauf"><span class="mono">02</span><span>Ablauf<small>Vom Gespräch zum Pilot</small></span></a>
+      <a href="#fragen"><span class="mono">03</span><span>Fragen<small>Kosten · Zeit · Daten</small></span></a>
     </nav>
     <div class="top-note">
-      <p>Ylva Labs · KI-Lab &amp; Venture Builder<br><span class="muted">Schleswig-Holstein · 54°N 10°E</span></p>
+      <a class="btn" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Erstgespräch vereinbaren</a>
     </div>
   </div>
 </header>
 
 <main id="main">
-  <!-- Hero: pixel band -->
+  <!-- Hero: living pixel organism -->
   <div class="band-hero" aria-hidden="true">
     <canvas data-scene="hero"></canvas>
   </div>
 
+  <section class="hero-copy">
+    <div class="wrap hero-grid">
+      <h1 class="hero-title">KI, die im Betrieb mit&shy;arbeitet.</h1>
+      <div class="hero-side">
+        <p>Wir entwickeln mit Betrieben aus Schleswig-Holstein Werkzeuge, die Papierkram, Anfragen und Dokumentation abnehmen. Ihr bringt das Problem aus dem Alltag, wir bauen die Lösung und tragen das Entwicklungsrisiko.</p>
+        <div class="hero-ctas">
+          <a class="btn" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch</a>
+          <a class="btn ghost" href="#zeitfresser">Was frisst bei euch Zeit? ↓</a>
+        </div>
+      </div>
+      <ul class="hero-facts label">
+        <li><b>30 Min.</b> Erstgespräch, kostenlos</li>
+        <li><b>Prototyp</b> in wenigen Wochen</li>
+        <li><b>Vor Ort</b> in Schleswig-Holstein</li>
+        <li><i class="pulse" aria-hidden="true"></i><b>Jetzt</b> Pilotbetriebe gesucht</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Problem finder: the main conversion element -->
+  <section class="finder" id="zeitfresser">
+    <div class="wrap">
+      <header class="flow-head px-mask">
+        <span class="label">01 · Für Betriebe</span>
+        <h2>Was frisst bei euch am meisten Zeit?</h2>
+        <p>Kreuzt an, was euch im Alltag ausbremst. Daraus machen wir eine fertige Anfrage, ihr müsst sie nur noch abschicken.</p>
+      </header>
+
+      <form class="finder-box" id="finder" onsubmit="return false">
+        <div class="tabs" role="tablist" aria-label="Branche">
+          <button type="button" role="tab" aria-selected="true" data-branche="Handwerk">Handwerk</button>
+          <button type="button" role="tab" aria-selected="false" data-branche="Pflege">Pflege</button>
+          <button type="button" role="tab" aria-selected="false" data-branche="Landwirtschaft">Landwirtschaft</button>
+          <button type="button" role="tab" aria-selected="false" data-branche="Anderer Betrieb">Andere Betriebe</button>
+        </div>
+
+        <fieldset class="pains" data-for="Handwerk">
+          <legend class="sr-only">Zeitfresser im Handwerk</legend>
+          <label><input type="checkbox" value="Angebote schreiben dauert Abende"><span>Angebote schreiben dauert Abende</span></label>
+          <label><input type="checkbox" value="Aufmaß, Fotos und Notizen liegen verstreut (Zettel, WhatsApp)"><span>Aufmaß, Fotos und Notizen liegen verstreut</span></label>
+          <label><input type="checkbox" value="Einsatz- und Terminplanung per Telefon-Pingpong"><span>Termine und Einsätze planen per Telefon-Pingpong</span></label>
+          <label><input type="checkbox" value="Nachkalkulation macht keiner"><span>Nachkalkulation macht keiner</span></label>
+          <label><input type="checkbox" value="Rechnungen und Mahnungen hängen hinterher"><span>Rechnungen und Mahnungen hängen hinterher</span></label>
+          <label><input type="checkbox" value="Kundenanfragen gehen unter"><span>Kundenanfragen gehen unter</span></label>
+        </fieldset>
+        <fieldset class="pains" data-for="Pflege" hidden>
+          <legend class="sr-only">Zeitfresser in der Pflege</legend>
+          <label><input type="checkbox" value="Dokumentation nach jedem Einsatz"><span>Dokumentation nach jedem Einsatz</span></label>
+          <label><input type="checkbox" value="Dienst- und Tourenplanung ändert sich täglich"><span>Dienst- und Tourenplanung ändert sich täglich</span></label>
+          <label><input type="checkbox" value="Übergaben zwischen Schichten gehen verloren"><span>Übergaben zwischen Schichten gehen verloren</span></label>
+          <label><input type="checkbox" value="Abrechnung mit Kassen kostet Zeit"><span>Abrechnung mit den Kassen kostet Zeit</span></label>
+          <label><input type="checkbox" value="Neue Kolleg:innen einarbeiten"><span>Neue Kolleg:innen einarbeiten</span></label>
+          <label><input type="checkbox" value="Viele Anrufe und Anfragen von Angehörigen"><span>Viele Anrufe und Anfragen von Angehörigen</span></label>
+        </fieldset>
+        <fieldset class="pains" data-for="Landwirtschaft" hidden>
+          <legend class="sr-only">Zeitfresser in der Landwirtschaft</legend>
+          <label><input type="checkbox" value="Dokumentationspflichten (Düngung, Pflanzenschutz, Tierhaltung)"><span>Dokumentationspflichten (Düngung, Pflanzenschutz, Tiere)</span></label>
+          <label><input type="checkbox" value="Förderanträge und Nachweise"><span>Förderanträge und Nachweise</span></label>
+          <label><input type="checkbox" value="Daten aus Maschinen und Apps passen nicht zusammen"><span>Daten aus Maschinen und Apps passen nicht zusammen</span></label>
+          <label><input type="checkbox" value="Lager-, Futter- und Einsatzplanung"><span>Lager-, Futter- und Einsatzplanung</span></label>
+          <label><input type="checkbox" value="Bestellungen in der Direktvermarktung"><span>Bestellungen in der Direktvermarktung</span></label>
+          <label><input type="checkbox" value="Personal- und Saisonplanung"><span>Personal- und Saisonplanung</span></label>
+        </fieldset>
+        <fieldset class="pains" data-for="Anderer Betrieb" hidden>
+          <legend class="sr-only">Zeitfresser in anderen Betrieben</legend>
+          <label><input type="checkbox" value="Postfach voller Routine-Anfragen"><span>Postfach voller Routine-Anfragen</span></label>
+          <label><input type="checkbox" value="Rechnungen und Belege abtippen"><span>Rechnungen und Belege abtippen</span></label>
+          <label><input type="checkbox" value="Wissen steckt in wenigen Köpfen"><span>Wissen steckt in wenigen Köpfen</span></label>
+          <label><input type="checkbox" value="Angebote und Preislisten pflegen"><span>Angebote und Preislisten pflegen</span></label>
+          <label><input type="checkbox" value="Termine koordinieren"><span>Termine koordinieren</span></label>
+          <label><input type="checkbox" value="Berichte und Auswertungen zusammensuchen"><span>Berichte und Auswertungen zusammensuchen</span></label>
+        </fieldset>
+
+        <label class="other"><span class="label">Oder in euren Worten</span><input type="text" id="finder-other" placeholder="z. B. „Wir tippen jeden Lieferschein von Hand ab“" maxlength="200"></label>
+
+        <div class="finder-foot">
+          <div class="finder-count" aria-live="polite"><span class="count-px" id="finder-px" aria-hidden="true"></span><span id="finder-count">Noch nichts ausgewählt</span></div>
+          <a class="btn" id="finder-send" href="mailto:kontakt@example.de?subject=Pilotbetrieb"><span class="btn-dot" aria-hidden="true"></span>Anfrage vorbereiten</a>
+        </div>
+        <p class="finder-note">Öffnet euer E-Mail-Programm mit einer vorformulierten Nachricht. Es wird nichts automatisch gesendet und nichts gespeichert.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Examples -->
   <section class="intro">
     <div class="wrap">
-      <p class="statement px-mask">Ein kurzer Blick darauf, wie wir KI in Betriebe bringen und warum wir dafür keine eigenen Sprachmodelle bauen. Aber zuerst: woran wir arbeiten wollen.</p>
-
+      <p class="statement px-mask">So könnte das aussehen. Erste Ideen, die wir gemeinsam mit Pilotbetrieben bauen und im Alltag testen wollen.</p>
       <div class="cards">
         <article class="card reveal">
           <div class="card-art"><canvas data-scene="art" data-icon="werkstatt"></canvas></div>
           <h3>Handwerker-Dashboard</h3>
-          <p>Aufträge, Material und Termine auf einen Blick. Angebote per Sprachnotiz.</p>
-          <span class="pill dark">Pilot gesucht</span>
+          <p>Aufträge, Material und Termine auf einen Blick. Angebote per Sprachnotiz statt am Feierabend.</p>
+          <span class="pill dark">Pilotbetrieb gesucht</span>
         </article>
         <article class="card reveal">
           <div class="card-art"><canvas data-scene="art" data-icon="mikro" data-dither="down"></canvas></div>
           <h3>Pflege-Doku per Sprache</h3>
-          <p>Direkt nach dem Einsatz einsprechen, strukturiert ablegen, fertig.</p>
-          <span class="pill">Idee</span>
+          <p>Nach dem Einsatz kurz einsprechen, die Doku liegt strukturiert im System. Mehr Zeit für Menschen.</p>
+          <span class="pill dark">Pilotbetrieb gesucht</span>
         </article>
         <article class="card reveal">
           <div class="card-art"><canvas data-scene="art" data-icon="aehre"></canvas></div>
           <h3>Hof-Assistent</h3>
-          <p>Nachweise und Anträge aus Daten, die auf dem Hof schon da sind.</p>
-          <span class="pill">Idee</span>
+          <p>Nachweise und Anträge aus Daten, die auf dem Hof ohnehin schon da sind.</p>
+          <span class="pill dark">Pilotbetrieb gesucht</span>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Vision -->
-  <section class="split" id="vision">
+  <!-- Offer -->
+  <section class="split" id="angebot">
+    <div class="wrap split-grid">
+      <header class="split-head px-mask">
+        <h2>Was ihr als Pilotbetrieb bekommt.</h2>
+        <span class="label">Angebot · Pilot</span>
+      </header>
+      <div class="split-body reveal">
+        <ul class="offer">
+          <li><span class="label">Maßgeschneidert</span><p>Ein Werkzeug für genau euren Ablauf, keine Software von der Stange, an die ihr euch anpassen müsst.</p></li>
+          <li><span class="label">Kein Entwicklungsrisiko</span><p>Wir bauen den Prototyp. Ihr entscheidet erst, wenn ihr ihn im Alltag ausprobiert habt.</p></li>
+          <li><span class="label">Wenig Aufwand</span><p>Ein Gespräch, ein Tag vor Ort, danach kurze Rückmeldungen. Ihr braucht kein IT-Wissen.</p></li>
+          <li><span class="label">Beteiligung möglich</span><p>Wird aus eurem Pilot ein eigenes Produkt, könnt ihr euch als Anker-Betrieb daran beteiligen.</p></li>
+        </ul>
+        <div class="faces">
+          <figure>
+            <span class="face" data-bitmap="sad"></span>
+            <figcaption><span class="label">Software von der Stange</span>Schön in der Demo, im Alltag nutzt sie niemand.</figcaption>
+          </figure>
+          <figure>
+            <span class="face" data-bitmap="happy"></span>
+            <figcaption><span class="label">Mit euch gebaut</span>Getestet von euren Leuten an euren echten Aufgaben.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="flow" id="ablauf">
+    <div class="wrap">
+      <header class="flow-head px-mask">
+        <span class="label">02 · Ablauf</span>
+        <h2>Vom ersten Gespräch zum Werkzeug im Alltag.</h2>
+        <p>Aus vielen Problemen werden wenige Lösungen, die wirklich tragen. Ihr seid bei jedem Schritt dabei und entscheidet, ob es weitergeht.</p>
+      </header>
+      <div class="viz viz-flow" aria-hidden="true"><canvas data-scene="flow"></canvas></div>
+      <ol class="steps">
+        <li class="reveal"><span class="dot"></span><span class="label">1 · Erstgespräch</span><p>30 Minuten, kostenlos, am Telefon oder bei euch. Wir hören zu, was nervt.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">2 · Vor-Ort-Tag</span><p>Wir schauen euch einen Tag über die Schulter und finden den größten Hebel.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">3 · Prototyp</span><p>In wenigen Wochen steht eine erste Version, mit euren echten Abläufen.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">4 · Testen &amp; entscheiden</span><p>Ihr nutzt es im Alltag. Trägt es, bauen wir es aus. Wenn nicht, hören wir auf.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Why us -->
+  <section class="split" id="warum">
     <div class="wrap split-grid">
       <header class="split-head px-mask">
         <h2>Aus Schleswig-Holstein, für den Mittelstand.</h2>
-        <span class="label">Vision · Regional</span>
+        <span class="label">Warum Ylva Labs</span>
       </header>
       <div class="split-body reveal">
-        <p>Wir sind ein regionales KI-Innovation-Lab und Venture Builder. Unser Fokus ist angewandte KI: Automationen und Branchensoftware für Handwerk, Pflege, Landwirtschaft und andere Betriebe im Land.</p>
-        <p>Statt eigene Sprachmodelle zu entwickeln, nutzen wir die besten vorhandenen und bauen daraus Werkzeuge, die im Betriebsalltag funktionieren.</p>
+        <p>Wir sind ein regionales KI-Lab. Wir entwickeln keine eigenen Sprachmodelle, sondern nutzen die besten vorhandenen und bauen daraus Werkzeuge, die im Betriebsalltag funktionieren.</p>
+        <ul class="offer">
+          <li><span class="label">Vor Ort statt Hotline</span><p>Wir kommen vorbei und sprechen eure Sprache, nicht Tech-Englisch.</p></li>
+          <li><span class="label">Ehrlich statt Hype</span><p>Lohnt sich KI für euer Problem nicht, sagen wir das im Erstgespräch.</p></li>
+          <li><span class="label">Eure Daten bleiben eure</span><p>Wir nutzen sie nur für euer Projekt, DSGVO-konform und nach vorheriger Absprache.</p></li>
+        </ul>
         <p class="muted">Ylva ist ein nordischer Name und bedeutet Wölfin. Wir arbeiten wie ein Rudel: Betriebe, Talente und Förderer gemeinsam.</p>
       </div>
     </div>
   </section>
 
-  <!-- Ansatz -->
-  <section class="split" id="ansatz">
+  <!-- FAQ -->
+  <section class="split" id="fragen">
     <div class="wrap split-grid">
       <header class="split-head px-mask">
-        <h2>KI kann fast alles. Außer die letzten 10&nbsp;Prozent im Betrieb.</h2>
-        <span class="label">Ansatz · Praxis</span>
+        <span class="label">03 · Fragen</span>
+        <h2>Was Betriebe uns vorher fragen.</h2>
       </header>
-      <div class="split-body reveal">
-        <p>Ein Prototyp im Labor ist schnell gebaut. Ob er Zeit spart, zeigt sich erst am Montagmorgen: in der Werkstatt, auf Station, auf dem Hof.</p>
-        <div class="faces">
-          <figure>
-            <span class="face" data-bitmap="sad"></span>
-            <figcaption><span class="label">Im Labor</span>Schöne Demo, aber im Alltag nutzt sie niemand.</figcaption>
-          </figure>
-          <figure>
-            <span class="face" data-bitmap="happy"></span>
-            <figcaption><span class="label">Im Betrieb</span>Getestet mit echten Menschen an echten Problemen.</figcaption>
-          </figure>
-        </div>
-        <p>Deshalb testen wir jede Idee früh mit einem lokalen Pilotbetrieb und führen nur weiter, was dort trägt.</p>
+      <div class="split-body faq reveal">
+        <details open>
+          <summary>Was kostet das?</summary>
+          <p>Das Erstgespräch und unsere Einschätzung, ob sich KI für euer Problem lohnt, sind kostenlos. Für den Pilot vereinbaren wir vorher ein klares, festes Budget und prüfen gemeinsam, ob Fördermittel infrage kommen, zum Beispiel über die WTSH. Keine versteckten Kosten.</p>
+        </details>
+        <details>
+          <summary>Wie viel Zeit kostet uns ein Pilot?</summary>
+          <p>Am Anfang ein Gespräch und ein Tag, an dem wir euch über die Schulter schauen. Danach vor allem kurze Rückmeldungen, ob das Werkzeug im Alltag hilft. Die Entwicklung übernehmen wir.</p>
+        </details>
+        <details>
+          <summary>Müssen wir technisch etwas können?</summary>
+          <p>Nein. Wenn ihr ein Smartphone oder einen PC bedienen könnt, reicht das. Wir bauen das Werkzeug so, dass es in eure bestehenden Abläufe passt.</p>
+        </details>
+        <details>
+          <summary>Was passiert mit unseren Daten?</summary>
+          <p>Wir verwenden sie nur für euer Projekt und klären vorab schriftlich, welche Daten wo verarbeitet werden. Auf Wunsch setzen wir auf Anbieter mit Servern in der EU.</p>
+        </details>
+        <details>
+          <summary>Was, wenn es nicht funktioniert?</summary>
+          <p>Dann hören wir auf. Genau dafür testen wir früh und im echten Alltag, bevor ihr euch auf etwas festlegt.</p>
+        </details>
+        <details>
+          <summary>Wem gehört die Lösung am Ende?</summary>
+          <p>Ihr nutzt, was wir gemeinsam bauen. Wird daraus ein Produkt für viele Betriebe, gründen wir eine eigene Firma. Als Pilotbetrieb könnt ihr euch daran beteiligen und profitiert mit.</p>
+        </details>
       </div>
     </div>
   </section>
 
-  <!-- Prozess -->
-  <section class="flow" id="prozess">
+  <!-- Final CTA -->
+  <section class="cta" id="kontakt">
     <div class="wrap">
-      <header class="flow-head px-mask">
-        <h2>Ausprobieren. Testen.<br>Weiterführen. Ausgründen.</h2>
-        <p>Viele Ideen an die Wand werfen und nur weiterführen, was hält. Mit unterschiedlichen Talenten und schnell im echten Markt.</p>
-      </header>
-      <div class="viz viz-flow" aria-hidden="true"><canvas data-scene="flow"></canvas></div>
-      <ol class="steps">
-        <li class="reveal"><span class="dot"></span><span class="label">Ausprobieren</span><p>Viele kleine Prototypen mit unterschiedlichen Talenten.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Testen</span><p>Mit lokalen Betrieben im echten Alltag.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Weiterführen</span><p>Nur was trägt, bekommt mehr Zeit und Budget.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Ausgründen</span><p>Was Umsatz macht, wird eine eigene Firma.</p></li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- Modell -->
-  <section class="split" id="modell">
-    <div class="wrap split-grid">
-      <header class="split-head px-mask">
-        <h2>Das Studio-Modell.</h2>
-        <span class="label">HoldCo · Spinoff</span>
-      </header>
-      <div class="split-body reveal">
-        <p>Eine Mutter-UG stellt Infrastruktur, Community, Partnerkontakte und Vorarbeit. Sobald ein Projekt Marktreife erreicht und eigene Umsätze macht, wird es in eine eigene Tochter-UG ausgegliedert.</p>
-        <a class="btn" href="#mitmachen">Mitmachen</a>
+      <span class="label px-mask">Kontakt · Erstgespräch</span>
+      <h2 class="cta-title">Erzählt uns, was nervt.<br>Wir sagen euch, ob KI hilft.</h2>
+      <div class="cta-row">
+        <a class="btn btn-lg" data-mailto="Erstgespräch Pilotbetrieb" href="mailto:kontakt@example.de?subject=Erstgespr%C3%A4ch%20Pilotbetrieb"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch anfragen</a>
+        <a class="btn ghost btn-lg" href="#zeitfresser">Erst Zeitfresser auswählen</a>
       </div>
-    </div>
-    <div class="wrap">
-      <div class="viz viz-proto" aria-hidden="true"><canvas data-scene="proto"></canvas></div>
-      <ol class="steps">
-        <li class="reveal"><span class="dot"></span><span class="label">Mutter-UG</span><p>Infrastruktur, Community, Kontakte und Vorarbeit.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Prototyp</span><p>Ein Team, eine Idee, ein Pilotbetrieb.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Marktreife</span><p>Erste zahlende Kunden, eigene Umsätze.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">Tochter-UG</span><p>Eigene Firma mit eigenem Team.</p></li>
-      </ol>
+      <p class="cta-note">Oder direkt an <a data-contact-text href="mailto:kontakt@example.de">kontakt@example.de</a>. 30 Minuten, kostenlos und unverbindlich.</p>
     </div>
   </section>
 
-  <!-- Anteile -->
-  <section class="split" id="anteile">
-    <div class="wrap split-grid">
-      <header class="split-head px-mask">
-        <h2>Wer baut, besitzt die Mehrheit.</h2>
-        <span class="label">Anteile pro Spinoff</span>
-      </header>
-      <div class="split-body reveal">
-        <p>So könnte sich eine Tochter-UG aufteilen. Das ist eine Orientierung, keine feste Regel.</p>
-        <div class="share" role="img" aria-label="Anteile: Lead-Talent etwa 65 Prozent, Mutter-UG etwa 25 Prozent, optionaler Anker-Betrieb oder Investor etwa 10 Prozent. Jedes Quadrat entspricht zwei Prozent." data-share="33,12,5"></div>
-        <ul class="arrows">
-          <li><i class="k0"></i><span><b>Lead-Talent · 60–70&nbsp;%</b> führt das Produkt als Gründer:in und CEO.</span></li>
-          <li><i class="k1"></i><span><b>Mutter-UG · 20–30&nbsp;%</b> für Kontakte, Studio-Infrastruktur und Vorarbeit.</span></li>
-          <li><i class="k2"></i><span><b>Anker-Betrieb oder Investor · ~10&nbsp;%</b> optional, für frühes Kapital oder Marktzugang.</span></li>
-        </ul>
-        <p class="muted">Talente bauen eigene Firmen auf. Das Lab wächst mit jeder Ausgründung.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Fahrplan -->
-  <section class="split" id="fahrplan">
-    <div class="wrap split-grid">
-      <header class="split-head px-mask">
-        <h2>Ohne Startkapital starten.</h2>
-        <span class="label">Fahrplan · Finanzierung</span>
-      </header>
-      <div class="split-body reveal">
-        <ul class="phases">
-          <li><span class="label">Phase 1 <em>Jetzt</em></span><p>Start als Initiative und Netzwerk. Erstes Pilotprojekt mit einem lokalen Betrieb.</p></li>
-          <li><span class="label">Phase 2</span><p>Aus ersten Einnahmen oder Fördergeldern wird die Mutter-UG gegründet.</p></li>
-          <li><span class="label">Phase 3</span><p>Mischfinanzierung aus B2B-Sponsoring, Pilot-Honoraren und öffentlicher Förderung.</p></li>
-        </ul>
-        <div class="pills">
-          <span class="pill">WTSH</span><span class="pill">Innovationstransfer</span><span class="pill">KI-Initiative SH</span><span class="pill">B2B-Sponsoring</span><span class="pill">Pilot-Honorare</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Mitmachen -->
+  <!-- Also: talents & partners -->
   <section class="join" id="mitmachen">
     <div class="wrap">
       <header class="flow-head px-mask">
-        <h2>Die Ideen sind überall.<br>Die Umsetzung nicht.</h2>
-        <p>Das Lab lebt von drei Seiten, die alle etwas davon haben. So steigt ihr ein.</p>
+        <span class="label">Außerdem</span>
+        <h2>Ihr seid kein Betrieb, wollt aber mitmachen?</h2>
+        <p>Aus erfolgreichen Piloten gründen wir eigene Firmen. Dafür suchen wir Menschen, die bauen, und Partner, die die Region voranbringen wollen.</p>
       </header>
-      <div class="cards">
-        <a class="card reveal" href="mailto:kontakt@example.de?subject=Pilotbetrieb">
-          <div class="card-art"><canvas data-scene="art" data-icon="werkstatt"></canvas></div>
-          <h3>Betriebe</h3>
-          <p>Maßgeschneiderte KI-Lösungen und Prototypen, ohne eigenes Entwickler-Risiko und ohne hohe Entwicklungskosten.</p>
-          <span class="pills"><span class="pill blue">Pilot</span><span class="pill">Prototyp</span><span class="pill dark">Kein R&amp;D-Risiko</span></span>
-        </a>
-        <a class="card reveal" href="mailto:kontakt@example.de?subject=Talent">
+      <div class="cards cards-2">
+        <a class="card reveal" data-mailto="Talent" href="mailto:kontakt@example.de?subject=Talent">
           <div class="card-art"><canvas data-scene="art" data-icon="blitz" data-dither="down"></canvas></div>
           <h3>Talente &amp; Macher</h3>
-          <p>Ein Playground mit Infrastruktur, Budget, Mentoring und direktem Zugang zu echten Firmen.</p>
+          <p>Infrastruktur, Budget, Mentoring und echte Betriebe. Wer ein Produkt zur Marktreife bringt, führt es als Gründer:in mit Mehrheitsanteil.</p>
           <span class="pills"><span class="pill blue">Budget</span><span class="pill">Mentoring</span><span class="pill dark">Mehrheitsanteil</span></span>
         </a>
-        <a class="card reveal" href="mailto:kontakt@example.de?subject=Partner%20%2F%20F%C3%B6rderung">
+        <a class="card reveal" data-mailto="Partner / Förderung" href="mailto:kontakt@example.de?subject=Partner%20%2F%20F%C3%B6rderung">
           <div class="card-art"><canvas data-scene="art" data-icon="herz"></canvas></div>
-          <h3>Förderer &amp; Land SH</h3>
-          <p>Talent-Inkubator, Fachkräftebindung und Digitalisierungsmotor für die regionale Wirtschaft.</p>
+          <h3>Förderer &amp; Partner</h3>
+          <p>Talent-Inkubator, Fachkräftebindung und Digitalisierungsmotor für die regionale Wirtschaft in Schleswig-Holstein.</p>
           <span class="pills"><span class="pill blue">Inkubator</span><span class="pill">Fachkräfte</span><span class="pill dark">Digitalisierung</span></span>
         </a>
       </div>
@@ -228,9 +306,9 @@
 
 <footer class="foot">
   <div class="wrap foot-inner">
-    <a class="btn" href="mailto:kontakt@example.de">Kontakt aufnehmen</a>
-    <p>Wir bauen angewandte KI mit Betrieben aus Schleswig-Holstein. Ihr habt ein Problem, das nervt, oder eine Idee, die raus will? Schreibt uns.</p>
-    <p><a href="mailto:kontakt@example.de">kontakt@example.de</a></p>
+    <a class="btn" href="#kontakt">Erstgespräch vereinbaren</a>
+    <p>Ylva Labs entwickelt angewandte KI mit Betrieben aus Schleswig-Holstein: für Handwerk, Pflege, Landwirtschaft und den Mittelstand.</p>
+    <p><a data-contact-text href="mailto:kontakt@example.de">kontakt@example.de</a></p>
     <p class="label"><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · © <span id="year">2026</span> Ylva Labs</p>
   </div>
   <div class="bars" aria-hidden="true">
@@ -238,6 +316,12 @@
   </div>
   <a class="btn to-top" href="#main">↑ Nach oben</a>
 </footer>
+
+<!-- Mobile: persistent call to action once the hero is out of view -->
+<div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+  <span>Pilotbetriebe gesucht</span>
+  <a class="btn" href="#kontakt" tabindex="-1">Erstgespräch</a>
+</div>
 
 <script src="assets/main.js" defer></script>
 </body>
