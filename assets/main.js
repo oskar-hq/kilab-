@@ -6,8 +6,8 @@
 
   const CELL = 14;
   const C = {
-    ink: '#0A0A0A', neon: '#d8ff00', gold: '#f6d36d',
-    mist: '#b3b9ca', slate: '#6b7385', navy: '#1e2544', line: 'rgba(10,10,10,.10)'
+    ink: '#1d2126', accent: '#8fd0ff', accent2: '#d4ecff',
+    grey1: '#c9ced4', grey2: '#8a929c', deep: '#4a525c', line: 'rgba(29,33,38,.10)'
   };
 
   // 4x4 Bayer matrix for ordered dithering (classic pixel-art shading)
@@ -164,7 +164,7 @@
   let waveVisible = true;
 
   // Colour bands from crest downwards, blended with ordered dithering.
-  const BANDS = [C.neon, C.gold, C.mist, C.slate, C.navy];
+  const BANDS = [C.accent, C.accent2, C.grey1, C.grey2, C.deep];
   const EDGES = [1.4, 3.2, 6.2, 11];
 
   function heightAt(c, cols, t) {
@@ -189,15 +189,15 @@
         const x = c * CELL, y = r * CELL, d = r - crest;
         if (d < -1) {
           if (d > -6 && hash(c, r + Math.floor(t * 3)) > 0.965) {
-            ctx.fillStyle = hash(r, c) > 0.5 ? C.neon : C.gold;
+            ctx.fillStyle = hash(r, c) > 0.5 ? C.accent : C.accent2;
             ctx.fillRect(x, y, s, s);
           } else if (c % 2 === 0 && r % 2 === 0) {
             ctx.fillStyle = C.line; ctx.fillRect(x + 6, y + 6, 2, 2);
           }
           continue;
         }
-        if (d < 0) { if (hash(c, r) > 0.55) { ctx.fillStyle = C.neon; ctx.fillRect(x, y, s, s); } continue; }
-        // depth from crest, but always sink into navy towards the bottom edge
+        if (d < 0) { if (hash(c, r) > 0.55) { ctx.fillStyle = C.accent; ctx.fillRect(x, y, s, s); } continue; }
+        // depth from crest, but always sink into the deep grey towards the bottom edge
         const depth = Math.max(d, 13 - (rows - 1 - r) * 2.2);
         const v = depth + (bayer(c, r) - 0.5) * 2.2;
         let i = 0; while (i < EDGES.length && v > EDGES[i]) i++;
@@ -257,7 +257,7 @@
           if (age >= 1) { cells.delete(key); return; }
           const [x, y] = key.split(',').map(Number);
           const inset = Math.floor(age * 6);
-          this.ctx.fillStyle = age < 0.35 ? C.neon : C.gold;
+          this.ctx.fillStyle = age < 0.35 ? C.accent : C.accent2;
           this.ctx.globalAlpha = 1 - age;
           this.ctx.fillRect(x * CELL + inset, y * CELL + inset, CELL - 1 - inset * 2, CELL - 1 - inset * 2);
         });

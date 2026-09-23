@@ -5,7 +5,20 @@ Extracted by [Inspo](https://github.com/Nutlope/inspo) from https://craft.wild.a
 - **Mode:** light · **Macrostructure:** Marquee Hero
 - **Tone:** High-contrast Swiss-inspired layout, heavy sans-serif typography, generative pixel-art wave, extreme white space, rigid grid.
 
-## Tokens used in this project
+## Projekt-Palette (angepasst: Hellblau · Grau · Weiß)
+
+| Token | Hex | Rolle |
+|---|---|---|
+| `--paper` | `#FFFFFF` | Hintergrund |
+| `--tint` | `#f1f4f7` | Abschnittsflächen |
+| `--accent` | `#8fd0ff` | Hellblau, Akzent / Wellenkamm |
+| `--accent-2` | `#d4ecff` | helles Blau |
+| `--grey-1` | `#c9ced4` | helles Grau |
+| `--grey-2` | `#8a929c` | mittleres Grau |
+| `--deep` | `#4a525c` | dunkles Grau, dunkle Flächen |
+| `--ink` | `#1d2126` | Text |
+
+## Original tokens (reference)
 
 ```css
 :root {
