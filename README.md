@@ -39,8 +39,8 @@ Alle Pfade sind relativ, die Seite funktioniert also auch im Unterordner `/<repo
 
 - [x] Name: **Ylva Labs**
 - [x] Schriften lokal gehostet (keine Verbindung zu Google Fonts)
-- [ ] **Impressum & Datenschutz:** alle gelb markierten Platzhalter (`<mark class="todo">`) ersetzen: Name, Anschrift, Telefon, E-Mail, E-Mail-Anbieter. Nach Gründung der UG den auskommentierten Block im Impressum übernehmen.
-- [ ] **E-Mail:** in `index.html` am `<body data-contact="kontakt@example.de">` die echte Adresse eintragen. Alle Buttons, die Zeitfresser-Anfrage und die angezeigten Adressen übernehmen sie automatisch (die `mailto:`-Links im HTML sind nur Fallback ohne JavaScript, dort am besten auch ersetzen).
+- [x] Impressum & Datenschutz ausgefüllt (Oskar Jacobsen, Pommerby). Nach Gründung der UG den auskommentierten Block im Impressum übernehmen.
+- [x] Kontakt: info@ylvalabs.de (zentral in `index.html` am `<body data-contact>`)
 - [ ] In GitHub unter *Settings → Pages* **„Enforce HTTPS“** aktivieren (die Datenschutzerklärung sagt, dass nur HTTPS ausgeliefert wird).
 - [ ] Sobald die Domain feststeht: `og:image` in `index.html` auf eine absolute URL setzen.
 - [ ] Optional: Die Schrift „Sneak“ lizenzieren; sie steht bereits an erster Stelle im Font-Stack.

@@ -384,7 +384,7 @@
   }
 
   /* ---------- Contact address (set once on <body data-contact>) ---------- */
-  const CONTACT = document.body.dataset.contact || 'kontakt@example.de';
+  const CONTACT = document.body.dataset.contact || 'info@ylvalabs.de';
   const mailto = (subject, body) =>
     `mailto:${CONTACT}?subject=${encodeURIComponent(subject)}${body ? '&body=' + encodeURIComponent(body) : ''}`;
   document.querySelectorAll('[data-mailto]').forEach(a => { a.href = mailto(a.dataset.mailto); });
