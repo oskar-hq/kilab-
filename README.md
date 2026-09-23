@@ -7,7 +7,6 @@ Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeign
 
 ```
 index.html          Startseite
-brand.html          Brand Guidelines (Logo, Farbe, Typo, Pixel, Visitenkarte, Social)
 impressum.html      Impressum (gelb markierte Platzhalter ausfüllen)
 datenschutz.html    Datenschutzerklärung (gelb markierte Platzhalter ausfüllen)
 404.html            Fehlerseite (GitHub Pages nutzt sie automatisch)
@@ -15,7 +14,6 @@ favicon.ico/.svg    Favicon (Bildmarke)
 site.webmanifest    Icons für Homescreen / Android
 assets/style.css    Design-Tokens & Layout (siehe DESIGN.md)
 assets/main.js      Pixel-Szenen (Hero-Organismus, Flow, Modell-Band, Kartenbilder, Footer-Balken)
-assets/brand.js     Pixel-Raster für brand.html
 assets/icons/       Bildmarke (mark.svg), PNG-Icons, Open-Graph-Bild (og-image.png)
 assets/fonts/       Inter Tight, selbst gehostet (SIL OFL 1.1) – keine Google-Fonts-Anfragen
 .nojekyll           GitHub Pages liefert die Dateien unverändert aus
