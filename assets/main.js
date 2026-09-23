@@ -75,16 +75,6 @@
     }));
     return svg;
   }
-  // Brand mark (see brand.html): 4 x 4 grid, ink + pixel blue, two pixels missing.
-  document.querySelectorAll('[data-mark]').forEach(el => {
-    const MARK = ['##.b', '##bb', '.b##', 'bb##'], COL = { '#': '#1d2126', b: '#5aa9e6' };
-    el.classList.add('mark');
-    MARK.join('').split('').forEach(ch => {
-      const d = document.createElement('i');
-      if (COL[ch]) d.style.background = COL[ch];
-      el.appendChild(d);
-    });
-  });
   document.querySelectorAll('[data-bitmap]').forEach(el => {
     const map = BITMAPS[el.dataset.bitmap];
     if (map) el.appendChild(bitmapSVG(map));

@@ -6,15 +6,19 @@ Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeign
 ## Struktur
 
 ```
-index.html        Startseite
-brand.html        Brand Guidelines (Logo, Farbe, Typo, Pixel, Visitenkarte, Social)
-impressum.html    Platzhalter – vor Livegang ausfüllen
-datenschutz.html  Platzhalter – vor Livegang ausfüllen
-404.html          Fehlerseite (GitHub Pages nutzt sie automatisch)
-assets/style.css  Design-Tokens & Layout (siehe DESIGN.md)
-assets/brand.js   Pixel-Raster für brand.html
-assets/main.js    Pixel-Szenen (Hero-Band, Flow, Protokoll-Band, Kartenbilder, Footer-Balken)
-.nojekyll         GitHub Pages liefert die Dateien unverändert aus
+index.html          Startseite
+brand.html          Brand Guidelines (Logo, Farbe, Typo, Pixel, Visitenkarte, Social)
+impressum.html      Impressum (gelb markierte Platzhalter ausfüllen)
+datenschutz.html    Datenschutzerklärung (gelb markierte Platzhalter ausfüllen)
+404.html            Fehlerseite (GitHub Pages nutzt sie automatisch)
+favicon.ico/.svg    Favicon (Bildmarke)
+site.webmanifest    Icons für Homescreen / Android
+assets/style.css    Design-Tokens & Layout (siehe DESIGN.md)
+assets/main.js      Pixel-Szenen (Hero-Organismus, Flow, Modell-Band, Kartenbilder, Footer-Balken)
+assets/brand.js     Pixel-Raster für brand.html
+assets/icons/       Bildmarke (mark.svg), PNG-Icons, Open-Graph-Bild (og-image.png)
+assets/fonts/       Inter Tight, selbst gehostet (SIL OFL 1.1) – keine Google-Fonts-Anfragen
+.nojekyll           GitHub Pages liefert die Dateien unverändert aus
 ```
 
 ## Lokal ansehen
@@ -36,7 +40,9 @@ Alle Pfade sind relativ, die Seite funktioniert also auch im Unterordner `/<repo
 ## Vor dem Livegang
 
 - [x] Name: **Ylva Labs**
-- [ ] **E-Mail** `kontakt@example.de` durch die echte Adresse ersetzen.
-- [ ] **Impressum & Datenschutz** ausfüllen (in Deutschland Pflicht).
-- [ ] Optional: Google Fonts lokal hosten (Datenschutz) – Schrift nach `assets/fonts/` legen und `@font-face` in `style.css` ergänzen.
-- [ ] Optional: Die Schrift „Sneak“ aus der Designvorlage lizenzieren; sie steht bereits an erster Stelle im Font-Stack.
+- [x] Schriften lokal gehostet (keine Verbindung zu Google Fonts)
+- [ ] **Impressum & Datenschutz:** alle gelb markierten Platzhalter (`<mark class="todo">`) ersetzen: Name, Anschrift, Telefon, E-Mail, E-Mail-Anbieter. Nach Gründung der UG den auskommentierten Block im Impressum übernehmen.
+- [ ] **E-Mail** `kontakt@example.de` auf der Startseite durch die echte Adresse ersetzen.
+- [ ] In GitHub unter *Settings → Pages* **„Enforce HTTPS“** aktivieren (die Datenschutzerklärung sagt, dass nur HTTPS ausgeliefert wird).
+- [ ] Sobald die Domain feststeht: `og:image` in `index.html` auf eine absolute URL setzen.
+- [ ] Optional: Die Schrift „Sneak“ lizenzieren; sie steht bereits an erster Stelle im Font-Stack.
