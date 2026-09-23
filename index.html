@@ -8,7 +8,7 @@
 <meta property="og:title" content="KI-Lab SH – Angewandte KI für den Mittelstand">
 <meta property="og:description" content="Viele Ideen ausprobieren, mit echten Betrieben testen, die besten als eigene Firmen ausgründen.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#8fd0ff">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='14' height='14' fill='%234a525c'/%3E%3Crect x='14' width='14' height='14' fill='%238fd0ff'/%3E%3Crect y='14' width='14' height='14' fill='%238fd0ff'/%3E%3Crect x='14' y='14' width='14' height='14' fill='%234a525c'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,303 +19,215 @@
 <body>
 <a class="skip" href="#main">Zum Inhalt springen</a>
 
-<header class="nav">
-  <div class="wrap">
-    <a href="#" class="logo" aria-label="KI-Lab SH – zum Seitenanfang"><i aria-hidden="true"></i>KI-Lab SH</a>
-    <nav aria-label="Hauptnavigation">
-      <ul>
-        <li><a href="#ansatz">Ansatz</a></li>
-        <li><a href="#fuer-wen">Für wen</a></li>
-        <li><a href="#modell">Modell</a></li>
-        <li><a href="#ideen">Ideen</a></li>
-        <li><a href="#fahrplan">Fahrplan</a></li>
-      </ul>
+<header class="top">
+  <div class="wrap top-grid">
+    <a href="./" class="brand" aria-label="KI-Lab SH, Startseite">KI-Lab SH,<br>angewandt.</a>
+    <nav class="top-nav" aria-label="Hauptnavigation">
+      <a href="#ansatz"><span class="mono">A</span><span>Ansatz<small>Wie wir arbeiten</small></span></a>
+      <a href="#modell"><span class="mono">&amp;</span><span>Modell<small>HoldCo · Spinoffs</small></span></a>
+      <a href="#mitmachen"><span class="mono">→</span><span>Mitmachen<small>Betriebe · Talente</small></span></a>
     </nav>
-    <a href="#mitmachen" class="btn"><span class="dot"></span>Mitmachen</a>
+    <div class="top-note">
+      <span class="px-logo" data-bitmap="logo"></span>
+      <p>Regionales KI-Lab &amp; Venture Builder<br><span class="muted">Schleswig-Holstein · 54°N 10°E</span></p>
+    </div>
   </div>
 </header>
 
 <main id="main">
-  <!-- Hero -->
-  <section class="hero dotgrid">
-    <div class="wrap">
-      <div class="hero-top">
-        <h1>Angewandte <em>KI</em> für den Mittelstand zwischen Nord- und Ostsee.</h1>
-        <div class="hero-side">
-          <p>Ein regionales Innovation-Lab und Venture Builder. Wir bauen mit Betrieben aus Handwerk, Pflege und Landwirtschaft KI-Werkzeuge, testen sie im echten Alltag und gründen die besten als eigene Firmen aus.</p>
-          <div class="btns">
-            <a href="#mitmachen" class="btn"><span class="dot"></span>Pilotbetrieb werden</a>
-            <a href="#ansatz" class="btn ghost">So arbeiten wir ↓</a>
-          </div>
-        </div>
-      </div>
-      <div class="hero-meta label muted">
-        <span>Region <b>Schleswig-Holstein</b></span>
-        <span>Modell <b>Venture Studio</b></span>
-        <span>Fokus <b>Applying AI</b></span>
-        <span><i class="pulse" aria-hidden="true"></i>Status <b>Phase 1 · Pilotbetriebe gesucht</b></span>
-      </div>
-    </div>
-    <div class="wave" aria-hidden="true">
-      <canvas id="wave"></canvas>
-      <span class="coord label muted" id="coord">54°N · 10°E</span>
-    </div>
-  </section>
-
-  <!-- Marquee -->
-  <div class="marquee" role="img" aria-label="Branchen und Themen: Handwerk, Pflege, Landwirtschaft, Automation, Branchensoftware, Prototypen, Spinoffs">
-    <div class="marquee-track">
-      <span class="mq-item" data-pxtext="Handwerk"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Pflege"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Landwirtschaft"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Automation"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Branchensoftware"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Prototypen"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" data-pxtext="Spinoffs"></span><i class="mq-sep" aria-hidden="true"></i>
-      <span class="mq-item" aria-hidden="true" data-pxtext="Handwerk"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Pflege"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Landwirtschaft"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Automation"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Branchensoftware"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Prototypen"></span><i class="mq-sep" aria-hidden="true"></i><span class="mq-item" aria-hidden="true" data-pxtext="Spinoffs"></span><i class="mq-sep" aria-hidden="true"></i>
-    </div>
+  <!-- Hero: pixel band -->
+  <div class="band-hero" aria-hidden="true">
+    <canvas data-scene="hero"></canvas>
   </div>
-  <div class="px-edge" data-from="#4a525c" data-to="#FFFFFF" data-spark="#8fd0ff" aria-hidden="true"></div>
 
-  <!-- 01 Ansatz -->
-  <section id="ansatz">
+  <section class="intro">
     <div class="wrap">
-      <div class="sec-head reveal">
-        <div class="sec-idx"><span class="pxnum" data-pxtext="01"></span><span class="label muted">Ansatz</span></div>
-        <div class="txt">
-          <h2>Viele Ideen an die Wand werfen. Nur weitermachen, was hält.</h2>
-          <p>Wir probieren viele Projekte mit unterschiedlichen Talenten aus, testen sie schnell mit lokalen Betrieben im echten Markt und führen nur die Ansätze weiter, die wirklich funktionieren.</p>
-        </div>
-      </div>
+      <p class="statement reveal">Ein kurzer Blick darauf, wie wir KI in Betriebe bringen und warum wir dafür keine eigenen Sprachmodelle bauen. Aber zuerst: woran wir arbeiten wollen.</p>
 
-      <div class="funnel">
-        <div class="reveal">
-          <span class="label muted">Schritt 1 · Ausprobieren</span>
-          <div class="cells" data-cells="30" data-off="0"></div>
-          <h3>Viele Ideen</h3>
-          <p>Kleine Teams bauen in wenigen Wochen erste Prototypen, direkt an echten Problemen aus den Betrieben.</p>
-        </div>
-        <div class="reveal">
-          <span class="label muted">Schritt 2 · Testen</span>
-          <div class="cells" data-cells="8" data-off="3"></div>
-          <h3>Echte Piloten</h3>
-          <p>Was taugt, geht zu einem Pilotbetrieb. Im Alltag zeigt sich, ob es Zeit spart oder nur schön aussieht.</p>
-        </div>
-        <div class="reveal">
-          <span class="label muted">Schritt 3 · Ausgründen</span>
-          <div class="cells" data-cells="2" data-hit="2"></div>
-          <h3>Wenige Spinoffs</h3>
-          <p>Was Umsatz macht, wird zur eigenen Firma.</p>
-        </div>
-      </div>
-
-      <div class="no-llm reveal">
-        <span class="label">Klarer Fokus</span>
-        <p>Wir entwickeln <s>keine eigenen Sprachmodelle</s>. Wir nutzen die besten vorhandenen und bauen daraus Werkzeuge, die im Betrieb am Montagmorgen funktionieren.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 02 Für wen -->
-  <div class="px-edge" data-from="#FFFFFF" data-to="#f1f4f7" aria-hidden="true"></div>
-  <section id="fuer-wen" class="tint">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <div class="sec-idx"><span class="pxnum" data-pxtext="02"></span><span class="label muted">Für wen</span></div>
-        <div class="txt">
-          <h2>Ein Lab, drei Seiten, die alle etwas davon haben.</h2>
-        </div>
-      </div>
-      <div class="audience">
-        <article class="aud reveal">
-          <span class="pxicon" data-pxicon="werkstatt"></span><span class="label muted">Für Betriebe</span>
-          <h3>KI, die euren Alltag leichter macht</h3>
-          <p>Maßgeschneiderte Lösungen und Prototypen, ohne eigenes Entwickler-Team und ohne hohe Entwicklungskosten.</p>
-          <ul>
-            <li>Lösungen für eure echten Engpässe</li>
-            <li>Kein eigenes Entwicklungsrisiko</li>
-            <li>Früher Zugang zu neuen Werkzeugen</li>
-          </ul>
-          <a href="#mitmachen" class="btn ghost">Pilotbetrieb werden →</a>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="card-art"><canvas data-scene="art" data-icon="werkstatt" data-bg="#d4ecff,#8fd0ff"></canvas></div>
+          <h3>Handwerker-Dashboard</h3>
+          <p>Aufträge, Material und Termine auf einen Blick. Angebote per Sprachnotiz.</p>
+          <span class="pill dark">Pilot gesucht</span>
         </article>
-        <article class="aud reveal">
-          <span class="pxicon" data-pxicon="blitz"></span><span class="label muted">Für Talente &amp; Macher</span>
-          <h3>Ein Playground mit echten Kunden</h3>
-          <p>Infrastruktur, Budget, Mentoring und direkter Draht zu Firmen, um Ideen auszuprobieren, ohne alles selbst zu riskieren.</p>
-          <ul>
-            <li>Infrastruktur und Budget</li>
-            <li>Mentoring und Netzwerk</li>
-            <li>Mehrheitsanteil als Gründer:in</li>
-          </ul>
-          <a href="#mitmachen" class="btn ghost">Als Talent bewerben →</a>
+        <article class="card reveal">
+          <div class="card-art"><canvas data-scene="art" data-icon="mikro" data-bg="#f1f4f7,#c9ced4"></canvas></div>
+          <h3>Pflege-Doku per Sprache</h3>
+          <p>Direkt nach dem Einsatz einsprechen, strukturiert ablegen, fertig.</p>
+          <span class="pill">Idee</span>
         </article>
-        <article class="aud reveal">
-          <span class="pxicon" data-pxicon="herz"></span><span class="label muted">Für Förderer &amp; das Land</span>
-          <h3>Ein Motor für die Region</h3>
-          <p>Ein Inkubator für Talente, der Fachkräfte im Land hält und die Digitalisierung der regionalen Wirtschaft vorantreibt.</p>
-          <ul>
-            <li>Talent-Inkubator</li>
-            <li>Fachkräftebindung in SH</li>
-            <li>Digitalisierungsmotor Mittelstand</li>
-          </ul>
-          <a href="#mitmachen" class="btn ghost">Partner werden →</a>
+        <article class="card reveal">
+          <div class="card-art"><canvas data-scene="art" data-icon="aehre" data-bg="#8fd0ff,#d4ecff"></canvas></div>
+          <h3>Hof-Assistent</h3>
+          <p>Nachweise und Anträge aus Daten, die auf dem Hof schon da sind.</p>
+          <span class="pill">Idee</span>
         </article>
       </div>
     </div>
   </section>
 
-  <div class="px-edge" data-from="#f1f4f7" data-to="#FFFFFF" aria-hidden="true"></div>
-
-  <!-- 03 Modell -->
-  <section id="modell">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <div class="sec-idx"><span class="pxnum" data-pxtext="03"></span><span class="label muted">Modell</span></div>
-        <div class="txt">
-          <h2>Ein Studio in der Mitte. Eigene Firmen drumherum.</h2>
-          <p>Die Mutter-Holding stellt Infrastruktur, Community, Kontakte und Vorarbeit. Sobald ein Projekt marktreif ist und eigene Umsätze macht, wird es in eine eigene Tochter-UG ausgegliedert.</p>
-        </div>
+  <!-- Vision -->
+  <section class="split" id="vision">
+    <div class="wrap split-grid">
+      <header class="split-head reveal">
+        <h2>Aus Schleswig-Holstein, für den Mittelstand.</h2>
+        <span class="label">Vision · Regional</span>
+      </header>
+      <div class="split-body reveal">
+        <p>Wir sind ein regionales KI-Innovation-Lab und Venture Builder. Unser Fokus ist angewandte KI: Automationen und Branchensoftware für Handwerk, Pflege, Landwirtschaft und andere Betriebe im Land.</p>
+        <p>Statt eigene Sprachmodelle zu entwickeln, nutzen wir die besten vorhandenen und bauen daraus Werkzeuge, die im Betriebsalltag funktionieren.</p>
+        <p class="muted">Arbeitstitel. Der Name folgt.</p>
       </div>
+    </div>
+  </section>
 
-      <div class="model">
-        <div class="tree reveal" role="img" aria-label="Struktur: Die Mutter-UG als Venture Studio gründet aus erfolgreichen Projekten eigene Tochter-UGs aus.">
-          <div class="node root">
-            <span class="label">HoldCo · Venture Studio</span>
-            <h4>Mutter-UG</h4>
-            <p>Infrastruktur · Community · Partnerkontakte · Vorarbeit</p>
-          </div>
-          <div class="branch" aria-hidden="true"></div>
-          <div class="kids">
-            <div class="node live">
-              <span class="label">Tochter-UG</span>
-              <h4>Spinoff A</h4>
-              <p>z.&nbsp;B. Handwerker-Dashboard</p>
-            </div>
-            <div class="node idea">
-              <span class="label muted">Tochter-UG</span>
-              <h4>Spinoff B</h4>
-              <p>Nächstes marktreifes Projekt</p>
-            </div>
-            <div class="node idea">
-              <span class="label muted">Tochter-UG</span>
-              <h4>Spinoff C</h4>
-              <p>…</p>
-            </div>
-          </div>
-          <p class="note">Ausgegründet wird erst, wenn ein Projekt Marktreife erreicht und eigene Umsätze macht.</p>
+  <!-- Ansatz -->
+  <section class="split" id="ansatz">
+    <div class="wrap split-grid">
+      <header class="split-head reveal">
+        <h2>KI kann fast alles. Außer die letzten 10&nbsp;Prozent im Betrieb.</h2>
+        <span class="label">Ansatz · Praxis</span>
+      </header>
+      <div class="split-body reveal">
+        <p>Ein Prototyp im Labor ist schnell gebaut. Ob er Zeit spart, zeigt sich erst am Montagmorgen: in der Werkstatt, auf Station, auf dem Hof.</p>
+        <div class="faces">
+          <figure>
+            <span class="face" data-bitmap="sad"></span>
+            <figcaption><span class="label">Im Labor</span>Schöne Demo, aber im Alltag nutzt sie niemand.</figcaption>
+          </figure>
+          <figure>
+            <span class="face" data-bitmap="happy"></span>
+            <figcaption><span class="label">Im Betrieb</span>Getestet mit echten Menschen an echten Problemen.</figcaption>
+          </figure>
         </div>
+        <p>Deshalb testen wir jede Idee früh mit einem lokalen Pilotbetrieb und führen nur weiter, was dort trägt.</p>
+      </div>
+    </div>
+  </section>
 
-        <div class="split reveal">
-          <span class="label muted">Anteile pro Spinoff</span>
-          <h3 style="margin-top:14px">Wer baut, besitzt die Mehrheit.</h3>
-          <p>So könnte sich eine Tochter-UG aufteilen, als Orientierung und nicht fix.</p>
-          <div class="waffle" data-waffle="65,25,10" role="img" aria-label="Anteile: Lead-Talent etwa 60 bis 70 Prozent, Mutter-UG etwa 20 bis 30 Prozent, optionaler Anker-Betrieb oder Investor etwa 10 Prozent. Jedes Quadrat entspricht einem Prozent."></div>
-          <ul class="legend">
-            <li><i class="w0"></i><span><b>Lead-Talent</b><small>führt das Produkt als Gründer:in / CEO</small></span><span class="pct">60–70&nbsp;%</span></li>
-            <li><i class="w1"></i><span><b>Mutter-UG</b><small>für Kontakte, Studio-Infrastruktur &amp; Vorarbeit</small></span><span class="pct">20–30&nbsp;%</span></li>
-            <li><i class="w2"></i><span><b>Anker-Betrieb / Investor</b><small>optional, für frühes Kapital oder Marktzugang</small></span><span class="pct">~10&nbsp;%</span></li>
-          </ul>
+  <!-- Prozess -->
+  <section class="flow" id="prozess">
+    <div class="wrap">
+      <header class="flow-head reveal">
+        <h2>Ausprobieren. Testen.<br>Weiterführen. Ausgründen.</h2>
+        <p>Viele Ideen an die Wand werfen und nur weiterführen, was hält. Mit unterschiedlichen Talenten und schnell im echten Markt.</p>
+      </header>
+      <div class="viz viz-flow reveal" aria-hidden="true"><canvas data-scene="flow"></canvas></div>
+      <ol class="steps">
+        <li class="reveal"><span class="dot"></span><span class="label">Ausprobieren</span><p>Viele kleine Prototypen mit unterschiedlichen Talenten.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Testen</span><p>Mit lokalen Betrieben im echten Alltag.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Weiterführen</span><p>Nur was trägt, bekommt mehr Zeit und Budget.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Ausgründen</span><p>Was Umsatz macht, wird eine eigene Firma.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Modell -->
+  <section class="split" id="modell">
+    <div class="wrap split-grid">
+      <header class="split-head reveal">
+        <h2>Das Studio-Modell.</h2>
+        <span class="label">HoldCo · Spinoff</span>
+      </header>
+      <div class="split-body reveal">
+        <p>Eine Mutter-UG stellt Infrastruktur, Community, Partnerkontakte und Vorarbeit. Sobald ein Projekt Marktreife erreicht und eigene Umsätze macht, wird es in eine eigene Tochter-UG ausgegliedert.</p>
+        <a class="btn" href="#mitmachen">Mitmachen</a>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="viz viz-proto reveal" aria-hidden="true"><canvas data-scene="proto"></canvas></div>
+      <ol class="steps">
+        <li class="reveal"><span class="dot"></span><span class="label">Mutter-UG</span><p>Infrastruktur, Community, Kontakte und Vorarbeit.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Prototyp</span><p>Ein Team, eine Idee, ein Pilotbetrieb.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Marktreife</span><p>Erste zahlende Kunden, eigene Umsätze.</p></li>
+        <li class="reveal"><span class="dot"></span><span class="label">Tochter-UG</span><p>Eigene Firma mit eigenem Team.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Anteile -->
+  <section class="split" id="anteile">
+    <div class="wrap split-grid">
+      <header class="split-head reveal">
+        <h2>Wer baut, besitzt die Mehrheit.</h2>
+        <span class="label">Anteile pro Spinoff</span>
+      </header>
+      <div class="split-body reveal">
+        <p>So könnte sich eine Tochter-UG aufteilen. Das ist eine Orientierung, keine feste Regel.</p>
+        <div class="share" role="img" aria-label="Anteile: Lead-Talent etwa 65 Prozent, Mutter-UG etwa 25 Prozent, optionaler Anker-Betrieb oder Investor etwa 10 Prozent. Jedes Quadrat entspricht zwei Prozent." data-share="33,12,5"></div>
+        <ul class="arrows">
+          <li><i class="k0"></i><span><b>Lead-Talent · 60–70&nbsp;%</b> führt das Produkt als Gründer:in und CEO.</span></li>
+          <li><i class="k1"></i><span><b>Mutter-UG · 20–30&nbsp;%</b> für Kontakte, Studio-Infrastruktur und Vorarbeit.</span></li>
+          <li><i class="k2"></i><span><b>Anker-Betrieb oder Investor · ~10&nbsp;%</b> optional, für frühes Kapital oder Marktzugang.</span></li>
+        </ul>
+        <p class="muted">Talente bauen eigene Firmen auf. Das Lab wächst mit jeder Ausgründung.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fahrplan -->
+  <section class="split" id="fahrplan">
+    <div class="wrap split-grid">
+      <header class="split-head reveal">
+        <h2>Ohne Startkapital starten.</h2>
+        <span class="label">Fahrplan · Finanzierung</span>
+      </header>
+      <div class="split-body reveal">
+        <ul class="phases">
+          <li><span class="label">Phase 1 <em>Jetzt</em></span><p>Start als Initiative und Netzwerk. Erstes Pilotprojekt mit einem lokalen Betrieb.</p></li>
+          <li><span class="label">Phase 2</span><p>Aus ersten Einnahmen oder Fördergeldern wird die Mutter-UG gegründet.</p></li>
+          <li><span class="label">Phase 3</span><p>Mischfinanzierung aus B2B-Sponsoring, Pilot-Honoraren und öffentlicher Förderung.</p></li>
+        </ul>
+        <div class="pills">
+          <span class="pill">WTSH</span><span class="pill">Innovationstransfer</span><span class="pill">KI-Initiative SH</span><span class="pill">B2B-Sponsoring</span><span class="pill">Pilot-Honorare</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 04 Ideen -->
-  <section id="ideen" style="padding-top:0">
+  <!-- Mitmachen -->
+  <section class="join" id="mitmachen">
     <div class="wrap">
-      <div class="sec-head reveal">
-        <div class="sec-idx"><span class="pxnum" data-pxtext="04"></span><span class="label muted">Projektideen</span></div>
-        <div class="txt">
-          <h2>Womit wir anfangen könnten.</h2>
-          <p>Erste Richtungen, keine fertigen Produkte. Welche davon trägt, entscheiden die Betriebe.</p>
-        </div>
-      </div>
-      <ul class="ideas">
-        <li class="reveal"><span class="t">Handwerker-Dashboard<small>Handwerk</small></span><span class="d">Aufträge, Material, Termine und Nachkalkulation auf einen Blick. Angebote per Sprachnotiz statt Feierabend am Schreibtisch.</span><span class="tag hot">Pilot gesucht</span></li>
-        <li class="reveal"><span class="t">Pflege-Doku per Sprache<small>Pflege</small></span><span class="d">Dokumentation direkt nach dem Einsatz einsprechen und strukturiert ablegen. Mehr Zeit für Menschen, weniger für Formulare.</span><span class="tag">Idee</span></li>
-        <li class="reveal"><span class="t">Hof-Assistent<small>Landwirtschaft</small></span><span class="d">Hilfe bei Nachweisen, Anträgen und Dokumentationspflichten. Die Daten sind schon da, sie müssen nur ins richtige Formular.</span><span class="tag">Idee</span></li>
-        <li class="reveal"><span class="t">Posteingang-Automation<small>Branchenübergreifend</small></span><span class="d">E-Mails, Rechnungen und Anfragen automatisch sortieren, zuordnen und vorbereiten, angebunden an die Software, die schon im Einsatz ist.</span><span class="tag">Idee</span></li>
-      </ul>
-      <p class="ideas-foot label">Eigene Idee oder Problem im Betrieb? <a href="#mitmachen" style="color:var(--ink);border-bottom:1px solid">Erzählt es uns →</a></p>
-    </div>
-  </section>
-
-  <!-- 05 Fahrplan -->
-  <div class="px-edge" data-from="#FFFFFF" data-to="#f1f4f7" aria-hidden="true"></div>
-  <section id="fahrplan" class="tint">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <div class="sec-idx"><span class="pxnum" data-pxtext="05"></span><span class="label muted">Fahrplan</span></div>
-        <div class="txt">
-          <h2>Ohne Startkapital starten. Mit dem ersten Umsatz wachsen.</h2>
-        </div>
-      </div>
-      <div class="steps">
-        <div class="step now reveal">
-          <div><div class="bar"><i class="on"></i><i></i><i></i></div><span class="label">Phase 1 · Jetzt</span></div>
-          <div>
-            <h3>Initiative &amp; erster Pilot</h3>
-            <p>Start als Netzwerk, noch vor der Gründung. Ein erstes Pilotprojekt mit einem lokalen Betrieb umsetzen.</p>
-            <ul><li>Netzwerk &amp; erste Talente</li><li>Pilotbetrieb finden</li><li>Erster Prototyp im Einsatz</li></ul>
-          </div>
-        </div>
-        <div class="step reveal">
-          <div><div class="bar"><i class="on"></i><i class="on"></i><i></i></div><span class="label muted">Phase 2</span></div>
-          <div>
-            <h3>Gründung der Mutter-UG</h3>
-            <p>Aus den ersten Einnahmen oder Fördergeldern wird die Mutter-UG gegründet.</p>
-            <ul><li>Pilot-Honorare</li><li>Erste Förderzusage</li><li>Studio-Infrastruktur</li></ul>
-          </div>
-        </div>
-        <div class="step reveal">
-          <div><div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i></div><span class="label muted">Phase 3</span></div>
-          <div>
-            <h3>Mischfinanzierung &amp; Spinoffs</h3>
-            <p>B2B-Sponsoring, Pilot-Honorare und öffentliche Förderung zusammen. Erste Projekte werden ausgegründet.</p>
-            <ul><li>Mehrere Projekte parallel</li><li>Erste Tochter-UG</li><li>Wachsende Community</li></ul>
-          </div>
-        </div>
-      </div>
-      <div class="funding reveal">
-        <span class="label muted">Mögliche Förderwege, z.&nbsp;B.</span>
-        <span class="chip">WTSH</span>
-        <span class="chip">Innovationstransfer</span>
-        <span class="chip">KI-Initiative SH</span>
-        <span class="chip">B2B-Sponsoring</span>
-        <span class="chip">Pilot-Honorare</span>
-      </div>
-    </div>
-  </section>
-
-  <div class="px-edge" data-from="#f1f4f7" data-to="#FFFFFF" aria-hidden="true"></div>
-
-  <!-- CTA -->
-  <section class="cta" id="mitmachen">
-    <div class="wrap">
-      <div class="sec-idx reveal"><span class="pxnum" data-pxtext="06"></span><span class="label muted">Mitmachen</span></div>
-      <h2 class="reveal">Werft mit<br>uns <a href="mailto:kontakt@example.de">Ideen&nbsp;→</a></h2>
-      <div class="cta-row">
-        <a class="cta-card reveal" href="mailto:kontakt@example.de?subject=Pilotbetrieb">
-          <span class="label muted">Betriebe</span>
-          <b>Ihr habt ein Problem, das nervt? Wir bauen einen Prototyp dafür.</b>
-          <span>Pilotbetrieb werden →</span>
+      <header class="flow-head reveal">
+        <h2>Die Ideen sind überall.<br>Die Umsetzung nicht.</h2>
+        <p>Das Lab lebt von drei Seiten, die alle etwas davon haben. So steigt ihr ein.</p>
+      </header>
+      <div class="cards">
+        <a class="card reveal" href="mailto:kontakt@example.de?subject=Pilotbetrieb">
+          <div class="card-art"><canvas data-scene="art" data-icon="werkstatt" data-bg="#f1f4f7,#8fd0ff"></canvas></div>
+          <h3>Betriebe</h3>
+          <p>Maßgeschneiderte KI-Lösungen und Prototypen, ohne eigenes Entwickler-Risiko und ohne hohe Entwicklungskosten.</p>
+          <span class="pills"><span class="pill blue">Pilot</span><span class="pill">Prototyp</span><span class="pill dark">Kein R&amp;D-Risiko</span></span>
         </a>
-        <a class="cta-card reveal" href="mailto:kontakt@example.de?subject=Talent">
-          <span class="label muted">Talente &amp; Macher</span>
-          <b>Du willst bauen, statt nur darüber zu reden? Komm in den Playground.</b>
-          <span>Als Talent melden →</span>
+        <a class="card reveal" href="mailto:kontakt@example.de?subject=Talent">
+          <div class="card-art"><canvas data-scene="art" data-icon="blitz" data-bg="#8fd0ff,#4a525c"></canvas></div>
+          <h3>Talente &amp; Macher</h3>
+          <p>Ein Playground mit Infrastruktur, Budget, Mentoring und direktem Zugang zu echten Firmen.</p>
+          <span class="pills"><span class="pill blue">Budget</span><span class="pill">Mentoring</span><span class="pill dark">Mehrheitsanteil</span></span>
         </a>
-        <a class="cta-card reveal" href="mailto:kontakt@example.de?subject=Partner%20%2F%20F%C3%B6rderung">
-          <span class="label muted">Förderer &amp; Partner</span>
-          <b>Sie wollen Digitalisierung im Land voranbringen? Lassen Sie uns sprechen.</b>
-          <span>Partner werden →</span>
+        <a class="card reveal" href="mailto:kontakt@example.de?subject=Partner%20%2F%20F%C3%B6rderung">
+          <div class="card-art"><canvas data-scene="art" data-icon="herz" data-bg="#d4ecff,#c9ced4"></canvas></div>
+          <h3>Förderer &amp; Land SH</h3>
+          <p>Talent-Inkubator, Fachkräftebindung und Digitalisierungsmotor für die regionale Wirtschaft.</p>
+          <span class="pills"><span class="pill blue">Inkubator</span><span class="pill">Fachkräfte</span><span class="pill dark">Digitalisierung</span></span>
         </a>
       </div>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap"><div class="wordmark" data-pxtext="KI-Lab SH" data-gap="0.08"><span class="sr-only">KI-Lab SH</span></div></div>
-  <div class="wrap label muted">
-    <span>© <span id="year">2026</span> KI-Lab SH · Arbeitstitel</span>
-    <span><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></span>
-    <span>Gemacht in Schleswig-Holstein</span>
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <a class="btn" href="mailto:kontakt@example.de">Kontakt aufnehmen</a>
+    <p>Wir bauen angewandte KI mit Betrieben aus Schleswig-Holstein. Ihr habt ein Problem, das nervt, oder eine Idee, die raus will? Schreibt uns.</p>
+    <p><a href="mailto:kontakt@example.de">kontakt@example.de</a></p>
+    <p class="label"><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · © <span id="year">2026</span> KI-Lab SH (Arbeitstitel)</p>
   </div>
+  <div class="bars" aria-hidden="true">
+    <canvas data-scene="bars"></canvas>
+  </div>
+  <a class="btn to-top" href="#main">↑ Nach oben</a>
 </footer>
 
 <script src="assets/main.js" defer></script>
