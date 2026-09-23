@@ -11,7 +11,7 @@ impressum.html    Platzhalter – vor Livegang ausfüllen
 datenschutz.html  Platzhalter – vor Livegang ausfüllen
 404.html          Fehlerseite (GitHub Pages nutzt sie automatisch)
 assets/style.css  Design-Tokens & Layout (siehe DESIGN.md)
-assets/main.js    Pixel-Welle, Funnel-Grafik, Scroll-Animationen
+assets/main.js    Pixel-Welle, 5x7-Pixelschrift, Pixel-Icons, Dither-Übergänge, Cursor-Spur
 .nojekyll         GitHub Pages liefert die Dateien unverändert aus
 ```
 
