@@ -42,5 +42,5 @@ Alle Pfade sind relativ, die Seite funktioniert also auch im Unterordner `/<repo
 - [x] Impressum & Datenschutz ausgefüllt (Oskar Jacobsen, Pommerby). Nach Gründung der UG den auskommentierten Block im Impressum übernehmen.
 - [x] Kontakt: info@ylvalabs.de (zentral in `index.html` am `<body data-contact>`)
 - [ ] In GitHub unter *Settings → Pages* **„Enforce HTTPS“** aktivieren (die Datenschutzerklärung sagt, dass nur HTTPS ausgeliefert wird).
-- [ ] Sobald die Domain feststeht: `og:image` in `index.html` auf eine absolute URL setzen.
+- [x] Domain `ylvalabs.de` (Datei `CNAME`, canonical/og-URLs gesetzt)
 - [ ] Optional: Die Schrift „Sneak“ lizenzieren; sie steht bereits an erster Stelle im Font-Stack.
