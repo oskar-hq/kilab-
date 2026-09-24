@@ -1,7 +1,0 @@
-{
-  "shape": "css-only",
-  "readmeHeader": ".design-sync/conventions.md",
-  "cssEntry": "assets/style.css",
-  "fontsCss": "assets/fonts/fonts.css",
-  "build": ".design-sync/build.sh"
-}
