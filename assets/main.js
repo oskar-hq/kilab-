@@ -206,7 +206,7 @@
       time: true, scroll: true,
       draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
-        const mid = rows / 2, flick = Math.floor(t * 3);
+        const mid = rows / 2, flick = 0;              // static scatter: no flicker
         const a = 0.9 - 0.62 * ease(p);                 // boundary moves right -> left
         const WAVES = [{ f: 2.2, p: 0.0, th: 2 }, { f: 1.6, p: 2.1, th: 1 }, { f: 2.9, p: 4.0, th: 1 }];
         ctx.fillStyle = ON;
@@ -314,12 +314,12 @@
       }
     },
 
-    // Footer rubble: stacks of coloured pixels that rise as the footer comes in; a few flicker.
+    // Footer rubble: stacks of coloured pixels that rise as the footer comes in.
     rubble: {
-      time: true, scroll: true,
+      scroll: true,
       draw(ctx, w, h, t, el, p) {
         const cols = Math.ceil(w / G), rows = Math.floor(h / G);
-        const rise = 0.1 + 0.9 * ease(p), flick = Math.floor(t * 2);
+        const rise = 0.1 + 0.9 * ease(p);
         for (let c = 0; c < cols; c++) {
           const n = hash(Math.floor(c / 3), 11);             // clumps of neighbouring columns
           if (n < 0.12) continue;
@@ -329,8 +329,6 @@
             if (hash(c, r + 50) < 0.12) continue;            // holes in the pile
             fill(ctx, pick(c * 7, r), c * G, (rows - 1 - r) * G, G - 1);
           }
-          if (height > 2 && hash(c, 99) > 0.93 && hash(c, flick) > 0.5)   // loose pixel hovering on top
-            fill(ctx, pick(c, 3), c * G, (rows - 3 - height) * G, G - 1);
         }
       }
     },
@@ -575,7 +573,6 @@
     [[1, 0], [2, 0], [0, 1], [1, 1]], [[0, 0], [1, 0], [1, 1], [2, 1]], [[0, 0], [0, 1], [1, 1], [2, 1]], [[2, 0], [0, 1], [1, 1], [2, 1]]
   ];
   const TCOL = ['#9fd4ff', '#f6d36d', ON, '#2f5bd3', '#1d2126', '#8a929c', '#9fd4ff'];
-  const SPRITE_SET = { invader: [['invA', 'invB'], INK, '+200'], ghost: [['ghostA', 'ghostB'], '#2f5bd3', '+200'], pacman: [['pacOpen', 'pacShut'], PAC, '+500'] };
 
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (!reduce && fine) {
@@ -736,17 +733,6 @@
     let gameIdx = 0;
     const playAt = (x, y) => spawn(GAMES[gameIdx++ % GAMES.length](x, y));
 
-    // Resting sprites next to some section headings; click one and it pops.
-    const idle = [...document.querySelectorAll('[data-sprite]')].map(el => {
-      const [names, color, pts] = SPRITE_SET[el.dataset.sprite];
-      const rows = SPRITES[names[0]];
-      el.style.width = rows[0].length * G + 'px';
-      el.style.height = rows.length * G + 'px';
-      el.parentElement.classList.add('has-sprite');
-      return { el, frames: names.map(n => SPRITES[n]), color, pts, gone: 0 };
-    });
-    const idlePos = sp => { const r = sp.el.getBoundingClientRect(); return [r.left, r.top + scrollY, r]; };
-
     const hint = document.createElement('div');
     hint.className = 'play-hint';
     hint.setAttribute('aria-hidden', 'true');
@@ -766,35 +752,11 @@
     const SKIP = 'a,button,input,textarea,select,label,summary,iframe,img,p,h1,h2,h3,li,figcaption,small,b,.pill,.btn,.finder-box,.safari';
     document.addEventListener('click', e => {
       if (e.button !== 0 || e.defaultPrevented) return;
-      const el = e.target.closest('[data-sprite]');
-      const sp = el && idle.find(s => s.el === el);
-      if (sp) {
-        if (sp.gone) return;
-        const [x, y] = idlePos(sp);
-        shatter(sp.frames[0], sp.color, x, y, 1.1);
-        spawn(score(x + sp.el.offsetWidth / 2, y - 6 * G, sp.pts));
-        sp.gone = 6;
-        played();
-        return;
-      }
       if (e.target.closest(SKIP) || String(getSelection()).length) return;
       if (e.clientY + scrollY < heroEnd()) return;
       playAt(e.clientX, e.clientY + scrollY);
       played();
     });
-
-    // Now and then (every 35–65 s) a game starts by itself somewhere on screen,
-    // but never in the hero: only in the visible part below it.
-    const auto = () => {
-      const lo = Math.max(scrollY + innerHeight * 0.3, heroEnd()), hi = scrollY + innerHeight * 0.8;
-      if (!document.hidden && actors.length < 40 && hi - lo > 60) {
-        const x = innerWidth * (0.12 + Math.random() * 0.76), y = lo + Math.random() * (hi - lo);
-        if (Math.random() < 0.3) spawn(pacman(-4 * G, y, 1));
-        else playAt(x, y);
-      }
-      setTimeout(auto, 35000 + Math.random() * 30000);
-    };
-    setTimeout(auto, 15000);
 
     // Footer "play" button: a little show on top of the rubble.
     const playBtn = document.getElementById('play');
@@ -822,7 +784,7 @@
         cur.on = true;
       }
       cur.tx = e.clientX; cur.ty = e.clientY;
-      cur.hot = !!e.target.closest('a,button,label,summary,input,textarea,[data-sprite]');
+      cur.hot = !!e.target.closest('a,button,label,summary,input,textarea');
     }, { passive: true });
     document.addEventListener('mouseleave', () => { cur.on = false; });
     if (safari) {
@@ -861,12 +823,6 @@
       for (let i = actors.length - 1; i >= 0; i--) if (!actors[i].step(dt)) actors.splice(i, 1);
       ctx = pctx;
       actors.forEach(a => a.draw());
-      idle.forEach(sp => {
-        if (sp.gone > 0) { sp.gone -= dt; return; }
-        const [x, y, r] = idlePos(sp);
-        if (r.bottom < -50 || r.top > innerHeight + 50) return;
-        drawSprite(sp.frames[Math.floor(ts / 420) % 2], sp.color, x, y);
-      });
       drawCursor(dt);
       requestAnimationFrame(frame);
     };
