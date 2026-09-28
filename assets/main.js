@@ -440,6 +440,23 @@
     update();
   }
 
+  /* ---------- Portfolio: live site in a device frame ---------- */
+  const device = document.getElementById('device');
+  if (device) {
+    const frame = document.getElementById('device-frame');
+    const modes = [...device.querySelectorAll('.device-modes button')];
+    // Load the embedded site only once the frame is near the viewport.
+    new IntersectionObserver(([e], obs) => {
+      if (!e.isIntersecting) return;
+      frame.src = frame.dataset.src;
+      obs.disconnect();
+    }, { rootMargin: '400px' }).observe(device);
+    modes.forEach(b => b.addEventListener('click', () => {
+      device.dataset.mode = b.dataset.mode;
+      modes.forEach(m => m.setAttribute('aria-pressed', String(m === b)));
+    }));
+  }
+
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */
   const sticky = document.getElementById('sticky-cta');
   const heroCopy = document.querySelector('.hero-copy');

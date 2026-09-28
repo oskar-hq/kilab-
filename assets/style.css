@@ -239,6 +239,24 @@ svg rect{fill:var(--px)}
 }
 
 /* ---------- Responsive ---------- */
+/* Portfolio: live site in a device frame */
+.showcase{padding:clamp(70px,8vw,126px) 0;border-top:1px solid var(--line)}
+.device{margin:0 auto;max-width:100%;width:100%;background:var(--ink);border-radius:14px;padding:0 8px 8px;transition:width .5s cubic-bezier(.2,.8,.2,1),border-radius .5s}
+.device[data-mode="mobile"]{width:406px;border-radius:34px;padding:0 8px 12px}
+.device-bar{display:flex;align-items:center;gap:14px;height:44px;padding:0 8px;color:var(--grey-1)}
+.device-dots{display:flex;gap:6px}
+.device-dots i{width:9px;height:9px;border-radius:50%;background:var(--deep)}
+.device-url{flex:1;min-width:0;height:26px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--deep);font-size:11px;overflow:hidden;white-space:nowrap}
+.device[data-mode="mobile"] .device-dots{display:none}
+.device-modes{display:flex;gap:4px}
+.device-modes button{appearance:none;border:0;cursor:pointer;height:26px;padding:0 12px;border-radius:999px;background:transparent;color:var(--grey-1);font:400 10px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.device-modes button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
+.device-screen{position:relative;height:min(72vh,680px);background:var(--paper);border-radius:6px;overflow:hidden}
+.device[data-mode="mobile"] .device-screen{height:min(74vh,780px);border-radius:24px}
+.device-screen iframe{display:block;width:100%;height:100%;border:0}
+.showcase-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-top:21px}
+.showcase-foot h3{margin:0 0 6px;font-weight:500;font-size:18px}
+
 @media (max-width:1024px){
   :root{--gutter:35px}
   .brand{grid-column:1/13;grid-row:auto}
@@ -264,6 +282,9 @@ svg rect{fill:var(--px)}
   .hero-facts{flex-direction:column}
   .top-note{display:none}
   .cta-row .btn{width:100%;justify-content:center}
+  .device,.device[data-mode="mobile"]{width:100%;border-radius:28px}
+  .device-modes,.device-dots{display:none}
+  .device-screen,.device[data-mode="mobile"] .device-screen{height:72vh;border-radius:20px}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal,.share i{visibility:visible;transform:none;transition:none}
