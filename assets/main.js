@@ -4,6 +4,9 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const C = { paper: '#FFFFFF' };
+  // One grid for the whole page (CSS --g): the background lines and every pixel sit on it.
+  const G = 5;
+  const snap = v => Math.round(v / G) * G;
   // The one and only pixel colour (CSS custom property --px). A pixel is on or off.
   const css = name => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim();
   const ON = css('--px') || '#5aa9e6';
@@ -125,15 +128,15 @@
     hero: {
       time: true,
       draw(ctx, w, h, t) {
-        const S = 7, s = S - 1, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
+        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
         const scroll = clamp01(scrollY / Math.max(1, h));
         const lift = scroll * rows * 0.6;
         const th = 0.36 + scroll * 0.35;
-        // evaluate the noise field on a coarse grid (every G cells), interpolate between
-        const G = 2, gc = Math.ceil(cols / G) + 2, gr = Math.ceil(rows / G) + 2;
+        // evaluate the noise field on a coarse grid (every K cells), interpolate between
+        const K = 2, gc = Math.ceil(cols / K) + 2, gr = Math.ceil(rows / K) + 2;
         const F = new Float32Array(gc * gr), Z = new Float32Array(gc * gr);
         for (let j = 0; j < gr; j++) for (let i = 0; i < gc; i++) {
-          const c = i * G, ry = j * G + lift;
+          const c = i * K, ry = j * K + lift;
           const nx = c / cols, ny = ry / rows;
           const cy = -0.2 + 1.15 * nx + Math.sin(nx * 4 + t * 0.3) * 0.08;
           const d = (ny - cy) / (0.44 - 0.12 * nx);
@@ -142,7 +145,7 @@
           const n = fbm(c * 0.042 + q * 2.4, ry * 0.042 - q * 1.8, t * 0.32);
           let f = base * 0.78 + (n - 0.46) * 1.6;
           if (mouse.amp > 0.01) {
-            const dx = (c * S - mouse.x) / 150, dy = (j * G * S - mouse.y) / 150;
+            const dx = (c * S - mouse.x) / 150, dy = (j * K * S - mouse.y) / 150;
             f += 0.55 * mouse.amp * Math.exp(-(dx * dx + dy * dy));
           }
           F[j * gc + i] = f;
@@ -153,9 +156,9 @@
         const spore = Math.floor(t * 5) * 17;
         const N = HERO.length;
         for (let r = 0; r < rows; r++) {
-          const gy = r / G, j = Math.floor(gy), fy = gy - j;
+          const gy = r / K, j = Math.floor(gy), fy = gy - j;
           for (let c = 0; c < cols; c++) {
-            const gx = c / G, i = Math.floor(gx), fx = gx - i;
+            const gx = c / K, i = Math.floor(gx), fx = gx - i;
             const k = j * gc + i;
             const f = (F[k] * (1 - fx) + F[k + 1] * fx) * (1 - fy) + (F[k + gc] * (1 - fx) + F[k + gc + 1] * fx) * fy;
             const level = (f - th) / 0.35;               // <0 outside, >1 solid core
@@ -176,7 +179,7 @@
     flow: {
       time: true, scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = 5, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
+        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
         const mid = rows / 2, flick = Math.floor(t * 3);
         const a = 0.9 - 0.62 * ease(p);                 // boundary moves right -> left
         const WAVES = [{ f: 2.2, p: 0.0, th: 2 }, { f: 1.6, p: 2.1, th: 1 }, { f: 2.9, p: 4.0, th: 1 }];
@@ -208,7 +211,7 @@
     proto: {
       time: true, scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = 5, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
+        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
         const flick = Math.floor(t * 4);
         const DENSITY = [0, 0.3, 0.6, 1];
         const front = ease(p) * 1.15;
@@ -238,7 +241,7 @@
     art: {
       scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = Math.max(3, Math.floor(w / 60)), s = S - 1;
+        const S = G, s = S - 1;
         const cols = Math.ceil(w / S), rows = Math.ceil(h / S);
         const seed = el.dataset.icon.length * 31;
         const dir = el.dataset.dither === 'down' ? -1 : 1;
@@ -270,7 +273,7 @@
     bars: {
       time: true, scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = 4, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
+        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
         const rise = 0.15 + 0.85 * ease(p);
         ctx.fillStyle = ON;
         for (let c = 0; c < cols; c++) {
@@ -286,7 +289,7 @@
     mask: {
       scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = 5, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
+        const S = G, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
         const q = ease(p) * 1.25;
         for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
           const v = (c / cols) * 0.7 + hash(c, r) * 0.3;
@@ -302,7 +305,13 @@
     el, def: SCENES[el.dataset.scene], visible: true, ctx: null, w: 0, h: 0, lastP: -1
   })).filter(sc => sc.def);
 
+  // Page position from the offset chain (ignores reveal transforms in flight).
+  const pageOffset = el => { let x = 0, y = 0; for (let n = el; n; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; } return [x, y]; };
   function setup(sc) {
+    // Nudge the canvas so its origin lands on the page grid.
+    const [ox, oy] = pageOffset(sc.el);
+    const dx = ((ox % G) + G) % G, dy = ((oy % G) + G) % G;
+    sc.el.style.transform = dx || dy ? `translate(${-dx}px,${-dy}px)` : '';
     const r = sc.el.getBoundingClientRect();
     const dpr = Math.min(devicePixelRatio || 1, 2);
     sc.el.width = Math.max(1, Math.round(r.width * dpr));
@@ -333,23 +342,24 @@
 
   /* ---------- Pixel scroll progress bar ---------- */
   const bar = document.querySelector('.px-progress');
-  let barCtx = null, barW = 0, lastBarP = -1;
+  let barCtx = null, barW = 0, lastBarP = -1, lastBarY = -1;
   function drawProgress(force) {
     if (!bar) return;
     if (force || !barCtx) {
       const dpr = Math.min(devicePixelRatio || 1, 2);
       barW = innerWidth;
-      bar.width = Math.round(barW * dpr); bar.height = Math.round(4 * dpr);
+      bar.width = Math.round(barW * dpr); bar.height = Math.round(2 * G * dpr);
       barCtx = bar.getContext('2d'); barCtx.dpr = dpr;
     }
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? clamp01(scrollY / max) : 0;
-    if (!force && Math.abs(p - lastBarP) < 0.0005) return;
-    lastBarP = p;
-    const S = 4, cols = Math.ceil(barW / S), filled = Math.round(p * cols);
+    const y0 = (G - scrollY % G) % G;                // keep the row on the page grid
+    if (!force && Math.abs(p - lastBarP) < 0.0005 && y0 === lastBarY) return;
+    lastBarP = p; lastBarY = y0;
+    const cols = Math.ceil(barW / G), filled = Math.round(p * cols);
     barCtx.clearRect(0, 0, bar.width, bar.height);
     barCtx.fillStyle = ON;
-    for (let c = 0; c < filled; c++) fill(barCtx, null, c * S, 0, S - 1);
+    for (let c = 0; c < filled; c++) fill(barCtx, null, c * G, y0, G - 1);
   }
 
   /* ---------- Input ---------- */
@@ -367,6 +377,15 @@
   let resizeT;
   addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(resizeAll, 120); });
   resizeAll();
+  // Layout settles after fonts and images: re-align the canvases to the grid then.
+  if (document.fonts) document.fonts.ready.then(resizeAll);
+  addEventListener('load', resizeAll);
+  let bodyH = 0;
+  new ResizeObserver(() => {
+    if (Math.abs(document.body.offsetHeight - bodyH) < 1) return;
+    bodyH = document.body.offsetHeight;
+    clearTimeout(resizeT); resizeT = setTimeout(resizeAll, 120);
+  }).observe(document.body);
 
   if (!reduce) {
     let last = 0;
@@ -450,7 +469,36 @@
     }, { rootMargin: '400px' }).observe(frame);
   }
 
-  /* ---------- Pixel games: click into empty space ---------- */
+  /* ---------- Portfolio: centre the Safari window once you start using it ---------- */
+  const safari = document.querySelector('.safari');
+  let autoScrolling = false;
+  if (safari && matchMedia('(min-width:721px)').matches) {
+    const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const centre = () => {
+      const r = safari.getBoundingClientRect();
+      const target = scrollY + r.top - Math.max(0, (innerHeight - r.height) / 2);
+      const from = scrollY, dist = target - from;
+      if (autoScrolling || Math.abs(dist) < 12) return;
+      if (reduce) { scrollTo(0, target); return; }
+      autoScrolling = true;
+      const dur = Math.min(900, 380 + Math.abs(dist) * 0.9), t0s = performance.now();
+      const stop = () => { autoScrolling = false; removeEventListener('wheel', stop); removeEventListener('touchstart', stop); };
+      addEventListener('wheel', stop, { passive: true });
+      addEventListener('touchstart', stop, { passive: true });
+      const stepScroll = ts => {
+        if (!autoScrolling) return;
+        const k = Math.min(1, (ts - t0s) / dur);
+        scrollTo({ top: from + dist * easeInOut(k), behavior: 'instant' });
+        if (k < 1) requestAnimationFrame(stepScroll); else stop();
+      };
+      requestAnimationFrame(stepScroll);
+    };
+    safari.addEventListener('mouseenter', centre);
+    safari.addEventListener('pointerdown', centre);
+    safari.addEventListener('focusin', centre);
+  }
+
+  /* ---------- Pixel games: on the background layer, behind all content ---------- */
   // Sprites: '#' = main colour, 'w' = white, 'b' = ink, anything else = off.
   const SPRITES = {
     pacOpen: ['....#####....', '..#########..', '.###########.', '.#########...', '#########....', '########.....',
@@ -466,6 +514,9 @@
     invA: ['..#.....#..', '...#...#...', '..#######..', '.##.###.##.', '###########', '#.#######.#', '#.#.....#.#', '...##.##...'],
     invB: ['..#.....#..', '#..#...#..#', '#.#######.#', '###.###.###', '###########', '.#########.', '..#.....#..', '.#.......#.']
   };
+  // 3x5 pixel digits for the score pop-ups.
+  const GLYPHS = { '+': ['...', '.#.', '###', '.#.', '...'], 0: ['###', '#.#', '#.#', '#.#', '###'], 1: ['.#.', '##.', '.#.', '.#.', '###'],
+    2: ['###', '..#', '###', '#..', '###'], 5: ['###', '#..', '###', '..#', '###'] };
   const PAC = '#f6d36d', INK = '#1d2126';
   const GHOSTS = ['#2f5bd3', ON, '#9fd4ff', '#8a929c'];
   const TETRO = [
@@ -473,253 +524,282 @@
     [[1, 0], [2, 0], [0, 1], [1, 1]], [[0, 0], [1, 0], [1, 1], [2, 1]], [[0, 0], [0, 1], [1, 1], [2, 1]], [[2, 0], [0, 1], [1, 1], [2, 1]]
   ];
   const TCOL = ['#9fd4ff', '#f6d36d', ON, '#2f5bd3', '#1d2126', '#8a929c', '#9fd4ff'];
+  const SPRITE_SET = { invader: [['invA', 'invB'], INK, '+200'], ghost: [['ghostA', 'ghostB'], '#2f5bd3', '+200'], pacman: [['pacOpen', 'pacShut'], PAC, '+500'] };
 
-  // Inline SVG sprites in section headers (two frames, toggled on a timer).
-  function spriteSVG(frames, color) {
-    const h = frames[0].length, w = frames[0][0].length;
-    const svg = document.createElementNS(SVGNS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    svg.setAttribute('shape-rendering', 'crispEdges');
-    frames.forEach((rows, i) => {
-      const g = document.createElementNS(SVGNS, 'g');
-      if (i === 0) g.classList.add('on');
-      rows.forEach((row, y) => [...row].forEach((ch, x) => {
-        const fillC = ch === '#' ? color : ch === 'w' ? '#fff' : ch === 'b' ? INK : null;
-        if (!fillC) return;
-        const r = document.createElementNS(SVGNS, 'rect');
-        r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1);
-        r.style.fill = fillC;
-        g.appendChild(r);
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if (!reduce && fine) {
+    const makeLayer = cls => {
+      const cv = document.createElement('canvas');
+      cv.className = cls;
+      cv.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(cv);
+      return [cv, cv.getContext('2d')];
+    };
+    const [play, pctx] = makeLayer('px-play');      // behind everything
+    const [top, tctx] = makeLayer('px-cursor');     // the cursor circle, above
+    const sizeLayers = () => {
+      const d = Math.min(devicePixelRatio || 1, 2);
+      [[play, pctx], [top, tctx]].forEach(([cv, cx]) => { cv.width = Math.round(innerWidth * d); cv.height = Math.round(innerHeight * d); cx.dpr = d; });
+    };
+    sizeLayers();
+    addEventListener('resize', sizeLayers);
+
+    // All actors live in page coordinates and are snapped to the page grid.
+    let ctx = pctx;
+    const px = (c, x, y) => fill(ctx, c, snap(x), snap(y) - scrollY, G - 1);
+    const onScreen = y => y > scrollY - 200 && y < scrollY + innerHeight + 200;
+    const drawSprite = (rows, color, x, y, flip = false) => {
+      const w = rows[0].length;
+      rows.forEach((row, j) => [...row].forEach((ch, i) => {
+        const c = ch === '#' ? color : ch === 'w' ? '#fff' : ch === 'b' ? INK : null;
+        if (c) px(c, x + (flip ? w - 1 - i : i) * G, y + j * G);
       }));
-      svg.appendChild(g);
-    });
-    return svg;
-  }
-  const SPRITE_SET = { invader: [['invA', 'invB'], INK], ghost: [['ghostA', 'ghostB'], '#2f5bd3'], pacman: [['pacOpen', 'pacShut'], PAC] };
-  const headerSprites = [...document.querySelectorAll('[data-sprite]')];
-  headerSprites.forEach(el => {
-    const [names, color] = SPRITE_SET[el.dataset.sprite];
-    el.appendChild(spriteSVG(names.map(n => SPRITES[n]), color));
-    el.parentElement.classList.add('has-sprite');
-  });
-  if (!reduce && headerSprites.length) setInterval(() => {
-    headerSprites.forEach(el => el.querySelectorAll('g').forEach(g => g.classList.toggle('on')));
-  }, 420);
+    };
+    const drawText = (text, x, y, color) => {
+      const w = text.length * 4 * G;
+      [...text].forEach((ch, k) => (GLYPHS[ch] || []).forEach((row, j) => [...row].forEach((c, i) => {
+        if (c === '#') px(color, x - w / 2 + (k * 4 + i) * G, y + j * G);
+      })));
+    };
 
-  const play = document.createElement('canvas');
-  play.className = 'px-play';
-  play.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(play);
-  const pctx = play.getContext('2d');
-  const P = 5;                                   // one game pixel in CSS px
-  let VW = 0, VH = 0;
-  const sizePlay = () => {
-    const d = Math.min(devicePixelRatio || 1, 2);
-    VW = innerWidth; VH = innerHeight;
-    play.width = Math.round(VW * d); play.height = Math.round(VH * d);
-    pctx.dpr = d;
-  };
-  sizePlay();
-  addEventListener('resize', sizePlay);
+    const actors = [];
+    const spawn = (...list) => actors.push(...list);
 
-  const px = (c, x, y, s = P) => fill(pctx, c, Math.round(x / P) * P, Math.round(y / P) * P, s);
-  const drawSprite = (rows, color, x, y, flip = false) => {
-    const w = rows[0].length;
-    rows.forEach((row, j) => [...row].forEach((ch, i) => {
-      const c = ch === '#' ? color : ch === 'w' ? '#fff' : ch === 'b' ? INK : null;
-      if (c) px(c, x + (flip ? w - 1 - i : i) * P, y + j * P);
-    }));
-  };
-  const spriteParticles = (rows, color, x, y, power = 1) => {
-    rows.forEach((row, j) => [...row].forEach((ch, i) => {
+    // A single falling pixel. Blinks out at the end of its life (never fades: 1-bit).
+    function particle(x, y, vx, vy, c, life = 0.9 + Math.random() * 0.6) {
+      let t = 0;
+      return {
+        step(dt) { t += dt; vy += 900 * dt; x += vx * dt; y += vy * dt; return t < life && y < scrollY + innerHeight + 40; },
+        draw() { if (life - t > 0.25 || Math.floor(t * 16) % 2) px(c, x, y); }
+      };
+    }
+    const shatter = (rows, color, x, y, power = 1) => rows.forEach((row, j) => [...row].forEach((ch, i) => {
       if (ch !== '#') return;
       const a = Math.random() * Math.PI * 2, v = (120 + Math.random() * 260) * power;
-      actors.push(particle(x + i * P, y + j * P, Math.cos(a) * v, Math.sin(a) * v - 180, color));
+      spawn(particle(x + i * G, y + j * G, Math.cos(a) * v, Math.sin(a) * v - 180, color));
     }));
-  };
-
-  const actors = [];
-  let running = false, last = 0;
-  const loop = t => {
-    const dt = Math.min(0.05, (t - last) / 1000 || 0.016);
-    last = t;
-    pctx.clearRect(0, 0, play.width, play.height);
-    for (let i = actors.length - 1; i >= 0; i--) {
-      if (!actors[i].step(dt)) actors.splice(i, 1);
+    function score(x, y, text) {
+      let t = 0;
+      return { step(dt) { t += dt; y -= 30 * dt; return t < 0.9; }, draw() { drawText(text, x, y, INK); } };
     }
-    actors.forEach(a => a.draw());
-    if (actors.length) requestAnimationFrame(loop);
-    else { running = false; pctx.clearRect(0, 0, play.width, play.height); }
-  };
-  const spawn = (...list) => {
-    actors.push(...list);
-    if (!running) { running = true; last = performance.now(); requestAnimationFrame(loop); }
-  };
 
-  // A single falling pixel. Blinks out at the end of its life (never fades: 1-bit).
-  function particle(x, y, vx, vy, c, life = 0.9 + Math.random() * 0.6) {
-    let t = 0;
-    return {
-      step(dt) { t += dt; vy += 900 * dt; x += vx * dt; y += vy * dt; return t < life && y < VH + 20; },
-      draw() { if (life - t > 0.25 || Math.floor(t * 16) % 2) px(c, x, y); }
-    };
-  }
+    // Pac-Man eats a line of dots, two ghosts give chase.
+    function pacman(x, y, dir) {
+      const cy = y - 6 * G, speed = 300, dots = [];
+      for (let d = x + dir * 4 * G; d > -G && d < innerWidth + G; d += dir * 5 * G) dots.push(d);
+      let p = x - dir * 6 * G, t = 0;
+      const ghosts = [0, 1].map(k => ({ x: p - dir * (22 + k * 18) * G, c: GHOSTS[k * 2 + (Math.random() * 2 | 0)] }));
+      return {
+        step(dt) {
+          t += dt; p += dir * speed * dt;
+          ghosts.forEach(g => { g.x += dir * speed * 0.93 * dt; });
+          const mouth = p + dir * 6 * G;
+          while (dots.length && (dir > 0 ? dots[0] <= mouth : dots[0] >= mouth)) dots.shift();
+          const lastGhost = ghosts[ghosts.length - 1].x;
+          return dir > 0 ? lastGhost < innerWidth + 20 * G : lastGhost > -20 * G;
+        },
+        draw() {
+          if (!onScreen(y)) return;
+          dots.forEach(d => px(INK, d, y));
+          drawSprite(Math.floor(t * 9) % 2 ? SPRITES.pacShut : SPRITES.pacOpen, PAC, p - 6 * G, cy, dir < 0);
+          const gf = Math.floor(t * 6) % 2 ? SPRITES.ghostB : SPRITES.ghostA;
+          ghosts.forEach(g => drawSprite(gf, g.c, g.x - 7 * G, cy - G, dir < 0));
+        }
+      };
+    }
 
-  // Pac-Man eats a line of dots, two ghosts give chase.
-  function pacman(x, y, dir) {
-    const cy = y - 6 * P, speed = 300, dots = [];
-    for (let d = x + dir * 4 * P; d > -P && d < VW + P; d += dir * 5 * P) dots.push(d);
-    let px0 = x - dir * 6 * P, t = 0;
-    const ghosts = [0, 1].map(k => ({ x: px0 - dir * (22 + k * 18) * P, c: GHOSTS[k * 2 + (Math.random() * 2 | 0)] }));
-    return {
-      step(dt) {
-        t += dt; px0 += dir * speed * dt;
-        ghosts.forEach(g => { g.x += dir * speed * 0.93 * dt; });
-        const mouth = px0 + dir * 6 * P;
-        while (dots.length && (dir > 0 ? dots[0] <= mouth : dots[0] >= mouth)) dots.shift();
-        const lastGhost = ghosts[ghosts.length - 1].x;
-        return dir > 0 ? lastGhost < VW + 20 * P : lastGhost > -20 * P;
-      },
-      draw() {
-        dots.forEach(d => px(INK, d, y - P / 2));
-        const frame = Math.floor(t * 9) % 2 ? SPRITES.pacShut : SPRITES.pacOpen;
-        drawSprite(frame, PAC, px0 - 6 * P, cy, dir < 0);
-        const gf = Math.floor(t * 6) % 2 ? SPRITES.ghostB : SPRITES.ghostA;
-        ghosts.forEach(g => drawSprite(gf, g.c, g.x - 7 * P, cy - P, dir < 0));
-      }
-    };
-  }
-
-  // A tetromino drops in steps, rotates once, lands on the click and crumbles.
-  function tetris(x, y) {
-    const C = 4 * P;
-    let cells = TETRO[(Math.random() * TETRO.length) | 0].map(c => c.slice());
-    const color = TCOL[(Math.random() * TCOL.length) | 0];
-    const floor = Math.round(y / C) * C;
-    let top = Math.max(-2 * C, floor - 7 * C), acc = 0, landed = 0, rotated = false;
-    const x0 = Math.round(x / C) * C - C;
-    const height = () => Math.max(...cells.map(c => c[1])) + 1;
-    return {
-      step(dt) {
-        if (landed) {
-          landed += dt;
-          if (landed > 0.45) {
+    // A tetromino drops in steps, rotates once, lands and crumbles. Blocks are 4x4 grid pixels.
+    function tetris(x, y) {
+      const C = 4 * G;
+      let cells = TETRO[(Math.random() * TETRO.length) | 0].map(c => c.slice());
+      const color = TCOL[(Math.random() * TCOL.length) | 0];
+      const floor = Math.round(y / C) * C;
+      let topY = floor - 7 * C, acc = 0, landed = 0, rotated = false;
+      const x0 = Math.round(x / C) * C - C;
+      const height = () => Math.max(...cells.map(c => c[1])) + 1;
+      return {
+        step(dt) {
+          if (landed) {
+            landed += dt;
+            if (landed < 0.45) return true;
             cells.forEach(([i, j]) => {
               for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) if ((a + b) % 2 === 0)
-                actors.push(particle(x0 + i * C + a * P, top + j * C + b * P, (Math.random() - 0.5) * 240, -Math.random() * 260, color));
+                spawn(particle(x0 + i * C + a * G, topY + j * C + b * G, (Math.random() - 0.5) * 240, -Math.random() * 260, color));
             });
             return false;
           }
-          return true;
-        }
-        acc += dt;
-        while (acc > 0.07) {
-          acc -= 0.07;
-          if (!rotated && top > floor - 4 * C) { cells = cells.map(([i, j]) => [2 - j, i]); rotated = true; }
-          if (top + height() * C >= floor) { top = floor - height() * C; landed = 0.0001; break; }
-          top += C / 2;
-        }
-        return true;
-      },
-      draw() {
-        const flash = landed && Math.floor(landed * 14) % 2;
-        cells.forEach(([i, j]) => {
-          const cx = x0 + i * C, cy = top + j * C;
-          fill(pctx, flash ? '#fff' : color, cx, cy, C - 1);
-          if (!flash) fill(pctx, 'rgba(255,255,255,.55)', cx + P / 2, cy + P / 2, P);
-        });
-      }
-    };
-  }
-
-  // A space invader wiggles, a laser comes up from the bottom and pops it.
-  function invader(x, y) {
-    const ix = x - 5.5 * P, iy = y - 4 * P;
-    let t = 0, beam = VH, hit = false;
-    return {
-      step(dt) {
-        t += dt;
-        if (t > 0.8 && !hit) {
-          beam -= 1800 * dt;
-          if (beam <= iy + 8 * P) {
-            hit = true;
-            spriteParticles(SPRITES.invA, INK, ix + Math.sin(t * 8) * P, iy, 1);
-            spawn(scoreText(x, iy - 2 * P, '+100'));
+          acc += dt;
+          while (acc > 0.07) {
+            acc -= 0.07;
+            if (!rotated && topY > floor - 4 * C) { cells = cells.map(([i, j]) => [2 - j, i]); rotated = true; }
+            if (topY + height() * C >= floor) { topY = floor - height() * C; landed = 0.0001; break; }
+            topY += C / 2;
           }
+          return true;
+        },
+        draw() {
+          const flash = landed && Math.floor(landed * 14) % 2;
+          cells.forEach(([i, j]) => {
+            for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++)
+              px(flash || (a === 0 && b === 0) ? '#fff' : color, x0 + i * C + a * G, topY + j * C + b * G);
+          });
         }
-        return !hit;
-      },
-      draw() {
-        if (t > 0.8) for (let yy = beam; yy < Math.min(VH, beam + 14 * P); yy += P) px(ON, x - P / 2, yy);
-        drawSprite(Math.floor(t * 3) % 2 ? SPRITES.invB : SPRITES.invA, INK, ix + Math.sin(t * 8) * P, iy);
-      }
-    };
-  }
-  function scoreText(x, y, text) {
-    let t = 0;
-    return {
-      step(dt) { t += dt; y -= 30 * dt; return t < 0.9; },
-      draw() { pctx.save(); pctx.setTransform(pctx.dpr, 0, 0, pctx.dpr, 0, 0); pctx.font = '600 13px ' + css('--mono'); pctx.fillStyle = INK; pctx.textAlign = 'center'; pctx.fillText(text, x, y); pctx.restore(); }
-    };
-  }
-
-  // Pixel firework.
-  function burst(x, y) {
-    for (let k = 0; k < 28; k++) {
-      const a = (k / 28) * Math.PI * 2, v = 220 + (k % 3) * 90;
-      actors.push(particle(x, y, Math.cos(a) * v, Math.sin(a) * v - 120, HERO[k % HERO.length]));
+      };
     }
-    return { step: () => false, draw() {} };
-  }
 
-  const GAMES = [
-    (x, y) => pacman(x, y, x < VW / 2 ? 1 : -1),
-    tetris, invader, burst
-  ];
-  let gameIdx = 0;
-  const hint = document.createElement('div');
-  hint.className = 'play-hint';
-  hint.setAttribute('aria-hidden', 'true');
-  hint.innerHTML = '<i></i>Tipp: Klickt mal ins Leere';
-  document.body.appendChild(hint);
-  const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
-  const played = () => { hint.classList.remove('show'); store('ylva-played', '1'); };
+    // A space invader wiggles, a laser comes up from the bottom and pops it.
+    function invader(x, y) {
+      const ix = x - 5 * G, iy = y - 4 * G;
+      let t = 0, beam = null, hit = false;
+      return {
+        step(dt) {
+          t += dt;
+          if (t > 0.8 && !hit) {
+            if (beam === null) beam = scrollY + innerHeight;
+            beam -= 1800 * dt;
+            if (beam <= iy + 8 * G) {
+              hit = true;
+              shatter(SPRITES.invA, INK, ix, iy);
+              spawn(score(x, iy - 6 * G, '+100'));
+            }
+          }
+          return !hit;
+        },
+        draw() {
+          if (beam !== null) for (let yy = beam; yy < beam + 14 * G; yy += G) px(ON, x, yy);
+          drawSprite(Math.floor(t * 3) % 2 ? SPRITES.invB : SPRITES.invA, INK, ix + (Math.floor(t * 3) % 2) * G, iy);
+        }
+      };
+    }
 
-  // Games only with a real mouse: on phones a tap should just scroll and read.
-  if (!reduce && matchMedia('(hover:hover) and (pointer:fine)').matches) {
-    const SKIP = 'a,button,input,textarea,select,label,summary,iframe,img,p,h1,h2,h3,li,figcaption,small,b,.pill,.btn,.finder-box,.sticky-cta';
-    document.addEventListener('click', e => {
-      if (e.button !== 0 || e.defaultPrevented) return;
-      const sprite = e.target.closest('[data-sprite]');
-      if (sprite) {
-        const r = sprite.getBoundingClientRect();
-        const name = sprite.dataset.sprite;
-        const [names, color] = SPRITE_SET[name];
-        const rows = SPRITES[names[0]];
-        spriteParticles(rows, color, r.left, r.top, 1.1);
-        spawn(scoreText(r.left + r.width / 2, r.top - 6, name === 'pacman' ? '+500' : '+200'));
-        sprite.classList.add('gone');
-        setTimeout(() => sprite.classList.remove('gone'), 6000);
-        played();
-        return;
+    // Pixel firework.
+    function burst(x, y) {
+      for (let k = 0; k < 28; k++) {
+        const a = (k / 28) * Math.PI * 2, v = 220 + (k % 3) * 90;
+        spawn(particle(x, y, Math.cos(a) * v, Math.sin(a) * v - 120, HERO[k % HERO.length]));
       }
-      if (e.target.closest(SKIP)) return;
-      if (String(getSelection && getSelection()).length) return;
-      spawn(GAMES[gameIdx++ % GAMES.length](e.clientX, e.clientY));
-      played();
+      return { step: () => false, draw() {} };
+    }
+
+    const GAMES = [(x, y) => pacman(x, y, x < innerWidth / 2 ? 1 : -1), tetris, invader, burst];
+    let gameIdx = 0;
+    const playAt = (x, y) => spawn(GAMES[gameIdx++ % GAMES.length](x, y));
+
+    // Resting sprites next to some section headings; click one and it pops.
+    const idle = [...document.querySelectorAll('[data-sprite]')].map(el => {
+      const [names, color, pts] = SPRITE_SET[el.dataset.sprite];
+      const rows = SPRITES[names[0]];
+      el.style.width = rows[0].length * G + 'px';
+      el.style.height = rows.length * G + 'px';
+      el.parentElement.classList.add('has-sprite');
+      return { el, frames: names.map(n => SPRITES[n]), color, pts, gone: 0 };
     });
+    const idlePos = sp => { const r = sp.el.getBoundingClientRect(); return [r.left, r.top + scrollY, r]; };
 
-    // Every so often a Pac-Man parade crosses the bottom of the screen (wide screens only).
-    const parade = () => {
-      if (!document.hidden && innerWidth >= 1024 && !actors.length) spawn(pacman(-4 * P, innerHeight - 7 * P, 1));
-      setTimeout(parade, 45000 + Math.random() * 30000);
-    };
-    setTimeout(parade, 20000);
-
-    if (!store('ylva-played') && innerWidth >= 1024) {
+    const hint = document.createElement('div');
+    hint.className = 'play-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.innerHTML = '<i></i>Tipp: Klickt mal ins Leere';
+    document.body.appendChild(hint);
+    const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+    const played = () => { hint.classList.remove('show'); store('ylva-played', '1'); };
+    if (!store('ylva-played')) {
       setTimeout(() => hint.classList.add('show'), 5000);
       setTimeout(() => hint.classList.remove('show'), 17000);
     }
+
+    const SKIP = 'a,button,input,textarea,select,label,summary,iframe,img,p,h1,h2,h3,li,figcaption,small,b,.pill,.btn,.finder-box,.safari';
+    document.addEventListener('click', e => {
+      if (e.button !== 0 || e.defaultPrevented) return;
+      const el = e.target.closest('[data-sprite]');
+      const sp = el && idle.find(s => s.el === el);
+      if (sp) {
+        if (sp.gone) return;
+        const [x, y] = idlePos(sp);
+        shatter(sp.frames[0], sp.color, x, y, 1.1);
+        spawn(score(x + sp.el.offsetWidth / 2, y - 6 * G, sp.pts));
+        sp.gone = 6;
+        played();
+        return;
+      }
+      if (e.target.closest(SKIP) || String(getSelection()).length) return;
+      playAt(e.clientX, e.clientY + scrollY);
+      played();
+    });
+
+    // Games also start by themselves every few seconds, somewhere on screen.
+    const auto = () => {
+      if (!document.hidden && actors.length < 40) {
+        const x = innerWidth * (0.12 + Math.random() * 0.76), y = scrollY + innerHeight * (0.3 + Math.random() * 0.5);
+        if (Math.random() < 0.3) spawn(pacman(-4 * G, y, 1));
+        else playAt(x, y);
+      }
+      setTimeout(auto, 6000 + Math.random() * 7000);
+    };
+    setTimeout(auto, 3500);
+
+    /* Cursor circle: a pixel ring that springs after the mouse, stretches with
+       speed and fills over links. It is born inside the hero organism. */
+    const cur = { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, on: false, hot: false, r: 3 };
+    const heroBand = document.querySelector('.band-hero');
+    addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      if (!cur.on) {
+        const r = heroBand ? heroBand.getBoundingClientRect() : { left: e.clientX, top: e.clientY, width: 0, height: 0 };
+        cur.x = r.left + r.width * 0.45; cur.y = r.top + r.height * 0.5;
+        if (heroBand && r.bottom < 0) { cur.x = e.clientX; cur.y = e.clientY; }
+        cur.on = true;
+      }
+      cur.tx = e.clientX; cur.ty = e.clientY;
+      cur.hot = !!e.target.closest('a,button,label,summary,input,textarea,[data-sprite]');
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => { cur.on = false; });
+    if (safari) {
+      // Mouse events stop at the iframe edge; hide the ring over the live site.
+      safari.querySelector('.safari-screen').addEventListener('mouseenter', () => { cur.on = false; });
+    }
+    function drawCursor(dt) {
+      if (!cur.on) return;
+      const k = Math.min(1, dt * 60);
+      cur.vx = (cur.vx + (cur.tx - cur.x) * 0.16 * k) * Math.pow(0.7, k);
+      cur.vy = (cur.vy + (cur.ty - cur.y) * 0.16 * k) * Math.pow(0.7, k);
+      cur.x += cur.vx * k; cur.y += cur.vy * k;
+      cur.r += ((cur.hot ? 4.4 : 3) - cur.r) * 0.2 * k;
+      const speed = Math.hypot(cur.vx, cur.vy);
+      const st = Math.min(1.9, 1 + speed * 0.035);
+      const ang = Math.atan2(cur.vy, cur.vx), ca = Math.cos(ang), sa = Math.sin(ang);
+      const a = cur.r * st, b = cur.r / Math.sqrt(st), n = Math.ceil(a + 1);
+      const cx = Math.round(cur.x / G), cy = Math.round((cur.y + scrollY) / G);
+      ctx = tctx; ctx.fillStyle = ON;
+      for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+        const u = i * ca + j * sa, v = -i * sa + j * ca;
+        const d = (u / a) ** 2 + (v / b) ** 2;
+        if (d > 1) continue;
+        const inner = (u / Math.max(0.1, a - 1.2)) ** 2 + (v / Math.max(0.1, b - 1.2)) ** 2;
+        if (!cur.hot && inner < 1) continue;
+        px(null, (cx + i) * G, (cy + j) * G);
+      }
+    }
+
+    let lastT = performance.now();
+    const frame = ts => {
+      const dt = Math.min(0.05, (ts - lastT) / 1000);
+      lastT = ts;
+      pctx.clearRect(0, 0, play.width, play.height);
+      tctx.clearRect(0, 0, top.width, top.height);
+      for (let i = actors.length - 1; i >= 0; i--) if (!actors[i].step(dt)) actors.splice(i, 1);
+      ctx = pctx;
+      actors.forEach(a => a.draw());
+      idle.forEach(sp => {
+        if (sp.gone > 0) { sp.gone -= dt; return; }
+        const [x, y, r] = idlePos(sp);
+        if (r.bottom < -50 || r.top > innerHeight + 50) return;
+        drawSprite(sp.frames[Math.floor(ts / 420) % 2], sp.color, x, y);
+      });
+      drawCursor(dt);
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
   }
 
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */

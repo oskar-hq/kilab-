@@ -15,14 +15,16 @@
   /* hero organism: flat colour zones + spore colour (pixels still strictly on/off) */
   --hero-colors:#9fd4ff,#5aa9e6,#2f5bd3,#1d2126,#8a929c;
   --hero-spore:#f6d36d;
+  --g:5px;                 /* the page grid: background lines and every pixel sit on it */
+  --grid-line:rgba(29,33,38,.055);
   --maxw:1176px;
   --gutter:56px;
   --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
   --sans:"Sneak","Inter Tight",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;background-color:var(--paper);background-image:linear-gradient(to right,transparent calc(var(--g) - 1px),var(--grid-line) 0),linear-gradient(to bottom,transparent calc(var(--g) - 1px),var(--grid-line) 0);background-size:var(--g) var(--g)}
+body{margin:0;background:transparent;color:var(--ink);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 p{margin:0}
@@ -239,22 +241,25 @@ svg rect{fill:var(--px)}
 }
 
 /* ---------- Responsive ---------- */
-/* Portfolio: live site in a Safari window */
+/* Portfolio: live site in a Safari window (Safari 26 look) */
 .showcase{padding:clamp(70px,8vw,126px) 0;border-top:1px solid var(--line)}
-.safari{--sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.1),0 22px 70px -20px rgba(29,33,38,.35)}
-.safari-bar{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:18px;height:52px;padding:0 16px;background:#f6f6f6;border-bottom:1px solid #dcdcdc}
-.safari-lights{display:flex;gap:8px}
+.safari{--sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.06),0 28px 70px -24px rgba(29,33,38,.38)}
+.safari-bar{display:flex;align-items:center;gap:10px;height:54px;padding:0 12px 0 16px;background:#fbfbfb}
+.safari-lights{display:flex;gap:8px;margin-right:6px}
 .safari-lights i{width:12px;height:12px;border-radius:50%;background:#ff5f57;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)}
 .safari-lights i:nth-child(2){background:#febc2e}
 .safari-lights i:nth-child(3){background:#28c840}
-.safari-icons{display:flex;align-items:center;gap:16px}
-.safari svg{width:16px;height:16px;fill:none;stroke:#5f5f63;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.safari svg rect{fill:none}
-.safari svg.dim{stroke:#bdbdc1}
-.safari-url{justify-self:center;display:flex;align-items:center;justify-content:center;gap:6px;width:min(520px,100%);height:32px;padding:0 12px;border-radius:9px;background:#e9e9eb;font:400 13px/1 var(--sys);color:#1d1d1f;position:relative}
-.safari-url .lock{width:10px;height:12px;stroke:#6e6e73;stroke-width:1.4}
-.safari-url .reload{position:absolute;right:10px;width:13px;height:13px;stroke:#6e6e73}
-.safari-screen{position:relative;height:min(76vh,720px);background:#fff}
+.safari-pill{display:flex;align-items:center;gap:2px;height:34px;padding:0 4px;border-radius:999px;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.07)}
+.safari-pill span{display:grid;place-items:center;width:30px;height:28px}
+.safari-pill .wide{width:auto;padding:0 4px 0 6px;gap:2px;display:flex}
+.safari svg,.safari svg rect{fill:none}
+.safari svg{width:16px;height:16px;stroke:#3c3c43;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.safari svg.sm{width:9px;height:9px;stroke-width:1.8}
+.safari svg.dim{stroke:#c1c1c6}
+.safari-url{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;position:relative;height:34px;border-radius:999px;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.07);font:400 13px/1 var(--sys);color:#1d1d1f;letter-spacing:-.005em}
+.safari-url .l{position:absolute;left:12px}
+.safari-url .r{position:absolute;right:12px;width:14px;height:14px}
+.safari-screen{position:relative;height:min(calc(100vh - 160px),800px);background:#fff;border-top:.5px solid rgba(0,0,0,.12)}
 .safari-screen iframe{display:block;width:100%;height:100%;border:0}
 .safari-shot{display:none}
 .safari-shot img{display:block;width:100%;height:auto}
@@ -262,13 +267,10 @@ svg rect{fill:var(--px)}
 .showcase-foot h3{margin:0 0 4px;font-weight:500;font-size:18px}
 .showcase-foot p{font-size:14px;color:var(--body)}
 
-/* Pixel games layer */
-.px-play{position:fixed;inset:0;width:100vw;height:100vh;z-index:45;pointer-events:none}
-.sprite{position:absolute;right:0;top:0;width:var(--w,66px);cursor:pointer;image-rendering:pixelated}
-.sprite svg{display:block;width:100%;height:auto;overflow:visible}
-.sprite svg g{display:none}
-.sprite svg g.on{display:inline}
-.sprite.gone{visibility:hidden}
+/* Pixel games layer: behind all content, on the page grid. Cursor ring above. */
+.px-play{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
+.px-cursor{position:fixed;inset:0;width:100vw;height:100vh;z-index:46;pointer-events:none}
+.sprite{position:absolute;right:0;top:0;cursor:pointer}
 .has-sprite{position:relative;padding-right:90px}
 .play-hint{position:fixed;left:16px;bottom:16px;z-index:44;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--ink);color:var(--paper);font:400 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.08em;border-radius:999px;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none}
 .play-hint.show{opacity:1;transform:none}
@@ -299,10 +301,10 @@ svg rect{fill:var(--px)}
   .hero-facts{flex-direction:column}
   .top-note{display:none}
   .cta-row .btn{width:100%;justify-content:center}
-  .safari{border-radius:10px}
-  .safari-bar{grid-template-columns:1fr;height:44px;padding:0 10px}
-  .safari-lights,.safari-icons{display:none}
-  .safari-url{height:30px;font-size:12px}
+  .safari{border-radius:12px}
+  .safari-bar{height:48px;padding:0 8px}
+  .safari-lights,.safari-pill{display:none}
+  .safari-url{height:32px;font-size:12px}
   .safari-screen{height:auto}
   .safari-screen iframe{display:none}
   .safari-shot{display:block}
