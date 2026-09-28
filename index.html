@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="assets/style.css?v=10">
+<link rel="stylesheet" href="assets/style.css?v=12">
 <script>document.documentElement.classList.replace('no-js','js')</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Ylva Labs","url":"https://ylvalabs.de/","email":"info@ylvalabs.de","slogan":"Digitalisierung für Schleswig-Holstein.","description":"Websites und Digitalisierung für Betriebe, Selbstständige und Vereine in Schleswig-Holstein.","areaServed":{"@type":"State","name":"Schleswig-Holstein"},"knowsAbout":["Webdesign","Websites","Suchmaschinenoptimierung","Digitalisierung","Künstliche Intelligenz"]}
@@ -39,50 +39,48 @@
     <a href="./" class="brand" aria-label="Ylva Labs, Startseite"><img class="brand-mark" src="assets/icons/mark.svg" alt="">Ylva Labs</a>
     <nav class="top-nav" aria-label="Hauptnavigation">
       <a href="#referenzen"><span class="mono">01</span><span>Referenzen<small>Live ansehen</small></span></a>
-      <a href="#ablauf"><span class="mono">02</span><span>Ablauf<small>Vom Gespräch zur Website</small></span></a>
-      <a href="#fragen"><span class="mono">03</span><span>Fragen<small>Preis · Zeit · Pflege</small></span></a>
+      <a href="#ablauf"><span class="mono">05</span><span>Ablauf<small>Vom Gespräch zur Website</small></span></a>
+      <a href="#fragen"><span class="mono">06</span><span>Fragen<small>Preis · Zeit · Pflege</small></span></a>
     </nav>
     <div class="top-note">
-      <a class="btn" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Erstgespräch vereinbaren</a>
+      <a class="btn btn-go" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Erstgespräch vereinbaren<span class="btn-arrow" aria-hidden="true">→</span></a>
     </div>
   </div>
 </header>
 
 <main id="main">
-  <!-- Hero: living pixel organism -->
-  <div class="band-hero" aria-hidden="true">
-    <canvas data-scene="hero"></canvas>
-  </div>
-
-  <section class="hero-copy">
-    <div class="wrap hero-grid">
-      <h1 class="hero-title">Digitali&shy;sierung für <span class="hero-sub">Schleswig-Holstein.</span></h1>
-      <div class="hero-side">
-        <p>Wir bauen Websites für Betriebe, Selbstständige und Vereine aus Schleswig-Holstein: modern, schnell, auf dem Handy gut lesbar und bei Google auffindbar. Persönlich vor Ort, zu einem festen Preis.</p>
-        <div class="hero-ctas">
-          <a class="btn" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch</a>
-          <a class="btn ghost" href="#website">Was braucht eure Website? ↓</a>
-        </div>
+  <!-- Hero: text first; the pixel organism grows in once below it, then rests -->
+  <section class="hero-copy tex">
+    <div class="wrap">
+      <span class="label hero-kicker">Ylva Labs · Websites &amp; digitale Werkzeuge</span>
+      <h1 class="hero-title">Digitali&shy;sierung <span class="hero-sub">für Schleswig-Holstein.</span></h1>
+      <p class="hero-lead">Wir bauen Websites für Betriebe, Selbstständige und Vereine aus Schleswig-Holstein: modern, schnell, auf dem Handy gut lesbar und bei Google auffindbar. Persönlich vor Ort, zu einem festen Preis.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-go btn-lg" href="#kontakt"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch<span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a class="btn ghost btn-lg" href="#website">Was braucht eure Website? ↓</a>
       </div>
       <ul class="hero-facts label">
         <li><b>30 Min.</b> Erstgespräch, kostenlos</li>
         <li><b>Festpreis</b> vorher schriftlich</li>
         <li><b>Online</b> in wenigen Wochen</li>
-        <li><i class="pulse" aria-hidden="true"></i><b>Vor Ort</b> im Norden</li>
+        <li><i class="dot-px" aria-hidden="true"></i><b>Vor Ort</b> im Norden</li>
       </ul>
     </div>
   </section>
+  <div class="band-hero" aria-hidden="true">
+    <canvas data-scene="hero"></canvas>
+  </div>
 
   <!-- Portfolio: live site in a Safari window (screenshot on phones) -->
   <section class="showcase" id="referenzen">
     <div class="wrap">
-      <header class="flow-head px-mask">
-        <span class="label">01 · Referenzen</span>
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">01 · Referenzen</span><span class="sec-mark px-pop" data-bitmap="fenster" aria-hidden="true"></span></div>
         <h2>Nicht nur Bilder. Schaut rein.</h2>
         <p>Eine echte Website von uns, live eingebunden. Scrollt und klickt ruhig darin herum.</p>
       </header>
 
-      <div class="safari">
+      <div class="safari reveal">
         <div class="safari-bar" aria-hidden="true">
           <span class="safari-lights"><i></i><i></i><i></i></span>
           <span class="safari-pill"><span class="wide"><svg viewBox="0 0 20 16"><rect x="1.5" y="2" width="17" height="12" rx="3"/><path d="M7.5 2v12"/></svg><svg viewBox="0 0 10 10" class="sm"><path d="M2 3.5l3 3 3-3"/></svg></span></span>
@@ -102,18 +100,22 @@
 
       <div class="showcase-foot">
         <div>
+          <span class="label">Landwirtschaft · Website</span>
           <h3>Agrarkit</h3>
           <p>Die Ackerschlagkartei aus Pommerby, mit Karteikarte zum Durchblättern.</p>
         </div>
-        <a class="btn" href="https://agrarkit.de/" target="_blank" rel="noopener">Website öffnen ↗</a>
+        <a class="btn btn-go" href="https://agrarkit.de/" target="_blank" rel="noopener">Website öffnen<span class="btn-arrow" aria-hidden="true">↗</span></a>
       </div>
     </div>
   </section>
 
   <!-- Packages -->
-  <section class="intro">
+  <section class="intro" id="pakete">
     <div class="wrap">
-      <p class="statement px-mask">Drei Größen, ein Anspruch: eine Website, die zu eurem Betrieb passt und neue Kunden bringt.</p>
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">02 · Pakete</span><span class="sec-mark px-pop" data-bitmap="stapel" aria-hidden="true"></span></div>
+        <h2>Drei Größen, ein Anspruch: eine Website, die zu eurem Betrieb passt und neue Kunden bringt.</h2>
+      </header>
       <div class="cards">
         <article class="card reveal">
           <div class="card-art"><canvas data-scene="art" data-icon="pin"></canvas></div>
@@ -139,12 +141,12 @@
 
   <!-- Offer -->
   <section class="split" id="angebot">
-    <div class="wrap split-grid">
-      <header class="split-head px-mask">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">03 · Angebot</span><span class="sec-mark px-pop" data-bitmap="haken" aria-hidden="true"></span></div>
         <h2>Was ihr bei uns bekommt.</h2>
-        <span class="label">Angebot</span>
       </header>
-      <div class="split-body reveal">
+      <div class="reveal">
         <ul class="offer">
           <li><span class="label">Fester Preis</span><p>Ihr wisst vorher, was es kostet. Schriftlich, ohne versteckte Kosten.</p></li>
           <li><span class="label">Handy &amp; Google</span><p>Schnell, auf jedem Gerät gut lesbar und so gebaut, dass Kunden euch finden.</p></li>
@@ -158,13 +160,13 @@
   <!-- Website finder: the main conversion element -->
   <section class="finder" id="website">
     <div class="wrap">
-      <header class="flow-head px-mask">
-        <span class="label">Anfrage</span>
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">04 · Anfrage</span><span class="sec-mark px-pop" data-bitmap="liste" aria-hidden="true"></span></div>
         <h2>Was braucht eure Website?</h2>
         <p>Wählt aus, wo ihr gerade steht und was euch wichtig ist. Daraus machen wir eine fertige Anfrage, ihr müsst sie nur noch abschicken.</p>
       </header>
 
-      <form class="finder-box" id="finder" onsubmit="return false">
+      <form class="finder-box reveal" id="finder" onsubmit="return false">
         <div class="tabs" role="tablist" aria-label="Ausgangslage">
           <button type="button" role="tab" aria-selected="true" data-branche="Noch keine Website">Noch keine Website</button>
           <button type="button" role="tab" aria-selected="false" data-branche="Website ist veraltet">Website ist veraltet</button>
@@ -203,7 +205,7 @@
 
         <div class="finder-foot">
           <div class="finder-count" aria-live="polite"><span class="count-px" id="finder-px" aria-hidden="true"></span><span id="finder-count">Noch nichts ausgewählt</span></div>
-          <a class="btn" id="finder-send" href="mailto:info@ylvalabs.de?subject=Website-Anfrage"><span class="btn-dot" aria-hidden="true"></span>Anfrage vorbereiten</a>
+          <a class="btn btn-go btn-lg" id="finder-send" href="mailto:info@ylvalabs.de?subject=Website-Anfrage"><span class="btn-dot" aria-hidden="true"></span><span class="btn-text">Anfrage vorbereiten</span><span class="btn-arrow" aria-hidden="true">→</span></a>
         </div>
         <p class="finder-note">Öffnet euer E-Mail-Programm mit einer vorformulierten Nachricht. Es wird nichts automatisch gesendet und nichts gespeichert.</p>
       </form>
@@ -213,29 +215,29 @@
   <!-- Process -->
   <section class="flow" id="ablauf">
     <div class="wrap">
-      <header class="flow-head px-mask">
-        <span class="label">02 · Ablauf</span>
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">05 · Ablauf</span><span class="sec-mark px-pop" data-bitmap="stufen" aria-hidden="true"></span></div>
         <h2>Vom ersten Gespräch zur fertigen Website.</h2>
         <p>Ihr erzählt uns, was euren Betrieb ausmacht. Den Rest übernehmen wir und ihr entscheidet bei jedem Schritt mit.</p>
       </header>
       <div class="viz viz-flow" aria-hidden="true"><canvas data-scene="flow"></canvas></div>
       <ol class="steps">
-        <li class="reveal"><span class="dot"></span><span class="label">1 · Erstgespräch</span><p>30 Minuten, kostenlos, am Telefon oder bei euch. Danach bekommt ihr ein Angebot zum Festpreis.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">2 · Entwurf</span><p>Wir sammeln Texte und Fotos mit euch und zeigen einen ersten Entwurf.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">3 · Feinschliff</span><p>Ihr sagt, was noch nicht passt. Wir passen an, bis ihr zufrieden seid.</p></li>
-        <li class="reveal"><span class="dot"></span><span class="label">4 · Online</span><p>Die Website geht live. Auf Wunsch kümmern wir uns auch danach um Pflege und Updates.</p></li>
+        <li class="reveal"><span class="step-num px-pop" data-px="5" data-digits="01" aria-hidden="true"></span><span class="label">Erstgespräch</span><p>30 Minuten, kostenlos, am Telefon oder bei euch. Danach bekommt ihr ein Angebot zum Festpreis.</p></li>
+        <li class="reveal"><span class="step-num px-pop" data-px="5" data-digits="02" aria-hidden="true"></span><span class="label">Entwurf</span><p>Wir sammeln Texte und Fotos mit euch und zeigen einen ersten Entwurf.</p></li>
+        <li class="reveal"><span class="step-num px-pop" data-px="5" data-digits="03" aria-hidden="true"></span><span class="label">Feinschliff</span><p>Ihr sagt, was noch nicht passt. Wir passen an, bis ihr zufrieden seid.</p></li>
+        <li class="reveal"><span class="step-num px-pop" data-px="5" data-digits="04" aria-hidden="true"></span><span class="label">Online</span><p>Die Website geht live. Auf Wunsch kümmern wir uns auch danach um Pflege und Updates.</p></li>
       </ol>
     </div>
   </section>
 
   <!-- FAQ -->
   <section class="split" id="fragen">
-    <div class="wrap split-grid">
-      <header class="split-head px-mask">
-        <span class="label">03 · Fragen</span>
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <div class="sec-rule"><span class="label">06 · Fragen</span><span class="sec-mark px-pop" data-bitmap="frage" aria-hidden="true"></span></div>
         <h2>Was Betriebe uns vorher fragen.</h2>
       </header>
-      <div class="split-body faq reveal">
+      <div class="faq reveal">
         <details open>
           <summary>Was kostet eine Website?</summary>
           <p>Das hängt vom Umfang ab. Nach dem kostenlosen Erstgespräch bekommt ihr ein schriftliches Angebot zu einem festen Preis. Keine Stundenabrechnung, keine versteckten Kosten. Laufende Kosten für Domain und Hosting nennen wir euch vorher.</p>
@@ -264,42 +266,47 @@
     </div>
   </section>
 
-  <!-- Final CTA -->
+  <!-- Contact: the one place that may shout a little -->
   <section class="cta" id="kontakt">
     <div class="wrap">
-      <span class="label px-mask">Kontakt · Erstgespräch</span>
-      <h2 class="cta-title">Erzählt uns von eurem Betrieb.<br>Wir bauen die Website dazu.</h2>
-      <div class="cta-row">
-        <a class="btn btn-lg" data-mailto="Erstgespräch Website" href="mailto:info@ylvalabs.de?subject=Erstgespr%C3%A4ch%20Website"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch anfragen</a>
-        <a class="btn ghost btn-lg" href="#website">Erst Wünsche auswählen</a>
+      <div class="cta-card reveal">
+        <div class="cta-copy">
+          <span class="label">07 · Kontakt · Erstgespräch</span>
+          <h2 class="cta-title">Erzählt uns von eurem Betrieb.<br>Wir bauen die Website dazu.</h2>
+          <div class="cta-row">
+            <a class="btn btn-go btn-xl" data-mailto="Erstgespräch Website" href="mailto:info@ylvalabs.de?subject=Erstgespr%C3%A4ch%20Website"><span class="btn-dot" aria-hidden="true"></span>Kostenloses Erstgespräch anfragen<span class="btn-arrow" aria-hidden="true">→</span></a>
+            <a class="btn ghost btn-lg" href="#website">Erst Wünsche auswählen</a>
+          </div>
+          <p class="cta-note">Oder direkt an <a data-contact-text href="mailto:info@ylvalabs.de">info@ylvalabs.de</a>. 30 Minuten, kostenlos und unverbindlich.</p>
+        </div>
+        <div class="cta-art px-pop" data-bitmap="brief" data-px="12" aria-hidden="true"></div>
       </div>
-      <p class="cta-note">Oder direkt an <a data-contact-text href="mailto:info@ylvalabs.de">info@ylvalabs.de</a>. 30 Minuten, kostenlos und unverbindlich.</p>
     </div>
   </section>
 </main>
 
-<footer class="foot">
+<footer class="foot tex">
   <div class="marquee" aria-hidden="true">
     <canvas data-scene="marquee" data-text="Digitalisierung für Schleswig-Holstein   ·   Websites aus dem Norden   ·   "></canvas>
   </div>
   <div class="wrap foot-inner">
-    <a class="btn-px" data-mailto="Website-Anfrage" href="mailto:info@ylvalabs.de?subject=Website-Anfrage">Schreibt uns</a>
+    <a class="btn-px btn-go" data-mailto="Website-Anfrage" href="mailto:info@ylvalabs.de?subject=Website-Anfrage">Schreibt uns<span class="btn-arrow" aria-hidden="true">→</span></a>
     <p>Wir sind ein junges Digital-Lab aus Angeln und bauen Websites für Betriebe in ganz Schleswig-Holstein. Am liebsten sitzen wir dafür bei euch am Tisch.</p>
     <p class="foot-contact"><a data-contact-text href="mailto:info@ylvalabs.de">info@ylvalabs.de</a> · Pommerby, Schleswig-Holstein</p>
     <p class="label"><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · © <span id="year">2026</span> Ylva Labs</p>
   </div>
   <div class="rubble" aria-hidden="true">
     <canvas data-scene="rubble"></canvas>
-    <button type="button" class="btn-px play" id="play" tabindex="-1" hidden>play <i></i></button>
+    <button type="button" class="btn-px play" id="play" data-src="assets/games.js?v=12" hidden>play <i></i></button>
   </div>
 </footer>
 
 <!-- Mobile: persistent call to action once the hero is out of view -->
 <div class="sticky-cta" id="sticky-cta" aria-hidden="true">
   <span>Website für euren Betrieb?</span>
-  <a class="btn" href="#kontakt" tabindex="-1">Erstgespräch</a>
+  <a class="btn btn-go" href="#kontakt" tabindex="-1">Erstgespräch<span class="btn-arrow" aria-hidden="true">→</span></a>
 </div>
 
-<script src="assets/main.js?v=10" defer></script>
+<script src="assets/main.js?v=12" defer></script>
 </body>
 </html>

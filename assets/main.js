@@ -1,16 +1,19 @@
+/* Ylva Labs – page behaviour.
+   Motion principle: static by default, reactive when relevant. Nothing loops on
+   its own: canvases redraw only on scroll, on hover, or during a short one-shot
+   animation when they first come into view. */
 (() => {
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const small = matchMedia('(max-width:720px)').matches;          // phones: even fewer pixel animations
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  const C = { paper: '#FFFFFF' };
-  // One grid for the whole page (CSS --g): the background lines and every pixel sit on it.
+  // One grid for all pixel art: every pixel is G css px and sits on the page grid.
   const G = 5;
   const snap = v => Math.round(v / G) * G;
-  // The one and only pixel colour (CSS custom property --px). A pixel is on or off.
   const css = name => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim();
-  const ON = css('--px') || '#5aa9e6';
-  // Hero only: a few flat colour zones (each pixel still one solid colour, never blended).
+  const ON = css('--px') || '#5aa9e6';                                // the one pixel colour: on or off
   const HERO = (css('--hero-colors') || '#9fd4ff,#5aa9e6,#2f5bd3,#1d2126,#8a929c').split(',').map(v => v.trim());
   const SPORE = css('--hero-spore') || '#f6d36d';
 
@@ -41,76 +44,59 @@
   }
   const fbm = (x, y, z) => (vnoise(x, y, z) * 0.57 + vnoise(x * 2.03, y * 2.03, z * 1.3) * 0.29 + vnoise(x * 4.1, y * 4.1, z * 1.7) * 0.14);
 
-  // How far an element has travelled into the viewport: 0 = just below, 1 = settled.
-  const progressOf = (el, start = 1, span = 0.6) => {
-    const r = el.getBoundingClientRect(), vh = innerHeight;
-    return clamp01((vh * start - r.top) / (vh * span));
-  };
-
-  /* ---------- Bitmaps (icons, faces, logo) ---------- */
+  /* ---------- Bitmaps: icons, section marks, pixel digits ---------- */
+  // '#' = pixel on; '.' and '+' = off.
   const BITMAPS = {
-    sad: ['.........', '.#.#.#.#.', '..#...#..', '.#.#.#.#.', '.........', '..#####..', '.#.....#.', '.........'],
-    happy: ['.........', '..#...#..', '..#...#..', '.........', '.#.....#.', '..#...#..', '...###...', '.........'],
-    werkstatt: ['.....##.....', '....####....', '...######...', '..########..', '.##########.', '############',
-      '.#........#.', '.#.++..##.#.', '.#.++..##.#.', '.#.....##.#.', '.#.....##.#.', '############'],
-    mikro: ['....####....', '...#++++#...', '...#++++#...', '...#++++#...', '...#++++#...', '...######...',
-      '.#.######.#.', '.#..####..#.', '..#......#..', '...######...', '.....##.....', '...######...'],
-    aehre: ['.....#......', '....#.#.....', '...#.#.#....', '....###.....', '...#.#.#....', '....###.....',
-      '...#.#.#....', '....###.....', '.....#......', '.....#......', '...#####....', '..#######...'],
     blitz: ['.......####.', '......####..', '.....####...', '....####....', '...########.', '..########..',
       '.....####...', '....####....', '...###......', '..##........', '.#..........', '............'],
     pin: ['....####....', '..########..', '.####++####.', '.###++++###.', '.###++++###.', '.####++####.',
       '..########..', '...######...', '....####....', '.....##.....', '............', '.##########.'],
     fenster: ['############', '#.#.#......#', '############', '#..........#', '#.####.###.#', '#.####.....#',
       '#.####.###.#', '#.####.....#', '#..........#', '#.########.#', '#..........#', '############'],
-    herz: ['............', '.###....###.', '#####..#####', '############', '#####++#####', '####++++####',
-      '.##########.', '..########..', '...######...', '....####....', '.....##.....', '............']
+    stapel: ['............', '....####....', '....####....', '............', '..########..', '..########..',
+      '............', '############', '############', '............', '............', '............'],
+    haken: ['............', '............', '..........##', '.........###', '........###.', '##.....###..',
+      '###...###...', '.###.###....', '..#####.....', '...###......', '....#.......', '............'],
+    liste: ['............', '###.########', '#.#.........', '###.########', '............', '###.########',
+      '#.#.........', '###.########', '............', '###.#######.', '#.#.........', '###.#######.'],
+    stufen: ['.........###', '.........###', '.........###', '......######', '......######', '......######',
+      '...#########', '...#########', '...#########', '############', '############', '############'],
+    frage: ['...######...', '..########..', '.###....###.', '.##......##.', '.........##.', '........###.',
+      '......###...', '.....###....', '.....##.....', '............', '.....##.....', '.....##.....'],
+    brief: ['............', '############', '##........##', '#.#......#.#', '#..#....#..#', '#...#..#...#',
+      '#....##....#', '#..........#', '#..........#', '############', '............', '............']
   };
+  const DIGITS = { 0: ['###', '#.#', '#.#', '#.#', '###'], 1: ['.#.', '##.', '.#.', '.#.', '###'], 2: ['###', '..#', '###', '#..', '###'],
+    3: ['###', '..#', '.##', '..#', '###'], 4: ['#.#', '#.#', '###', '..#', '..#'] };
+  const digitRows = text => DIGITS[0].map((_, r) => [...text].map(d => DIGITS[d][r]).join('.'));
+
   const SVGNS = 'http://www.w3.org/2000/svg';
-  function bitmapSVG(rows, gap = 0.1) {
+  // Each pixel gets a random delay (--d) so a mark can "pop" in once (see .px-pop in CSS).
+  function bitmapSVG(rows, gap = 0.12) {
     const h = rows.length, w = Math.max(...rows.map(r => r.length));
     const svg = document.createElementNS(SVGNS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('shape-rendering', 'crispEdges');
     rows.forEach((row, y) => [...row].forEach((ch, x) => {
-      if (ch !== '#') return;                      // '+' marks holes: pixel off
+      if (ch !== '#') return;
       const r = document.createElementNS(SVGNS, 'rect');
       r.setAttribute('x', x + gap / 2); r.setAttribute('y', y + gap / 2);
       r.setAttribute('width', 1 - gap); r.setAttribute('height', 1 - gap);
+      r.style.setProperty('--d', Math.round(hash(x * 7 + 3, y * 13 + w) * 420) + 'ms');
       svg.appendChild(r);
     }));
     return svg;
   }
-  document.querySelectorAll('[data-bitmap]').forEach(el => {
-    const map = BITMAPS[el.dataset.bitmap];
-    if (map) el.appendChild(bitmapSVG(map));
-  });
+  // Whole css pixels per bitmap pixel (data-px, default 3) keep the art crisp.
+  const mount = (el, rows) => {
+    el.appendChild(bitmapSVG(rows));
+    el.style.width = rows[0].length * (+el.dataset.px || 3) + 'px';
+  };
+  document.querySelectorAll('[data-bitmap]').forEach(el => { if (BITMAPS[el.dataset.bitmap]) mount(el, BITMAPS[el.dataset.bitmap]); });
+  document.querySelectorAll('[data-digits]').forEach(el => mount(el, digitRows(el.dataset.digits)));
 
-  /* ---------- Share split (each square = 2 %) ---------- */
-  document.querySelectorAll('[data-share]').forEach(el => {
-    let k = 0;
-    el.dataset.share.split(',').map(Number).forEach((n, p) => {
-      if (p > 0) { const gap = document.createElement('b'); el.appendChild(gap); } // one empty cell between groups
-      for (let i = 0; i < n; i++, k++) {
-        const c = document.createElement('i');
-        c.className = 'k' + p;
-        c.style.setProperty('--i', k);
-        el.appendChild(c);
-      }
-    });
-  });
-
-  /* ---------- Pixel masks over headings (scroll-linked wipe) ---------- */
-  document.querySelectorAll('.px-mask').forEach(el => {
-    const cv = document.createElement('canvas');
-    cv.className = 'mask';
-    cv.dataset.scene = 'mask';
-    cv.setAttribute('aria-hidden', 'true');
-    el.appendChild(cv);
-  });
-
-  /* ---------- Canvas scenes ---------- */
+  /* ---------- Canvas scene engine ---------- */
   // Draw one pixel snapped to the device-pixel grid, so edges are never
   // anti-aliased into half-transparent colours (e.g. at 125 % / 150 % zoom).
   const fill = (ctx, color, x, y, s) => {
@@ -147,17 +133,23 @@
     return bm;
   }
 
+
+  /* Scene options:
+       intro: s   plays once from page load for s seconds (the hero)
+       once:  s   plays once for s seconds when it first comes into view
+       scroll     redraws while the page scrolls (scroll-linked, never on its own)
+     draw(ctx, w, h, t, el, p): t = the scene's own clock (only advances while it
+     animates), p = progress of its one-shot animation, 0..1. */
   const SCENES = {
-    // A living pixel organism: a domain-warped noise field grows, splits and
-    // re-forms along a diagonal. Scrolling away dissolves it. 1-bit only:
-    // each pixel is either on (full colour) or off; depth is shown by density.
+    // The pixel organism: grows in once (Level 3 moment), then rests. It stirs
+    // under the mouse and dissolves as it scrolls out of view.
     hero: {
-      time: true,
-      draw(ctx, w, h, t) {
+      intro: 2.4, scroll: true, hover: true,
+      draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
-        const scroll = clamp01(scrollY / Math.max(1, h));
+        const scroll = clamp01((80 - el.getBoundingClientRect().top) / Math.max(1, h));   // dissolves as it leaves the top
         const lift = scroll * rows * 0.6;
-        const th = 0.36 + scroll * 0.35;
+        const th = 0.36 + scroll * 0.35 + (1 - ease(p)) * 0.8;   // intro: the body grows in, then rests
         // evaluate the noise field on a coarse grid (every K cells), interpolate between
         const K = 2, gc = Math.ceil(cols / K) + 2, gr = Math.ceil(rows / K) + 2;
         const F = new Float32Array(gc * gr), Z = new Float32Array(gc * gr);
@@ -201,12 +193,12 @@
       }
     },
 
-    // Scattered pixels resolve into waves as the section scrolls into view.
+    // Scattered pixels resolve into waves once, as the section comes into view.
     flow: {
-      time: true, scroll: true,
+      once: 1.6,
       draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
-        const mid = rows / 2, flick = 0;              // static scatter: no flicker
+        const mid = rows / 2, flick = 0;
         const a = 0.9 - 0.62 * ease(p);                 // boundary moves right -> left
         const WAVES = [{ f: 2.2, p: 0.0, th: 2 }, { f: 1.6, p: 2.1, th: 1 }, { f: 2.9, p: 4.0, th: 1 }];
         ctx.fillStyle = ON;
@@ -233,39 +225,9 @@
       }
     },
 
-    // Noise -> sparse -> dense -> solid: the blocks assemble while scrolling.
-    proto: {
-      time: true, scroll: true,
-      draw(ctx, w, h, t, el, p) {
-        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
-        const flick = Math.floor(t * 4);
-        const DENSITY = [0, 0.3, 0.6, 1];
-        const front = ease(p) * 1.15;
-        ctx.fillStyle = ON;
-        for (let c = 0; c < cols; c++) {
-          const x = c / cols;
-          const top = Math.round(rows * (0.3 - 0.3 * smooth(0.6, 1, x)));
-          const bot = Math.round(rows * (x < 0.25 ? 1 : 0.8));
-          const built = smooth(x - 0.08, x + 0.02, front);
-          const seg = Math.min(3, Math.floor(x * 4));
-          for (let r = 0; r < rows; r++) {
-            const px = c * S, py = r * S;
-            const n = hash(c + flick * 977, r);
-            if (seg === 0) { if (n < 0.34 - x) fill(ctx, null, px, py, s); continue; }
-            if (r < top || r >= bot) continue;
-            if (hash(c, r) > built) {                    // not built yet: loose pixels at the front
-              if (built > 0.02 && n < 0.12) fill(ctx, null, px, py, s);
-              continue;
-            }
-            if (DENSITY[seg] > bayer(c, r)) fill(ctx, null, px, py, s);
-          }
-        }
-      }
-    },
-
-    // Card artwork: 1-bit dither backdrop, icon pixels fly into place on scroll.
+    // Card artwork: dither backdrop, icon pixels fly into place once; replays on hover.
     art: {
-      scroll: true,
+      once: 0.9, replay: true,
       draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1;
         const cols = Math.ceil(w / S), rows = Math.ceil(h / S);
@@ -295,10 +257,9 @@
       }
     },
 
-    // Footer marquee: the slogan as big pixel letters; it slides one grid cell per few px of scrolling.
+    // Footer marquee: the slogan in big pixel letters; it slides only while you scroll.
     marquee: {
       scroll: true,
-      progress: () => scrollY / 1000,                     // moves only while the page scrolls
       draw(ctx, w, h, t, el) {
         const bm = marqueeBitmap(el.dataset.text || '');
         if (!bm.w) return;
@@ -315,9 +276,9 @@
       }
     },
 
-    // Footer rubble: stacks of coloured pixels that rise as the footer comes in.
+    // Footer rubble: stacks of coloured pixels that rise once as the footer comes in.
     rubble: {
-      scroll: true,
+      once: 1.2,
       draw(ctx, w, h, t, el, p) {
         const cols = Math.ceil(w / G), rows = Math.floor(h / G);
         const rise = 0.1 + 0.9 * ease(p);
@@ -332,27 +293,13 @@
           }
         }
       }
-    },
-
-    // Paper-coloured cells covering a heading switch off left-to-right; the
-    // wipe front is a line of lit pixels.
-    mask: {
-      scroll: true,
-      draw(ctx, w, h, t, el, p) {
-        const S = G, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
-        const q = ease(p) * 1.25;
-        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-          const v = (c / cols) * 0.7 + hash(c, r) * 0.3;
-          if (v > q) fill(ctx, C.paper, c * S, r * S, S);
-          else if (v > q - 0.04) fill(ctx, ON, c * S, r * S, S - 1);
-        }
-      },
-      progress: el => progressOf(el.parentElement, 1.05, 0.3)
     }
   };
 
+  const nowS = () => performance.now() / 1000;
   const scenes = [...document.querySelectorAll('canvas[data-scene]')].map(el => ({
-    el, def: SCENES[el.dataset.scene], visible: true, ctx: null, w: 0, h: 0, lastP: -1
+    el, def: SCENES[el.dataset.scene], ctx: null, w: 0, h: 0, visible: false,
+    clock: 0, start: null, until: 0
   })).filter(sc => sc.def);
 
   // Page position from the offset chain (ignores reveal transforms in flight).
@@ -369,26 +316,57 @@
     sc.ctx = sc.el.getContext('2d');
     sc.ctx.dpr = sc.el.width / Math.max(1, r.width);
     sc.w = r.width; sc.h = r.height;
-    sc.lastP = -1;
   }
-  const t0 = performance.now();
-  const now = () => (performance.now() - t0) / 1000;
-  const sceneProgress = sc => reduce ? 1 : (sc.def.progress ? sc.def.progress(sc.el) : progressOf(sc.el, 1, 0.7));
-
-  function render(sc, t, force) {
-    const p = sc.def.scroll ? sceneProgress(sc) : 1;
-    if (!force && !sc.def.time && Math.abs(p - sc.lastP) < 0.002) return;
-    sc.lastP = p;
+  // Progress of the one-shot animation (1 = finished / static).
+  const oneShot = sc => {
+    const dur = sc.def.intro || sc.def.once;
+    if (!dur || reduce || (small && !sc.def.intro)) return 1;
+    if (sc.start === null) return 0;
+    return clamp01((nowS() - sc.start) / dur);
+  };
+  function render(sc) {
+    if (!sc.ctx) return;
     sc.ctx.clearRect(0, 0, sc.el.width, sc.el.height);
-    sc.def.draw(sc.ctx, sc.w, sc.h, t, sc.el, p);
+    sc.def.draw(sc.ctx, sc.w, sc.h, sc.clock, sc.el, oneShot(sc));
   }
-  function resizeAll() { scenes.forEach(sc => { setup(sc); render(sc, now(), true); }); drawProgress(true); }
+
+  // Frames are requested only when something changes; the loop stops itself.
+  let queued = false, scrolled = false, lastFrame = 0;
+  const kick = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
+  function tick(ts) {
+    queued = false;
+    const dt = lastFrame ? Math.min(0.05, (ts - lastFrame) / 1000) : 0.016;
+    lastFrame = ts;
+    let busy = false;
+    mouse.x += (mouse.tx - mouse.x) * 0.12;
+    mouse.y += (mouse.ty - mouse.y) * 0.12;
+    mouse.amp += (mouse.tamp - mouse.amp) * 0.08;
+    const t = nowS();
+    scenes.forEach(sc => {
+      if (!sc.visible) return;
+      const p = oneShot(sc);
+      const animating = (sc.start !== null && p < 1) || sc.until > t || (sc.def.hover && Math.abs(mouse.amp - mouse.tamp) > 0.01);
+      if (animating) sc.clock += dt;
+      if (animating || (scrolled && sc.def.scroll)) render(sc);
+      if (animating) busy = true;
+    });
+    scrolled = false;
+    drawProgress();
+    if (busy) kick(); else lastFrame = 0;
+  }
+  function resizeAll() { scenes.forEach(sc => { setup(sc); render(sc); }); drawProgress(true); }
 
   const vis = new IntersectionObserver(entries => entries.forEach(e => {
     const sc = scenes.find(s => s.el === e.target);
-    if (sc) sc.visible = e.isIntersecting;
-  }), { rootMargin: '100px 0px' });
-  scenes.forEach(sc => vis.observe(sc.el));
+    if (!sc) return;
+    sc.visible = e.isIntersecting;
+    if (sc.visible && sc.def.once && sc.start === null) sc.start = nowS();
+    if (sc.visible) { render(sc); kick(); }
+  }), { rootMargin: '0px 0px -10% 0px' });
+  scenes.forEach(sc => {
+    if (sc.def.intro) sc.start = nowS();
+    vis.observe(sc.el);
+  });
 
   /* ---------- Pixel scroll progress bar ---------- */
   const bar = document.querySelector('.px-progress');
@@ -403,7 +381,7 @@
     }
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? clamp01(scrollY / max) : 0;
-    const y0 = (G - scrollY % G) % G;                // keep the row on the page grid
+    const y0 = (G - scrollY % G) % G;
     if (!force && Math.abs(p - lastBarP) < 0.0005 && y0 === lastBarY) return;
     lastBarP = p; lastBarY = y0;
     const cols = Math.ceil(barW / G), filled = Math.round(p * cols);
@@ -413,20 +391,34 @@
   }
 
   /* ---------- Input ---------- */
-  const hero = document.querySelector('.band-hero');
-  if (hero) {
-    hero.addEventListener('pointermove', e => {
-      const r = hero.getBoundingClientRect();
+  addEventListener('scroll', () => { scrolled = true; kick(); }, { passive: true });
+
+  // Hero organism stirs under the mouse (desktop only), and rests again after.
+  const heroBand = document.querySelector('.band-hero');
+  const heroScene = scenes.find(sc => sc.def.intro);
+  if (heroBand && heroScene && fine && !reduce) {
+    heroBand.addEventListener('pointermove', e => {
+      const r = heroBand.getBoundingClientRect();
       const x = e.clientX - r.left, y = e.clientY - r.top;
       if (mouse.x < 0) { mouse.x = x; mouse.y = y; }
       mouse.tx = x; mouse.ty = y; mouse.tamp = 1;
+      heroScene.until = nowS() + 0.6;
+      kick();
     });
-    hero.addEventListener('pointerleave', () => { mouse.tamp = 0; });
+    heroBand.addEventListener('pointerleave', () => { mouse.tamp = 0; heroScene.until = nowS() + 1.2; kick(); });
   }
+
+  // Cards: the pixel artwork re-assembles on hover (Level 1 feedback).
+  if (fine && !reduce) document.querySelectorAll('.card').forEach(card => {
+    const sc = scenes.find(s => card.contains(s.el) && s.def.replay);
+    if (!sc) return;
+    card.addEventListener('pointerenter', () => { sc.start = nowS() - sc.def.once * 0.35; kick(); });
+  });
 
   let resizeT;
   addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(resizeAll, 120); });
   resizeAll();
+  kick();
   // Layout settles after fonts and images: re-align the canvases to the grid then.
   if (document.fonts) document.fonts.ready.then(resizeAll);
   addEventListener('load', resizeAll);
@@ -436,25 +428,6 @@
     bodyH = document.body.offsetHeight;
     clearTimeout(resizeT); resizeT = setTimeout(resizeAll, 120);
   }).observe(document.body);
-
-  if (!reduce) {
-    let last = 0;
-    const loop = ts => {
-      mouse.x += (mouse.tx - mouse.x) * 0.08;
-      mouse.y += (mouse.ty - mouse.y) * 0.08;
-      mouse.amp += (mouse.tamp - mouse.amp) * 0.05;
-      if (ts - last > 33) { // ~30 fps is plenty for pixel art
-        last = ts;
-        const t = now();
-        scenes.forEach(sc => { if (sc.visible) render(sc, t, false); });
-        drawProgress(false);
-      }
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
-  } else {
-    addEventListener('scroll', () => drawProgress(false), { passive: true });
-  }
 
   /* ---------- Contact address (set once on <body data-contact>) ---------- */
   const CONTACT = document.body.dataset.contact || 'info@ylvalabs.de';
@@ -495,7 +468,7 @@
       }
       lines.push('Betrieb:', 'Bestehende Website (falls vorhanden):', 'Ort:', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
       send.href = mailto(`Website-Anfrage: ${branche}`, lines.join('\n'));
-      send.lastChild.textContent = n ? 'Anfrage mit Auswahl vorbereiten' : 'Anfrage vorbereiten';
+      send.querySelector('.btn-text').textContent = n ? 'Anfrage mit Auswahl vorbereiten' : 'Anfrage vorbereiten';
     };
 
     tabs.forEach(tab => tab.addEventListener('click', () => {
@@ -511,7 +484,7 @@
 
   /* ---------- Portfolio: load the live site only on wide screens, near the viewport ---------- */
   const frame = document.getElementById('safari-frame');
-  if (frame && matchMedia('(min-width:721px)').matches) {
+  if (frame && !small) {
     new IntersectionObserver(([e], obs) => {
       if (!e.isIntersecting) return;
       frame.src = frame.dataset.src;
@@ -521,8 +494,8 @@
 
   /* ---------- Portfolio: centre the Safari window once you start using it ---------- */
   const safari = document.querySelector('.safari');
-  let autoScrolling = false;
-  if (safari && matchMedia('(min-width:721px)').matches) {
+  if (safari && !small) {
+    let autoScrolling = false;
     const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     const centre = () => {
       const r = safari.getBoundingClientRect();
@@ -548,242 +521,19 @@
     safari.addEventListener('focusin', centre);
   }
 
-  /* ---------- Pixel games: on the background layer, behind all content ---------- */
-  // Sprites: '#' = main colour, 'w' = white, 'b' = ink, anything else = off.
-  const SPRITES = {
-    pacOpen: ['....#####....', '..#########..', '.###########.', '.#########...', '#########....', '########.....',
-      '#######......', '########.....', '#########....', '.#########...', '.###########.', '..#########..', '....#####....'],
-    pacShut: ['....#####....', '..#########..', '.###########.', '.###########.', '#############', '#############',
-      '#############', '#############', '#############', '.###########.', '.###########.', '..#########..', '....#####....'],
-    ghostA: ['.....####.....', '...########...', '..##########..', '.##ww####ww##.', '.#wwww##wwww#.', '.#wwbb##wwbb#.',
-      '##wwbb##wwbb##', '###ww####ww###', '##############', '##############', '##############', '##############',
-      '##.###..###.##', '#...##..##...#'],
-    ghostB: ['.....####.....', '...########...', '..##########..', '.##ww####ww##.', '.#wwww##wwww#.', '.#wwbb##wwbb#.',
-      '##wwbb##wwbb##', '###ww####ww###', '##############', '##############', '##############', '##############',
-      '###.##..##.###', '.#..#....#..#.'],
-    invA: ['..#.....#..', '...#...#...', '..#######..', '.##.###.##.', '###########', '#.#######.#', '#.#.....#.#', '...##.##...'],
-    invB: ['..#.....#..', '#..#...#..#', '#.#######.#', '###.###.###', '###########', '.#########.', '..#.....#..', '.#.......#.']
-  };
-  // 3x5 pixel digits for the score pop-ups.
-  const GLYPHS = { '+': ['...', '.#.', '###', '.#.', '...'], 0: ['###', '#.#', '#.#', '#.#', '###'], 1: ['.#.', '##.', '.#.', '.#.', '###'],
-    2: ['###', '..#', '###', '#..', '###'], 5: ['###', '#..', '###', '..#', '###'] };
-  const PAC = '#f6d36d', INK = '#1d2126';
-  const GHOSTS = ['#2f5bd3', ON, '#9fd4ff', '#8a929c'];
-  const TETRO = [
-    [[0, 0], [1, 0], [2, 0], [3, 0]], [[0, 0], [1, 0], [0, 1], [1, 1]], [[0, 0], [1, 0], [2, 0], [1, 1]],
-    [[1, 0], [2, 0], [0, 1], [1, 1]], [[0, 0], [1, 0], [1, 1], [2, 1]], [[0, 0], [0, 1], [1, 1], [2, 1]], [[2, 0], [0, 1], [1, 1], [2, 1]]
-  ];
-  const TCOL = ['#9fd4ff', '#f6d36d', ON, '#2f5bd3', '#1d2126', '#8a929c', '#9fd4ff'];
-
-  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
-  let wake = () => {};
-  if (!reduce && fine) {
-    const makeLayer = cls => {
-      const cv = document.createElement('canvas');
-      cv.className = cls;
-      cv.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(cv);
-      return [cv, cv.getContext('2d')];
-    };
-    const [play, pctx] = makeLayer('px-play');      // behind everything
-    const sizeLayers = () => {
-      const d = Math.min(devicePixelRatio || 1, 2);
-      play.width = Math.round(innerWidth * d); play.height = Math.round(innerHeight * d); pctx.dpr = d;
-    };
-    sizeLayers();
-    addEventListener('resize', sizeLayers);
-
-    // All actors live in page coordinates and are snapped to the page grid.
-    const ctx = pctx;
-    const px = (c, x, y) => fill(ctx, c, snap(x), snap(y) - scrollY, G - 1);
-    const onScreen = y => y > scrollY - 200 && y < scrollY + innerHeight + 200;
-    const drawSprite = (rows, color, x, y, flip = false) => {
-      const w = rows[0].length;
-      rows.forEach((row, j) => [...row].forEach((ch, i) => {
-        const c = ch === '#' ? color : ch === 'w' ? '#fff' : ch === 'b' ? INK : null;
-        if (c) px(c, x + (flip ? w - 1 - i : i) * G, y + j * G);
-      }));
-    };
-    const drawText = (text, x, y, color) => {
-      const w = text.length * 4 * G;
-      [...text].forEach((ch, k) => (GLYPHS[ch] || []).forEach((row, j) => [...row].forEach((c, i) => {
-        if (c === '#') px(color, x - w / 2 + (k * 4 + i) * G, y + j * G);
-      })));
-    };
-
-    const actors = [];
-    const spawn = (...list) => { actors.push(...list); wake(); };
-
-    // A single falling pixel. Blinks out at the end of its life (never fades: 1-bit).
-    function particle(x, y, vx, vy, c, life = 0.9 + Math.random() * 0.6) {
-      let t = 0;
-      return {
-        step(dt) { t += dt; vy += 900 * dt; x += vx * dt; y += vy * dt; return t < life && y < scrollY + innerHeight + 40; },
-        draw() { if (life - t > 0.25 || Math.floor(t * 16) % 2) px(c, x, y); }
-      };
-    }
-    const shatter = (rows, color, x, y, power = 1) => rows.forEach((row, j) => [...row].forEach((ch, i) => {
-      if (ch !== '#') return;
-      const a = Math.random() * Math.PI * 2, v = (120 + Math.random() * 260) * power;
-      spawn(particle(x + i * G, y + j * G, Math.cos(a) * v, Math.sin(a) * v - 180, color));
-    }));
-    function score(x, y, text) {
-      let t = 0;
-      return { step(dt) { t += dt; y -= 30 * dt; return t < 0.9; }, draw() { drawText(text, x, y, INK); } };
-    }
-
-    // Pac-Man eats a line of dots, two ghosts give chase.
-    function pacman(x, y, dir) {
-      const cy = y - 6 * G, speed = 300, dots = [];
-      for (let d = x + dir * 4 * G; d > -G && d < innerWidth + G; d += dir * 5 * G) dots.push(d);
-      let p = x - dir * 6 * G, t = 0;
-      const ghosts = [0, 1].map(k => ({ x: p - dir * (22 + k * 18) * G, c: GHOSTS[k * 2 + (Math.random() * 2 | 0)] }));
-      return {
-        step(dt) {
-          t += dt; p += dir * speed * dt;
-          ghosts.forEach(g => { g.x += dir * speed * 0.93 * dt; });
-          const mouth = p + dir * 6 * G;
-          while (dots.length && (dir > 0 ? dots[0] <= mouth : dots[0] >= mouth)) dots.shift();
-          const lastGhost = ghosts[ghosts.length - 1].x;
-          return dir > 0 ? lastGhost < innerWidth + 20 * G : lastGhost > -20 * G;
-        },
-        draw() {
-          if (!onScreen(y)) return;
-          dots.forEach(d => px(INK, d, y));
-          drawSprite(Math.floor(t * 9) % 2 ? SPRITES.pacShut : SPRITES.pacOpen, PAC, p - 6 * G, cy, dir < 0);
-          const gf = Math.floor(t * 6) % 2 ? SPRITES.ghostB : SPRITES.ghostA;
-          ghosts.forEach(g => drawSprite(gf, g.c, g.x - 7 * G, cy - G, dir < 0));
-        }
-      };
-    }
-
-    // A tetromino drops in steps, rotates once, lands and crumbles. Blocks are 4x4 grid pixels.
-    function tetris(x, y) {
-      const C = 4 * G;
-      let cells = TETRO[(Math.random() * TETRO.length) | 0].map(c => c.slice());
-      const color = TCOL[(Math.random() * TCOL.length) | 0];
-      const floor = Math.round(y / C) * C;
-      let topY = floor - 7 * C, acc = 0, landed = 0, rotated = false;
-      const x0 = Math.round(x / C) * C - C;
-      const height = () => Math.max(...cells.map(c => c[1])) + 1;
-      return {
-        step(dt) {
-          if (landed) {
-            landed += dt;
-            if (landed < 0.45) return true;
-            cells.forEach(([i, j]) => {
-              for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) if ((a + b) % 2 === 0)
-                spawn(particle(x0 + i * C + a * G, topY + j * C + b * G, (Math.random() - 0.5) * 240, -Math.random() * 260, color));
-            });
-            return false;
-          }
-          acc += dt;
-          while (acc > 0.07) {
-            acc -= 0.07;
-            if (!rotated && topY > floor - 4 * C) { cells = cells.map(([i, j]) => [2 - j, i]); rotated = true; }
-            if (topY + height() * C >= floor) { topY = floor - height() * C; landed = 0.0001; break; }
-            topY += C / 2;
-          }
-          return true;
-        },
-        draw() {
-          const flash = landed && Math.floor(landed * 14) % 2;
-          cells.forEach(([i, j]) => {
-            for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++)
-              px(flash || (a === 0 && b === 0) ? '#fff' : color, x0 + i * C + a * G, topY + j * C + b * G);
-          });
-        }
-      };
-    }
-
-    // A space invader wiggles, a laser comes up from the bottom and pops it.
-    function invader(x, y) {
-      const ix = x - 5 * G, iy = y - 4 * G;
-      let t = 0, beam = null, hit = false;
-      return {
-        step(dt) {
-          t += dt;
-          if (t > 0.8 && !hit) {
-            if (beam === null) beam = scrollY + innerHeight;
-            beam -= 1800 * dt;
-            if (beam <= iy + 8 * G) {
-              hit = true;
-              shatter(SPRITES.invA, INK, ix, iy);
-              spawn(score(x, iy - 6 * G, '+100'));
-            }
-          }
-          return !hit;
-        },
-        draw() {
-          if (beam !== null) for (let yy = beam; yy < beam + 14 * G; yy += G) px(ON, x, yy);
-          drawSprite(Math.floor(t * 3) % 2 ? SPRITES.invB : SPRITES.invA, INK, ix + (Math.floor(t * 3) % 2) * G, iy);
-        }
-      };
-    }
-
-    // Pixel firework.
-    function burst(x, y) {
-      for (let k = 0; k < 28; k++) {
-        const a = (k / 28) * Math.PI * 2, v = 220 + (k % 3) * 90;
-        spawn(particle(x, y, Math.cos(a) * v, Math.sin(a) * v - 120, HERO[k % HERO.length]));
-      }
-      return { step: () => false, draw() {} };
-    }
-
-    const GAMES = [(x, y) => pacman(x, y, x < innerWidth / 2 ? 1 : -1), tetris, invader, burst];
-    let gameIdx = 0;
-    const playAt = (x, y) => spawn(GAMES[gameIdx++ % GAMES.length](x, y));
-
-    const hint = document.createElement('div');
-    hint.className = 'play-hint';
-    hint.setAttribute('aria-hidden', 'true');
-    hint.innerHTML = '<i></i>Tipp: Klickt mal ins Leere';
-    document.body.appendChild(hint);
-    const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
-    const played = () => { hint.classList.remove('show'); store('ylva-played', '1'); };
-    if (!store('ylva-played')) {
-      setTimeout(() => hint.classList.add('show'), 5000);
-      setTimeout(() => hint.classList.remove('show'), 17000);
-    }
-
-    // Nothing spawns in the hero (pixel organism + headline); keep a margin below it.
-    const heroCopy = document.querySelector('.hero-copy');
-    const heroEnd = () => heroCopy ? heroCopy.getBoundingClientRect().bottom + scrollY + 150 : 0;
-
-    const SKIP = 'a,button,input,textarea,select,label,summary,iframe,img,p,h1,h2,h3,li,figcaption,small,b,.pill,.btn,.finder-box,.safari';
-    document.addEventListener('click', e => {
-      if (e.button !== 0 || e.defaultPrevented) return;
-      if (e.target.closest(SKIP) || String(getSelection()).length) return;
-      if (e.clientY + scrollY < heroEnd()) return;
-      playAt(e.clientX, e.clientY + scrollY);
-      played();
+  /* ---------- Footer "play": pixel games, loaded only when asked for ---------- */
+  const playBtn = document.getElementById('play');
+  if (playBtn && fine && !reduce) {
+    playBtn.hidden = false;
+    let show = null;
+    playBtn.addEventListener('click', () => {
+      if (show) { show(playBtn.parentElement); return; }
+      window.YLVA = { G, snap, fill, ON, HERO };
+      const s = document.createElement('script');
+      s.src = playBtn.dataset.src;
+      s.onload = () => { show = window.YLVA_GAMES; if (show) show(playBtn.parentElement); };
+      document.head.appendChild(s);
     });
-
-    // Footer "play" button: a little show on top of the rubble.
-    const playBtn = document.getElementById('play');
-    if (playBtn) {
-      playBtn.hidden = false;
-      playBtn.addEventListener('click', () => {
-        const r = playBtn.parentElement.getBoundingClientRect(), y = r.top + scrollY;
-        spawn(pacman(-4 * G, y + 10 * G, 1));
-        for (let k = 0; k < 5; k++) setTimeout(() => spawn(tetris(innerWidth * (0.1 + Math.random() * 0.8), y + 12 * G)), 300 + k * 350);
-        setTimeout(() => spawn(invader(innerWidth * (0.25 + Math.random() * 0.5), y - 20 * G)), 1200);
-        played();
-      });
-    }
-
-    // The layer only animates while something is playing.
-    let lastT = 0, running = false;
-    const frame = ts => {
-      const dt = Math.min(0.05, (ts - lastT) / 1000);
-      lastT = ts;
-      pctx.clearRect(0, 0, play.width, play.height);
-      for (let i = actors.length - 1; i >= 0; i--) if (!actors[i].step(dt)) actors.splice(i, 1);
-      actors.forEach(a => a.draw());
-      if (actors.length) requestAnimationFrame(frame);
-      else { running = false; pctx.clearRect(0, 0, play.width, play.height); }
-    };
-    wake = () => { if (running) return; running = true; lastT = performance.now(); requestAnimationFrame(frame); };
   }
 
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */
@@ -802,16 +552,16 @@
     if (contactSec) new IntersectionObserver(([e]) => { atContact = e.isIntersecting; sync(); }).observe(contactSec);
   }
 
-  /* ---------- Scroll reveal ---------- */
+  /* ---------- Reveal: fade + 12px lift, once; section marks pop in with it ---------- */
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
       e.target.classList.add('in');
       io.unobserve(e.target);
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
   document.querySelectorAll('.reveal').forEach((el, i) => {
-    el.style.transitionDelay = (i % 3) * 70 + 'ms';
+    el.style.setProperty('--stagger', (i % 4) * 60 + 'ms');
     io.observe(el);
   });
 })();

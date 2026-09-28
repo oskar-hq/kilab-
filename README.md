@@ -12,8 +12,10 @@ datenschutz.html    Datenschutzerklärung (gelb markierte Platzhalter ausfüllen
 404.html            Fehlerseite (GitHub Pages nutzt sie automatisch)
 favicon.ico/.svg    Favicon (Bildmarke)
 site.webmanifest    Icons für Homescreen / Android
-assets/style.css    Design-Tokens & Layout (siehe DESIGN.md)
-assets/main.js      Pixel-Szenen (Hero-Organismus, Flow, Modell-Band, Kartenbilder, Footer-Balken)
+assets/style.css    Design-Tokens, Layout und Animations-Ebenen L0–L3 (siehe Kommentar im CSS)
+assets/main.js      Seitenlogik + Pixel-Szenen (Hero, Ablauf, Kartenbilder, Footer). Nichts läuft dauerhaft:
+                    gezeichnet wird nur bei Scroll, Hover oder einer kurzen Einmal-Animation.
+assets/games.js     Pixel-Spiele für den „play“-Button im Footer (wird erst beim Klick geladen)
 assets/icons/       Bildmarke (mark.svg), PNG-Icons, Open-Graph-Bild (og-image.png)
 assets/fonts/       Inter Tight, selbst gehostet (SIL OFL 1.1) – keine Google-Fonts-Anfragen
 .nojekyll           GitHub Pages liefert die Dateien unverändert aus
