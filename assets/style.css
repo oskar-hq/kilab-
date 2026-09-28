@@ -167,6 +167,7 @@ svg rect{fill:var(--px)}
 .hero-copy{padding:clamp(35px,5vw,70px) 0 clamp(70px,8vw,112px)}
 .hero-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:28px 14px;align-items:end}
 .hero-title{grid-column:1/8;margin:0;font-weight:500;font-size:clamp(40px,5.6vw,84px);line-height:.95;letter-spacing:-.035em;hyphens:manual}
+.hero-sub{display:block;color:var(--grey-2)}
 .hero-side{grid-column:8/13;display:flex;flex-direction:column;gap:21px;font-size:15px;line-height:1.55;color:var(--body)}
 .hero-ctas{display:flex;flex-wrap:wrap;gap:8px}
 .hero-facts{grid-column:1/13;list-style:none;margin:21px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 21px}

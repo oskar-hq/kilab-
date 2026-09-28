@@ -1,6 +1,6 @@
 # Ylva Labs
 
-Landingpage für ein regionales KI-Innovation-Lab / Venture Builder in Schleswig-Holstein.
+Landingpage von Ylva Labs – „Digitalisierung für Angeln. Schleswig-Holstein.“ Aktueller Fokus: Websites für Betriebe aus der Region, KI-Projekte als nächster Schritt.
 Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeignet.
 
 ## Struktur
