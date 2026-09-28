@@ -759,6 +759,10 @@
       setTimeout(() => hint.classList.remove('show'), 17000);
     }
 
+    // Nothing spawns in the hero (pixel organism + headline); keep a margin below it.
+    const heroCopy = document.querySelector('.hero-copy');
+    const heroEnd = () => heroCopy ? heroCopy.getBoundingClientRect().bottom + scrollY + 150 : 0;
+
     const SKIP = 'a,button,input,textarea,select,label,summary,iframe,img,p,h1,h2,h3,li,figcaption,small,b,.pill,.btn,.finder-box,.safari';
     document.addEventListener('click', e => {
       if (e.button !== 0 || e.defaultPrevented) return;
@@ -774,14 +778,17 @@
         return;
       }
       if (e.target.closest(SKIP) || String(getSelection()).length) return;
+      if (e.clientY + scrollY < heroEnd()) return;
       playAt(e.clientX, e.clientY + scrollY);
       played();
     });
 
-    // Now and then (every 35–65 s) a game starts by itself somewhere on screen.
+    // Now and then (every 35–65 s) a game starts by itself somewhere on screen,
+    // but never in the hero: only in the visible part below it.
     const auto = () => {
-      if (!document.hidden && actors.length < 40) {
-        const x = innerWidth * (0.12 + Math.random() * 0.76), y = scrollY + innerHeight * (0.3 + Math.random() * 0.5);
+      const lo = Math.max(scrollY + innerHeight * 0.3, heroEnd()), hi = scrollY + innerHeight * 0.8;
+      if (!document.hidden && actors.length < 40 && hi - lo > 60) {
+        const x = innerWidth * (0.12 + Math.random() * 0.76), y = lo + Math.random() * (hi - lo);
         if (Math.random() < 0.3) spawn(pacman(-4 * G, y, 1));
         else playAt(x, y);
       }
