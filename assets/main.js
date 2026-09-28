@@ -295,14 +295,15 @@
       }
     },
 
-    // Footer marquee: the slogan as big pixel letters, sliding left one grid cell at a time.
+    // Footer marquee: the slogan as big pixel letters; it slides one grid cell per few px of scrolling.
     marquee: {
-      time: true,
+      scroll: true,
+      progress: () => scrollY / 1000,                     // moves only while the page scrolls
       draw(ctx, w, h, t, el) {
         const bm = marqueeBitmap(el.dataset.text || '');
         if (!bm.w) return;
         const rows = bm.h, cols = Math.ceil(w / G) + 1;
-        const off = reduce ? 0 : Math.floor(t * 9);
+        const off = reduce ? 0 : Math.floor(scrollY / 4);
         const y0 = Math.max(0, Math.floor((h / G - rows) / 2));
         for (let c = 0; c < cols; c++) {
           const bc = (c + off) % bm.w;
@@ -575,6 +576,7 @@
   const TCOL = ['#9fd4ff', '#f6d36d', ON, '#2f5bd3', '#1d2126', '#8a929c', '#9fd4ff'];
 
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  let wake = () => {};
   if (!reduce && fine) {
     const makeLayer = cls => {
       const cv = document.createElement('canvas');
@@ -584,16 +586,15 @@
       return [cv, cv.getContext('2d')];
     };
     const [play, pctx] = makeLayer('px-play');      // behind everything
-    const [top, tctx] = makeLayer('px-cursor');     // the cursor circle, above
     const sizeLayers = () => {
       const d = Math.min(devicePixelRatio || 1, 2);
-      [[play, pctx], [top, tctx]].forEach(([cv, cx]) => { cv.width = Math.round(innerWidth * d); cv.height = Math.round(innerHeight * d); cx.dpr = d; });
+      play.width = Math.round(innerWidth * d); play.height = Math.round(innerHeight * d); pctx.dpr = d;
     };
     sizeLayers();
     addEventListener('resize', sizeLayers);
 
     // All actors live in page coordinates and are snapped to the page grid.
-    let ctx = pctx;
+    const ctx = pctx;
     const px = (c, x, y) => fill(ctx, c, snap(x), snap(y) - scrollY, G - 1);
     const onScreen = y => y > scrollY - 200 && y < scrollY + innerHeight + 200;
     const drawSprite = (rows, color, x, y, flip = false) => {
@@ -611,7 +612,7 @@
     };
 
     const actors = [];
-    const spawn = (...list) => actors.push(...list);
+    const spawn = (...list) => { actors.push(...list); wake(); };
 
     // A single falling pixel. Blinks out at the end of its life (never fades: 1-bit).
     function particle(x, y, vx, vy, c, life = 0.9 + Math.random() * 0.6) {
@@ -771,62 +772,18 @@
       });
     }
 
-    /* Cursor circle: a pixel ring that springs after the mouse, stretches with
-       speed and fills over links. It is born inside the hero organism. */
-    const cur = { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, on: false, hot: false, r: 3 };
-    const heroBand = document.querySelector('.band-hero');
-    addEventListener('pointermove', e => {
-      if (e.pointerType !== 'mouse') return;
-      if (!cur.on) {
-        const r = heroBand ? heroBand.getBoundingClientRect() : { left: e.clientX, top: e.clientY, width: 0, height: 0 };
-        cur.x = r.left + r.width * 0.45; cur.y = r.top + r.height * 0.5;
-        if (heroBand && r.bottom < 0) { cur.x = e.clientX; cur.y = e.clientY; }
-        cur.on = true;
-      }
-      cur.tx = e.clientX; cur.ty = e.clientY;
-      cur.hot = !!e.target.closest('a,button,label,summary,input,textarea');
-    }, { passive: true });
-    document.addEventListener('mouseleave', () => { cur.on = false; });
-    if (safari) {
-      // Mouse events stop at the iframe edge; hide the ring over the live site.
-      safari.querySelector('.safari-screen').addEventListener('mouseenter', () => { cur.on = false; });
-    }
-    function drawCursor(dt) {
-      if (!cur.on) return;
-      const k = Math.min(1, dt * 60);
-      cur.vx = (cur.vx + (cur.tx - cur.x) * 0.16 * k) * Math.pow(0.7, k);
-      cur.vy = (cur.vy + (cur.ty - cur.y) * 0.16 * k) * Math.pow(0.7, k);
-      cur.x += cur.vx * k; cur.y += cur.vy * k;
-      cur.r += ((cur.hot ? 4.4 : 3) - cur.r) * 0.2 * k;
-      const speed = Math.hypot(cur.vx, cur.vy);
-      const st = Math.min(1.9, 1 + speed * 0.035);
-      const ang = Math.atan2(cur.vy, cur.vx), ca = Math.cos(ang), sa = Math.sin(ang);
-      const a = cur.r * st, b = cur.r / Math.sqrt(st), n = Math.ceil(a + 1);
-      const cx = Math.round(cur.x / G), cy = Math.round((cur.y + scrollY) / G);
-      ctx = tctx; ctx.fillStyle = ON;
-      for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
-        const u = i * ca + j * sa, v = -i * sa + j * ca;
-        const d = (u / a) ** 2 + (v / b) ** 2;
-        if (d > 1) continue;
-        const inner = (u / Math.max(0.1, a - 1.2)) ** 2 + (v / Math.max(0.1, b - 1.2)) ** 2;
-        if (!cur.hot && inner < 1) continue;
-        px(null, (cx + i) * G, (cy + j) * G);
-      }
-    }
-
-    let lastT = performance.now();
+    // The layer only animates while something is playing.
+    let lastT = 0, running = false;
     const frame = ts => {
       const dt = Math.min(0.05, (ts - lastT) / 1000);
       lastT = ts;
       pctx.clearRect(0, 0, play.width, play.height);
-      tctx.clearRect(0, 0, top.width, top.height);
       for (let i = actors.length - 1; i >= 0; i--) if (!actors[i].step(dt)) actors.splice(i, 1);
-      ctx = pctx;
       actors.forEach(a => a.draw());
-      drawCursor(dt);
-      requestAnimationFrame(frame);
+      if (actors.length) requestAnimationFrame(frame);
+      else { running = false; pctx.clearRect(0, 0, play.width, play.height); }
     };
-    requestAnimationFrame(frame);
+    wake = () => { if (running) return; running = true; lastT = performance.now(); requestAnimationFrame(frame); };
   }
 
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */

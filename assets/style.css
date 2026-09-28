@@ -276,9 +276,8 @@ svg rect{fill:var(--px)}
 .showcase-foot h3{margin:0 0 4px;font-weight:500;font-size:18px}
 .showcase-foot p{font-size:14px;color:var(--body)}
 
-/* Pixel games layer: behind all content, on the page grid. Cursor ring above. */
+/* Pixel games layer: behind all content, on the page grid */
 .px-play{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
-.px-cursor{position:fixed;inset:0;width:100vw;height:100vh;z-index:46;pointer-events:none}
 .play-hint{position:fixed;left:16px;bottom:16px;z-index:44;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--ink);color:var(--paper);font:400 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.08em;border-radius:999px;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none}
 .play-hint.show{opacity:1;transform:none}
 .play-hint i{width:8px;height:8px;background:#f6d36d}
