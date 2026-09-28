@@ -778,16 +778,16 @@
       played();
     });
 
-    // Games also start by themselves every few seconds, somewhere on screen.
+    // Now and then (every 35–65 s) a game starts by itself somewhere on screen.
     const auto = () => {
       if (!document.hidden && actors.length < 40) {
         const x = innerWidth * (0.12 + Math.random() * 0.76), y = scrollY + innerHeight * (0.3 + Math.random() * 0.5);
         if (Math.random() < 0.3) spawn(pacman(-4 * G, y, 1));
         else playAt(x, y);
       }
-      setTimeout(auto, 6000 + Math.random() * 7000);
+      setTimeout(auto, 35000 + Math.random() * 30000);
     };
-    setTimeout(auto, 3500);
+    setTimeout(auto, 15000);
 
     // Footer "play" button: a little show on top of the rubble.
     const playBtn = document.getElementById('play');
