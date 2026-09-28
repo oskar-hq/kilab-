@@ -121,6 +121,32 @@
   };
   const mouse = { x: -1, y: -1, tx: -1, ty: -1, amp: 0, tamp: 0 };
 
+  // Mostly the pixel blue, with a few accents; fixed per cell so colours travel with the shape.
+  const PALETTE = [[0.62, ON], [0.76, '#2f5bd3'], [0.86, '#9fd4ff'], [0.95, '#1d2126'], [1, '#f6d36d']];
+  const pick = (c, r) => { const v = hash(c * 13 + 5, r * 7 + 1); return PALETTE.find(([q]) => v <= q)[1]; };
+
+  // Text -> 1-bit bitmap on the grid: render small, sample the alpha.
+  const bitmaps = new Map();
+  let fontsReady = !document.fonts;
+  if (document.fonts) document.fonts.ready.then(() => { fontsReady = true; bitmaps.clear(); });
+  function marqueeBitmap(text) {
+    if (bitmaps.has(text)) return bitmaps.get(text);
+    const H = 21, cv = document.createElement('canvas'), c2 = cv.getContext('2d', { willReadFrequently: true });
+    const font = '600 20px "Inter Tight", ui-sans-serif, system-ui, sans-serif';
+    c2.font = font;
+    if ('letterSpacing' in c2) c2.letterSpacing = '1px';
+    const W = Math.ceil(c2.measureText(text).width) + 4;
+    cv.width = W; cv.height = H;
+    c2.font = font; if ('letterSpacing' in c2) c2.letterSpacing = '1px'; c2.textBaseline = 'alphabetic'; c2.fillStyle = '#000';
+    c2.fillText(text, 1, 16);
+    c2.strokeStyle = '#000'; c2.lineWidth = 0.5; c2.strokeText(text, 1, 16);   // a touch bolder
+    const data = c2.getImageData(0, 0, W, H).data, on = new Uint8Array(W * H);
+    for (let i = 0; i < W * H; i++) on[i] = data[i * 4 + 3] > 120 ? 1 : 0;
+    const bm = { w: W, h: H, on };
+    if (fontsReady) bitmaps.set(text, bm);
+    return bm;
+  }
+
   const SCENES = {
     // A living pixel organism: a domain-warped noise field grows, splits and
     // re-forms along a diagonal. Scrolling away dissolves it. 1-bit only:
@@ -269,17 +295,42 @@
       }
     },
 
-    // Footer equaliser bars; they rise as the footer comes into view.
-    bars: {
+    // Footer marquee: the slogan as big pixel letters, sliding left one grid cell at a time.
+    marquee: {
+      time: true,
+      draw(ctx, w, h, t, el) {
+        const bm = marqueeBitmap(el.dataset.text || '');
+        if (!bm.w) return;
+        const rows = bm.h, cols = Math.ceil(w / G) + 1;
+        const off = reduce ? 0 : Math.floor(t * 9);
+        const y0 = Math.max(0, Math.floor((h / G - rows) / 2));
+        for (let c = 0; c < cols; c++) {
+          const bc = (c + off) % bm.w;
+          for (let r = 0; r < rows; r++) {
+            if (!bm.on[r * bm.w + bc]) continue;
+            fill(ctx, pick(bc, r), c * G, (y0 + r) * G, G - 1);
+          }
+        }
+      }
+    },
+
+    // Footer rubble: stacks of coloured pixels that rise as the footer comes in; a few flicker.
+    rubble: {
       time: true, scroll: true,
       draw(ctx, w, h, t, el, p) {
-        const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
-        const rise = 0.15 + 0.85 * ease(p);
-        ctx.fillStyle = ON;
+        const cols = Math.ceil(w / G), rows = Math.floor(h / G);
+        const rise = 0.1 + 0.9 * ease(p), flick = Math.floor(t * 2);
         for (let c = 0; c < cols; c++) {
-          const wave = (Math.sin(c * 0.12 + t * 1.1) + Math.sin(c * 0.031 - t * 0.6) + 2) / 4;
-          const height = Math.round(rows * rise * clamp01(0.1 + wave * 0.9 * (0.35 + hash(c, 1) * 0.65)));
-          for (let r = 0; r < height; r++) fill(ctx, null, c * S, (rows - 1 - r) * S, s);
+          const n = hash(Math.floor(c / 3), 11);             // clumps of neighbouring columns
+          if (n < 0.12) continue;
+          const peak = Math.pow(hash(c, 7), 1.7) * (0.3 + n * 0.7);
+          const height = Math.round(rows * rise * peak) + (hash(c, 3) < 0.7 ? 1 + (hash(c, 4) * 3 | 0) : 0);
+          for (let r = 0; r < height; r++) {
+            if (hash(c, r + 50) < 0.12) continue;            // holes in the pile
+            fill(ctx, pick(c * 7, r), c * G, (rows - 1 - r) * G, G - 1);
+          }
+          if (height > 2 && hash(c, 99) > 0.93 && hash(c, flick) > 0.5)   // loose pixel hovering on top
+            fill(ctx, pick(c, 3), c * G, (rows - 3 - height) * G, G - 1);
         }
       }
     },
@@ -737,6 +788,19 @@
       setTimeout(auto, 6000 + Math.random() * 7000);
     };
     setTimeout(auto, 3500);
+
+    // Footer "play" button: a little show on top of the rubble.
+    const playBtn = document.getElementById('play');
+    if (playBtn) {
+      playBtn.hidden = false;
+      playBtn.addEventListener('click', () => {
+        const r = playBtn.parentElement.getBoundingClientRect(), y = r.top + scrollY;
+        spawn(pacman(-4 * G, y + 10 * G, 1));
+        for (let k = 0; k < 5; k++) setTimeout(() => spawn(tetris(innerWidth * (0.1 + Math.random() * 0.8), y + 12 * G)), 300 + k * 350);
+        setTimeout(() => spawn(invader(innerWidth * (0.25 + Math.random() * 0.5), y - 20 * G)), 1200);
+        played();
+      });
+    }
 
     /* Cursor circle: a pixel ring that springs after the mouse, stretches with
        speed and fills over links. It is born inside the hero organism. */
