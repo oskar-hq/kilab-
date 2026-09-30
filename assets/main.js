@@ -1,8 +1,8 @@
 /* Ylva Labs – page behaviour.
-   Motion principle: calm by default. The one thing that lives on its own is the
-   pixel organism in the hero, and only while it is on screen. Every other canvas
-   redraws only on scroll, on hover, or during a short one-shot animation when it
-   first comes into view. */
+   Motion principle: calm by default. Two things live on their own, and only while
+   they are on screen: the pixel organism in the hero and the slogan in the footer.
+   Every other canvas redraws only on scroll, on hover, or during a short one-shot
+   animation when it first comes into view. */
 (() => {
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -155,10 +155,49 @@
     return out;
   };
 
+  // Footer marquee: speed in pixel columns per second, and the pixels that dance.
+  // Time is cut into windows of DANCE_WINDOW seconds, each holding one or two events at
+  // random moments: irregular, but never quiet for long. In an event a pixel on the edge
+  // of a letter hops or floats off the top, or drops off the bottom, and falls back into
+  // line; sometimes a few neighbours along the edge join in. Everything follows from
+  // the clock, so nothing has to be stored between frames.
+  const MARQUEE_SPEED = 9, DANCE_WINDOW = 2.5, DANCE_MAX = 1.6;
+  // The top (or bottom) lit pixel of a bitmap column, -1 for an empty column.
+  const edgeRow = (bm, col, fromTop) => {
+    for (let i = 0; i < bm.h; i++) { const r = fromTop ? i : bm.h - 1 - i; if (bm.on[r * bm.w + col]) return r; }
+    return -1;
+  };
+  function dancers(bm, t, cols) {
+    const moved = new Map();                               // bitmap index -> [dx, dy] in pixels
+    for (let m = Math.max(0, Math.floor((t - DANCE_MAX) / DANCE_WINDOW)); m <= Math.floor(t / DANCE_WINDOW); m++) {
+      for (let e = 0, count = hash(m, 900) < 0.4 ? 2 : 1; e < count; e++) {
+        const k = m * 2 + e;                                 // the event's number seeds all its choices
+        const t0 = (m + hash(k, 902)) * DANCE_WINDOW, dur = 0.7 + hash(k, 903) * 0.9;
+        const p = (t - t0) / dur;
+        if (p <= 0 || p >= 1) continue;
+        const kind = hash(k, 906), top = kind < 0.75;        // hop or float off the top, or drop off the bottom
+        // a column that was well on screen when the event began
+        let col = (Math.floor(t0 * MARQUEE_SPEED) + Math.floor(cols * (0.1 + hash(k, 904) * 0.8))) % bm.w;
+        for (let tries = 0; tries < 16 && edgeRow(bm, col, top) < 0; tries++) col = (col + 1) % bm.w;
+        const amp = 3 + Math.floor(hash(k, 907) * 3), n = hash(k, 908) < 0.3 ? 2 + Math.floor(hash(k, 909) * 3) : 1;
+        for (let j = 0; j < n; j++) {                        // neighbours along the edge follow a little later
+          const cj = (col + j) % bm.w, row = edgeRow(bm, cj, top);
+          if (row < 0) break;
+          const q = clamp01((p - j * 0.08) / (1 - (n - 1) * 0.08)), arc = Math.sin(Math.PI * q);
+          const d = kind < 0.45 ? [0, -Math.round(amp * arc)]                                  // hop
+            : top ? [Math.round(2 * Math.sin(2 * Math.PI * q)), -Math.round((amp - 1) * arc)]   // float
+            : [0, Math.round((amp - 1) * arc)];                                               // drop
+          if (d[0] || d[1]) moved.set(row * bm.w + cj, d);
+        }
+      }
+    }
+    return moved;
+  }
+
   /* Scene options:
        intro: s   plays once from page load for s seconds (the hero)
        once:  s   plays once for s seconds when it first comes into view
-       live       keeps moving while it is on screen (the hero; still for reduced motion)
+       live       keeps moving while it is on screen (hero, footer marquee; still for reduced motion)
        scroll     redraws while the page scrolls (scroll-linked)
        layout(el) sizes or measures before the canvas is set up (on load and resize)
      draw(ctx, w, h, t, el, p): t = the scene's own clock (only advances while it
@@ -325,22 +364,29 @@
       }
     },
 
-    // Footer marquee: the slogan in big pixel letters; it slides only while you scroll.
+    // Footer marquee: the slogan in big pixel letters. It runs on its own while it is
+    // on screen, and now and then a few pixels step out of line and fall back in.
     marquee: {
-      scroll: true,
+      live: true,
       draw(ctx, w, h, t, el) {
         const bm = marqueeBitmap(el.dataset.text || '');
         if (!bm.w) return;
         const rows = bm.h, cols = Math.ceil(w / G) + 1;
-        const off = reduce ? 0 : Math.floor(scrollY / 4);
+        const off = reduce ? 0 : Math.floor(t * MARQUEE_SPEED);
         const y0 = Math.max(0, Math.floor((h / G - rows) / 2));
+        const away = reduce ? null : dancers(bm, t, cols);
+        const out = [];                                    // dancing pixels, drawn on top
         for (let c = 0; c < cols; c++) {
           const bc = (c + off) % bm.w;
           for (let r = 0; r < rows; r++) {
-            if (!bm.on[r * bm.w + bc]) continue;
-            fill(ctx, pick(bc, r), c * G, (y0 + r) * G, G - 1);
+            const k = r * bm.w + bc;
+            if (!bm.on[k]) continue;
+            const d = away && away.get(k);
+            if (d) out.push([pick(bc, r), c + d[0], y0 + r + d[1]]);
+            else fill(ctx, pick(bc, r), c * G, (y0 + r) * G, G - 1);
           }
         }
+        out.forEach(([color, c, r]) => fill(ctx, color, c * G, r * G, G - 1));
       }
     },
 
@@ -464,7 +510,7 @@
 
   // Hero organism leans towards the mouse anywhere in the hero (desktop only).
   const heroSec = document.querySelector('.hero-copy');
-  const heroScene = scenes.find(sc => sc.def.live);
+  const heroScene = scenes.find(sc => sc.def === SCENES.hero);
   if (heroSec && heroScene && fine && !reduce) {
     heroSec.addEventListener('pointermove', e => {
       const r = heroScene.el.getBoundingClientRect();
