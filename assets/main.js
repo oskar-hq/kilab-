@@ -1,7 +1,8 @@
 /* Ylva Labs – page behaviour.
-   Motion principle: static by default, reactive when relevant. Nothing loops on
-   its own: canvases redraw only on scroll, on hover, or during a short one-shot
-   animation when they first come into view. */
+   Motion principle: calm by default. The one thing that lives on its own is the
+   pixel organism in the hero, and only while it is on screen. Every other canvas
+   redraws only on scroll, on hover, or during a short one-shot animation when it
+   first comes into view. */
 (() => {
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -11,7 +12,6 @@
 
   // One grid for all pixel art: every pixel is G css px and sits on the page grid.
   const G = 5;
-  const snap = v => Math.round(v / G) * G;
   const css = name => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim();
   const ON = css('--px') || '#5aa9e6';                                // the one pixel colour: on or off
   const HERO = (css('--hero-colors') || '#9fd4ff,#5aa9e6,#2f5bd3,#1d2126,#8a929c').split(',').map(v => v.trim());
@@ -134,48 +134,116 @@
   }
 
 
+  // The organism's body: a few lobes that circle, swell and merge (metaballs).
+  // o = orbit and r = radius (shares of the body radius), v = angular speed, ph = phase, p = pulse speed
+  const LOBES = [
+    { o: 0.12, r: 0.62, v: 0.18, ph: 0, p: 0.9 },
+    { o: 0.45, r: 0.46, v: -0.13, ph: 2.1, p: 1.1 },
+    { o: 0.5, r: 0.4, v: 0.1, ph: 4.2, p: 0.7 },
+    { o: 0.56, r: 0.36, v: -0.21, ph: 1, p: 1.3 }
+  ];
+  // Mostly blue, some ink and grey: upper bounds (0..1) for the colour zones of the organism.
+  const ZONES = [0.24, 0.48, 0.7, 0.88, 1];
+  // Text boxes as the browser laid them out: one per line of text, one per button.
+  const textBoxes = nodes => {
+    const range = document.createRange(), out = [];
+    nodes.forEach(n => {
+      if (n.matches('.btn')) { out.push(n.getBoundingClientRect()); return; }
+      const walk = document.createTreeWalker(n, NodeFilter.SHOW_TEXT);
+      for (let t = walk.nextNode(); t; t = walk.nextNode()) { range.selectNodeContents(t); out.push(...range.getClientRects()); }
+    });
+    return out;
+  };
+
   /* Scene options:
        intro: s   plays once from page load for s seconds (the hero)
        once:  s   plays once for s seconds when it first comes into view
-       scroll     redraws while the page scrolls (scroll-linked, never on its own)
+       live       keeps moving while it is on screen (the hero; still for reduced motion)
+       scroll     redraws while the page scrolls (scroll-linked)
+       layout(el) sizes or measures before the canvas is set up (on load and resize)
      draw(ctx, w, h, t, el, p): t = the scene's own clock (only advances while it
      animates), p = progress of its one-shot animation, 0..1. */
   const SCENES = {
-    // The pixel organism: grows in once (Level 3 moment), then rests. It stirs
-    // under the mouse and dissolves as it scrolls out of view.
+    // The pixel organism (Level 3): grows in, then lives. Its lobes drift and merge,
+    // the membrane flows, colour bands stream through it and spores rise around it.
+    // It keeps clear of the text, leans towards the mouse and dissolves as the hero
+    // scrolls away.
     hero: {
-      intro: 2.4, scroll: true, hover: true,
+      intro: 2.4, live: true, scroll: true,
+      // Wide screens: the canvas covers the hero down to the facts line and the body
+      // stays right of the text (per pixel row: the first x it may use). Smaller
+      // screens: CSS turns it into a band above the headline.
+      layout(el) {
+        el._free = el._home = null;
+        el.style.height = '';
+        if (getComputedStyle(el).position !== 'absolute') return;
+        const sec = el.parentElement, facts = sec.querySelector('.hero-facts');
+        if (facts) el.style.height = Math.max(0, facts.getBoundingClientRect().top - sec.getBoundingClientRect().top - 14) + 'px';
+        const cr = el.getBoundingClientRect(), rows = Math.ceil(cr.height / G), free = new Float32Array(rows);
+        textBoxes(sec.querySelectorAll('.hero-kicker, .hero-title, .hero-lead, .hero-ctas .btn')).forEach(b => {
+          const r0 = Math.max(0, Math.floor((b.top - cr.top - 14) / G)), r1 = Math.min(rows - 1, Math.ceil((b.bottom - cr.top + 14) / G));
+          for (let r = r0; r <= r1; r++) free[r] = Math.max(free[r], b.right - cr.left + 36);
+        });
+        const edge = Math.max(...free);                                   // right end of the widest line
+        el._free = free;
+        el._home = { x: edge + (cr.width - edge) * 0.52, y: cr.height * 0.5, r: Math.max(0, Math.min((cr.width - edge) * 0.46, cr.height * 0.4)) };
+      },
       draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.ceil(h / S);
         const scroll = clamp01((80 - el.getBoundingClientRect().top) / Math.max(1, h));   // dissolves as it leaves the top
         const lift = scroll * rows * 0.6;
-        const th = 0.36 + scroll * 0.35 + (1 - ease(p)) * 0.8;   // intro: the body grows in, then rests
-        // evaluate the noise field on a coarse grid (every K cells), interpolate between
+        const th = 0.36 + scroll * 0.35 + (1 - ease(p)) * 0.8;   // intro: the body grows in
+        const free = el._free, home = el._home || { x: w / 2, y: h / 2, r: h * 0.5 };
+        const R = home.r * (1 + 0.05 * Math.sin(t * 1.1));      // breathing
+        // lobes travel round beside the text, and mostly sideways in the band
+        const tx = free ? R : Math.min(w * 0.32, R * 3.2), ty = free ? R : R * 0.6;
+        const lean = 0.1 * mouse.amp;
+        const lobes = LOBES.map((b, i) => ({
+          x: home.x + Math.cos(t * b.v + b.ph) * b.o * tx + (mouse.x - home.x) * lean,
+          y: home.y + Math.sin(t * b.v * 1.3 + b.ph) * b.o * ty + (mouse.y - home.y) * lean,
+          rr: (b.r * R * (1 + 0.1 * Math.sin(t * b.p + i * 2))) ** 2
+        }));
+        // Only the area the body can reach needs work: beyond E from every lobe centre the
+        // field stays below 0.457, where even a membrane pixel or spore is impossible.
+        let x0 = w, x1 = 0, y0 = h, y1 = 0, sum = 0;
+        for (const b of lobes) { x0 = Math.min(x0, b.x); x1 = Math.max(x1, b.x); y0 = Math.min(y0, b.y); y1 = Math.max(y1, b.y); sum += b.rr; }
+        const E = Math.sqrt(sum * 2.2);
+        const c0 = Math.max(0, Math.floor((x0 - E) / S)), c1 = Math.min(cols, Math.ceil((x1 + E) / S));
+        const r0 = Math.max(0, Math.floor((y0 - E) / S)), r1 = Math.min(rows, Math.ceil((y1 + E) / S));
+        // the axis the colour bands run across turns slowly
+        const a = 0.7 + 0.35 * Math.sin(t * 0.05), ax = Math.cos(a), ay = Math.sin(a);
+        // evaluate the field on a coarse grid (every K cells), interpolate between
         const K = 2, gc = Math.ceil(cols / K) + 2, gr = Math.ceil(rows / K) + 2;
-        const F = new Float32Array(gc * gr), Z = new Float32Array(gc * gr);
-        for (let j = 0; j < gr; j++) for (let i = 0; i < gc; i++) {
-          const c = i * K, ry = j * K + lift;
-          const nx = c / cols, ny = ry / rows;
-          const cy = -0.2 + 1.15 * nx + Math.sin(nx * 4 + t * 0.3) * 0.08;
-          const d = (ny - cy) / (0.44 - 0.12 * nx);
-          const base = (1 - d * d) * (1 - 0.8 * smooth(0.35, 1, nx));
-          const q = fbm(c * 0.025, ry * 0.025, t * 0.12);
-          const n = fbm(c * 0.042 + q * 2.4, ry * 0.042 - q * 1.8, t * 0.32);
-          let f = base * 0.78 + (n - 0.46) * 1.6;
-          if (mouse.amp > 0.01) {
-            const dx = (c * S - mouse.x) / 150, dy = (j * K * S - mouse.y) / 150;
-            f += 0.55 * mouse.amp * Math.exp(-(dx * dx + dy * dy));
+        if (!el._F || el._F.length !== gc * gr) { el._F = new Float32Array(gc * gr); el._Z = new Float32Array(gc * gr); }
+        const F = el._F.fill(-1), Z = el._Z.fill(0);       // reused every frame
+        for (let j = Math.floor(r0 / K), jEnd = Math.min(gr, Math.ceil(r1 / K) + 2); j < jEnd; j++) {
+          const y = j * K * S, ry = j * K + lift;
+          const fr = free ? free[Math.min(rows - 1, j * K)] : 0;
+          const edge = free ? smooth(0, 60, y) * smooth(h, h - 60, y) : 1;   // fades out at the top and bottom of the hero
+          for (let i = Math.floor(c0 / K), iEnd = Math.min(gc, Math.ceil(c1 / K) + 2); i < iEnd; i++) {
+            const c = i * K, x = c * S;
+            let m = 0;                                     // metaball field: 1 on the membrane
+            for (const b of lobes) { const dx = x - b.x, dy = y - b.y; m += b.rr / (dx * dx + dy * dy + 1); }
+            const keep = edge * (free ? smooth(fr, fr + 80, x) : 1);   // keeps clear of the text
+            const base = (1 - Math.max(m, 1e-6) ** -0.75) * keep - (1 - keep) * 1.5;   // soft towards the membrane
+            if (base < -0.8) continue;                     // far outside: no noise needed
+            const q = fbm(c * 0.025, ry * 0.025, t * 0.12);
+            const n = fbm(c * 0.042 + q * 2.4, ry * 0.042 - q * 1.8, t * 0.32);
+            let f = base * 0.78 + (n - 0.46) * 1.4;
+            if (mouse.amp > 0.01) {
+              const dx = (x - mouse.x) / 150, dy = (y - mouse.y) / 150;
+              f += 0.55 * mouse.amp * keep * Math.exp(-(dx * dx + dy * dy));
+            }
+            F[j * gc + i] = f;
+            // zone coordinate: position along the axis, warped by the same noise,
+            // drifting so the colour bands stream through the organism
+            Z[j * gc + i] = ((x - home.x) * ax + (y - home.y) * ay) / (R * 1.25) + (q - 0.5) * 2.2 + Math.sin(t * 0.2 + x / w * 2) * 0.25;
           }
-          F[j * gc + i] = f;
-          // zone coordinate: position across the body, warped by the same noise,
-          // drifting slowly so the colour bands travel through the organism
-          Z[j * gc + i] = d * 0.55 + (q - 0.5) * 2.2 + Math.sin(t * 0.2 + nx * 2) * 0.25;
         }
-        const spore = Math.floor(t * 5) * 17;
-        const N = HERO.length;
-        for (let r = 0; r < rows; r++) {
+        const rise = Math.floor(t * 2);                    // spores drift up one pixel every half second
+        for (let r = r0; r < r1; r++) {
           const gy = r / K, j = Math.floor(gy), fy = gy - j;
-          for (let c = 0; c < cols; c++) {
+          for (let c = Math.max(c0, free ? Math.floor(free[r] / S) : 0); c < c1; c++) {
             const gx = c / K, i = Math.floor(gx), fx = gx - i;
             const k = j * gc + i;
             const f = (F[k] * (1 - fx) + F[k + 1] * fx) * (1 - fy) + (F[k + gc] * (1 - fx) + F[k + gc + 1] * fx) * fy;
@@ -183,9 +251,9 @@
             if (level > 0) {
               if (level * 1.4 <= bayer(c, r)) continue;  // dithered membrane, solid core
               const z = (Z[k] * (1 - fx) + Z[k + 1] * fx) * (1 - fy) + (Z[k + gc] * (1 - fx) + Z[k + gc + 1] * fx) * fy;
-              const zone = Math.max(0, Math.min(N - 1, Math.floor((z + 1) / 2 * N)));
-              fill(ctx, HERO[zone], c * S, r * S, s);  // hard zone edges, no blending
-            } else if (level > -0.6 && hash(c, r + spore) < 0.012) {
+              const z01 = clamp01((z + 1) / 2);
+              fill(ctx, HERO[ZONES.findIndex(q => z01 <= q)], c * S, r * S, s);   // hard zone edges, no blending
+            } else if (level > -0.6 && hash(c, r + rise) < 0.012) {
               fill(ctx, SPORE, c * S, r * S, s);         // spores around the body
             }
           }
@@ -299,12 +367,13 @@
   const nowS = () => performance.now() / 1000;
   const scenes = [...document.querySelectorAll('canvas[data-scene]')].map(el => ({
     el, def: SCENES[el.dataset.scene], ctx: null, w: 0, h: 0, visible: false,
-    clock: 0, start: null, until: 0
+    clock: 0, start: null, drawn: 0
   })).filter(sc => sc.def);
 
   // Page position from the offset chain (ignores reveal transforms in flight).
   const pageOffset = el => { let x = 0, y = 0; for (let n = el; n; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; } return [x, y]; };
   function setup(sc) {
+    if (sc.def.layout) sc.def.layout(sc.el);
     // Nudge the canvas so its origin lands on the page grid.
     const [ox, oy] = pageOffset(sc.el);
     const dx = ((ox % G) + G) % G, dy = ((oy % G) + G) % G;
@@ -330,7 +399,8 @@
     sc.def.draw(sc.ctx, sc.w, sc.h, sc.clock, sc.el, oneShot(sc));
   }
 
-  // Frames are requested only when something changes; the loop stops itself.
+  // Frames are requested only while something moves: a one-shot animation, the
+  // page scrolling, or the living organism while it is on screen. Otherwise the loop stops.
   let queued = false, scrolled = false, lastFrame = 0;
   const kick = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
   function tick(ts) {
@@ -341,14 +411,13 @@
     mouse.x += (mouse.tx - mouse.x) * 0.12;
     mouse.y += (mouse.ty - mouse.y) * 0.12;
     mouse.amp += (mouse.tamp - mouse.amp) * 0.08;
-    const t = nowS();
     scenes.forEach(sc => {
       if (!sc.visible) return;
-      const p = oneShot(sc);
-      const animating = (sc.start !== null && p < 1) || sc.until > t || (sc.def.hover && Math.abs(mouse.amp - mouse.tamp) > 0.01);
-      if (animating) sc.clock += dt;
-      if (animating || (scrolled && sc.def.scroll)) render(sc);
-      if (animating) busy = true;
+      const live = sc.def.live && !reduce;
+      const animating = live || (sc.start !== null && oneShot(sc) < 1);
+      if (animating) { sc.clock += dt; busy = true; }
+      const due = !live || ts - sc.drawn > 30;          // living scenes redraw at about 30 fps, plenty for 5 px pixels
+      if ((animating && due) || (scrolled && sc.def.scroll)) { render(sc); sc.drawn = ts; }
     });
     scrolled = false;
     drawProgress();
@@ -393,19 +462,17 @@
   /* ---------- Input ---------- */
   addEventListener('scroll', () => { scrolled = true; kick(); }, { passive: true });
 
-  // Hero organism stirs under the mouse (desktop only), and rests again after.
-  const heroBand = document.querySelector('.band-hero');
-  const heroScene = scenes.find(sc => sc.def.intro);
-  if (heroBand && heroScene && fine && !reduce) {
-    heroBand.addEventListener('pointermove', e => {
-      const r = heroBand.getBoundingClientRect();
+  // Hero organism leans towards the mouse anywhere in the hero (desktop only).
+  const heroSec = document.querySelector('.hero-copy');
+  const heroScene = scenes.find(sc => sc.def.live);
+  if (heroSec && heroScene && fine && !reduce) {
+    heroSec.addEventListener('pointermove', e => {
+      const r = heroScene.el.getBoundingClientRect();
       const x = e.clientX - r.left, y = e.clientY - r.top;
       if (mouse.x < 0) { mouse.x = x; mouse.y = y; }
       mouse.tx = x; mouse.ty = y; mouse.tamp = 1;
-      heroScene.until = nowS() + 0.6;
-      kick();
     });
-    heroBand.addEventListener('pointerleave', () => { mouse.tamp = 0; heroScene.until = nowS() + 1.2; kick(); });
+    heroSec.addEventListener('pointerleave', () => { mouse.tamp = 0; });
   }
 
   // Cards: the pixel artwork re-assembles on hover (Level 1 feedback).
@@ -507,21 +574,6 @@
     safari.addEventListener('mouseenter', centre);
     safari.addEventListener('pointerdown', centre);
     safari.addEventListener('focusin', centre);
-  }
-
-  /* ---------- Footer "play": pixel games, loaded only when asked for ---------- */
-  const playBtn = document.getElementById('play');
-  if (playBtn && fine && !reduce) {
-    playBtn.hidden = false;
-    let show = null;
-    playBtn.addEventListener('click', () => {
-      if (show) { show(playBtn.parentElement); return; }
-      window.YLVA = { G, snap, fill, ON, HERO };
-      const s = document.createElement('script');
-      s.src = playBtn.dataset.src;
-      s.onload = () => { show = window.YLVA_GAMES; if (show) show(playBtn.parentElement); };
-      document.head.appendChild(s);
-    });
   }
 
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */
