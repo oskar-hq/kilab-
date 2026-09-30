@@ -53,7 +53,8 @@ svg rect{fill:var(--px)}
    L0 content   appears once (fade + 12px), then static
    L1 hover     small move, border, opacity, pixels react
    L2 CTA       stronger hover: lift, arrow, pixel spark
-   L3 moments   hero organism grows in once; section marks pop in once
+   L3 moments   hero organism grows in, then lives (only while on screen);
+                section marks pop in once
    ========================================================================== */
 
 /* L0: reveal once */
@@ -110,7 +111,9 @@ svg rect{fill:var(--px)}
 .hero-facts{list-style:none;margin:clamp(42px,5vw,70px) 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 21px}
 .hero-facts b{font-weight:400;color:var(--ink)}
 .dot-px{display:inline-block;width:7px;height:7px;background:var(--px);margin-right:6px;vertical-align:1px}
-.band-hero{height:clamp(120px,15vw,220px)}
+/* The pixel organism: a layer behind the hero, beside the headline (JS keeps it clear of the text) */
+.hero-organism{position:absolute;left:0;top:0;z-index:-1}
+.no-js .hero-organism{display:none}
 
 /* ---------- Section frame: number, rule, pixel mark, heading ---------- */
 .showcase,.intro,.split,.finder,.flow{padding:clamp(56px,6.5vw,98px) 0}
@@ -221,7 +224,6 @@ svg rect{fill:var(--px)}
 .foot-inner a:not(.btn-px):hover{color:var(--ink);text-decoration:underline}
 .foot-inner .label{margin-top:14px;max-width:none}
 .rubble{position:relative;height:130px;margin-top:clamp(70px,8vw,126px)}
-.rubble .play{position:absolute;left:50%;bottom:10px;transform:translateX(-50%)}
 /* Button with pixel-stepped corners (two 5px steps, on the page grid) */
 .btn-px{--s:5px;display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 35px;border:0;background:var(--ink);color:var(--paper);font:400 17px/1 var(--sans);cursor:pointer;white-space:nowrap;
   transition:background .2s,transform .25s var(--ease-out);clip-path:polygon(0 calc(var(--s)*2),var(--s) calc(var(--s)*2),var(--s) var(--s),calc(var(--s)*2) var(--s),calc(var(--s)*2) 0,calc(100% - var(--s)*2) 0,calc(100% - var(--s)*2) var(--s),calc(100% - var(--s)) var(--s),calc(100% - var(--s)) calc(var(--s)*2),100% calc(var(--s)*2),100% calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)),calc(100% - var(--s)*2) calc(100% - var(--s)),calc(100% - var(--s)*2) 100%,calc(var(--s)*2) 100%,calc(var(--s)*2) calc(100% - var(--s)),var(--s) calc(100% - var(--s)),var(--s) calc(100% - var(--s)*2),0 calc(100% - var(--s)*2))}
@@ -229,10 +231,7 @@ svg rect{fill:var(--px)}
 .btn-px:hover{background:var(--deep)}
 .btn-px.btn-go::after{display:none}
 .btn-px.btn-go:hover{box-shadow:none}
-.rubble .play:hover{transform:translateX(-50%) translateY(-2px)}
-.play i{width:19px;height:4px;background:repeating-linear-gradient(90deg,#f6d36d 0 4px,transparent 4px 5px)}
 .px-progress{position:fixed;top:0;left:0;width:100%;height:10px;z-index:30;pointer-events:none}
-.px-play{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none}
 
 /* ---------- Portfolio ---------- */
 /* Portfolio: live site in a Safari window (Safari 26 look) */
@@ -292,6 +291,8 @@ svg rect{fill:var(--px)}
   .steps,.offer{grid-template-columns:repeat(2,1fr);row-gap:28px}
   .cta-card{grid-template-columns:1fr}
   .cta-art{display:none}
+  .hero-copy{padding-top:0}
+  .hero-organism{position:relative;height:clamp(130px,24vw,210px);margin-bottom:clamp(21px,4vw,35px)}
 }
 @media (max-width:720px){
   :root{--gutter:16px}
@@ -303,7 +304,6 @@ svg rect{fill:var(--px)}
   .hero-title{font-size:clamp(40px,11.5vw,56px)}
   .hero-ctas .btn{width:100%;justify-content:center}
   .hero-facts{flex-direction:column}
-  .band-hero{height:110px}
   .tex::before{display:none}
   .cards{grid-template-columns:1fr;gap:35px}
   .pains,.offer,.steps{grid-template-columns:1fr}
@@ -329,6 +329,5 @@ svg rect{fill:var(--px)}
   .reveal{opacity:1;transform:none}
   .px-pop rect{opacity:1}
   .sec-rule::after{transform:none}
-  .btn-go:hover,.card:hover,.rubble .play:hover{transform:none}
-  .rubble .play:hover{transform:translateX(-50%)}
+  .btn-go:hover,.card:hover{transform:none}
 }

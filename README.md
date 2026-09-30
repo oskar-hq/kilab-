@@ -14,9 +14,9 @@ datenschutz.html    Datenschutzerklärung (gelb markierte Platzhalter ausfüllen
 favicon.ico/.svg    Favicon (Bildmarke)
 site.webmanifest    Icons für Homescreen / Android
 assets/style.css    Design-Tokens, Layout und Animations-Ebenen L0–L3 (siehe Kommentar im CSS)
-assets/main.js      Seitenlogik + Pixel-Szenen (Hero, Ablauf, Kartenbilder, Footer). Nichts läuft dauerhaft:
-                    gezeichnet wird nur bei Scroll, Hover oder einer kurzen Einmal-Animation.
-assets/games.js     Pixel-Spiele für den „play“-Button im Footer (wird erst beim Klick geladen)
+assets/main.js      Seitenlogik + Pixel-Szenen (Hero, Ablauf, Kartenbilder, Footer). Dauerhaft bewegt sich nur
+                    der Pixel-Organismus im Hero, und nur solange er zu sehen ist. Alles andere wird nur bei
+                    Scroll, Hover oder einer kurzen Einmal-Animation gezeichnet.
 assets/icons/       Bildmarke (mark.svg), PNG-Icons, Open-Graph-Bild (og-image.png)
 assets/fonts/       Inter Tight, selbst gehostet (SIL OFL 1.1) – keine Google-Fonts-Anfragen
 .nojekyll           GitHub Pages liefert die Dateien unverändert aus
