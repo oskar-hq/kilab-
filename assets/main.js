@@ -47,16 +47,16 @@
   /* ---------- Bitmaps: icons, section marks, pixel digits ---------- */
   // '#' = pixel on; '.' and '+' = off.
   const BITMAPS = {
-    blitz: ['.......####.', '......####..', '.....####...', '....####....', '...########.', '..########..',
-      '.....####...', '....####....', '...###......', '..##........', '.#..........', '............'],
-    pin: ['....####....', '..########..', '.####++####.', '.###++++###.', '.###++++###.', '.####++####.',
-      '..########..', '...######...', '....####....', '.....##.....', '............', '.##########.'],
     fenster: ['############', '#.#.#......#', '############', '#..........#', '#.####.###.#', '#.####.....#',
       '#.####.###.#', '#.####.....#', '#..........#', '#.########.#', '#..........#', '############'],
+    zahnrad: ['....####....', '.##.####.##.', '.##########.', '..########..', '####....####', '####....####',
+      '####....####', '####....####', '..########..', '.##########.', '.##.####.##.', '....####....'],
+    funke: ['............', '.........#..', '....#...###.', '....#....#..', '...###......', '..#####.....',
+      '#########...', '..#####.....', '...###......', '....#.......', '....#.......', '............'],
+    lupe: ['...####.....', '.##....##...', '.#......#...', '#........#..', '#........#..', '#........#..',
+      '#........#..', '.#......#...', '.##....###..', '...####.###.', '.........###', '..........##'],
     stapel: ['............', '....####....', '....####....', '............', '..########..', '..########..',
       '............', '############', '############', '............', '............', '............'],
-    haken: ['............', '............', '..........##', '.........###', '........###.', '##.....###..',
-      '###...###...', '.###.###....', '..#####.....', '...###......', '....#.......', '............'],
     liste: ['............', '###.########', '#.#.........', '###.########', '............', '###.########',
       '#.#.........', '###.########', '............', '###.#######.', '#.#.........', '###.#######.'],
     stufen: ['.........###', '.........###', '.........###', '......######', '......######', '......######',
@@ -436,7 +436,7 @@
   document.querySelectorAll('[data-mailto]').forEach(a => { a.href = mailto(a.dataset.mailto); });
   document.querySelectorAll('[data-contact-text]').forEach(a => { a.href = `mailto:${CONTACT}`; a.textContent = CONTACT; });
 
-  /* ---------- Website finder: pick wishes, get a pre-written enquiry ---------- */
+  /* ---------- Finder: pick what costs time or what you wish for, get a pre-written enquiry ---------- */
   const finder = document.getElementById('finder');
   if (finder) {
     const tabs = [...finder.querySelectorAll('[role="tab"]')];
@@ -454,20 +454,20 @@
       const free = other.value.trim();
       const n = picked.length + (free ? 1 : 0);
       [...pxBox.children].forEach((px, i) => px.classList.toggle('on', i < n));
-      count.textContent = n === 0 ? 'Noch nichts ausgewählt' : n === 1 ? '1 Wunsch ausgewählt' : `${n} Wünsche ausgewählt`;
+      count.textContent = n === 0 ? 'Noch nichts ausgewählt' : n === 1 ? '1 Punkt ausgewählt' : `${n} Punkte ausgewählt`;
       const lines = [
         'Hallo Ylva Labs,', '',
-        'wir interessieren uns für eine Website und ein kostenloses Erstgespräch.', '',
-        `Ausgangslage: ${branche}`, ''
+        'wir interessieren uns für eine Zusammenarbeit und ein kostenloses Erstgespräch.', '',
+        `Thema: ${branche}`, ''
       ];
       if (n) {
-        lines.push('Darum geht es uns:');
+        lines.push('Das beschäftigt uns:');
         picked.forEach(v => lines.push(`- ${v}`));
         if (free) lines.push(`- ${free}`);
         lines.push('');
       }
-      lines.push('Betrieb:', 'Bestehende Website (falls vorhanden):', 'Ort:', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
-      send.href = mailto(`Website-Anfrage: ${branche}`, lines.join('\n'));
+      lines.push('Unternehmen:', 'Branche:', 'Ort:', 'Website (falls vorhanden):', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
+      send.href = mailto(`Anfrage Zusammenarbeit: ${branche}`, lines.join('\n'));
       send.querySelector('.btn-text').textContent = n ? 'Anfrage mit Auswahl vorbereiten' : 'Anfrage vorbereiten';
     };
 

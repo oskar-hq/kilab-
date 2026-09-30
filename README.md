@@ -1,6 +1,7 @@
 # Ylva Labs
 
-Landingpage von Ylva Labs – „Digitalisierung für Schleswig-Holstein.“ Fokus: Websites für Betriebe aus der Region.
+Landingpage von Ylva Labs – „KI für den Mittelstand in Schleswig-Holstein.“ Wir erforschen, wie KI mittelständische Unternehmen
+effizienter macht, und suchen Partnerunternehmen, mit denen wir gemeinsam entwickeln: eine Website oder ein spezielles Programm.
 Rein statisches HTML/CSS/JS, kein Build-Schritt, direkt für GitHub Pages geeignet.
 
 ## Struktur

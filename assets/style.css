@@ -121,7 +121,7 @@ svg rect{fill:var(--px)}
 .sec-rule .label{color:var(--ink)}
 .sec-mark{display:block;flex:none}
 .sec-mark svg{display:block;width:100%;height:auto}
-.sec-head h2{margin:0;max-width:22ch;font-weight:500;font-size:clamp(26px,2.9vw,40px);line-height:1.08;letter-spacing:-.025em}
+.sec-head h2{margin:0;max-width:22ch;font-weight:500;font-size:clamp(26px,2.9vw,40px);line-height:1.08;letter-spacing:-.025em;text-wrap:balance}
 .sec-head p{margin-top:14px;max-width:56ch;font-size:15px;line-height:1.6;color:var(--body)}
 
 /* ---------- Packages ---------- */
@@ -198,7 +198,7 @@ svg rect{fill:var(--px)}
 .cta-card{--s:10px;position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:42px;padding:clamp(35px,5vw,84px);background:var(--ink);color:var(--paper);
   clip-path:polygon(0 calc(var(--s)*2),var(--s) calc(var(--s)*2),var(--s) var(--s),calc(var(--s)*2) var(--s),calc(var(--s)*2) 0,calc(100% - var(--s)*2) 0,calc(100% - var(--s)*2) var(--s),calc(100% - var(--s)) var(--s),calc(100% - var(--s)) calc(var(--s)*2),100% calc(var(--s)*2),100% calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)),calc(100% - var(--s)*2) calc(100% - var(--s)),calc(100% - var(--s)*2) 100%,calc(var(--s)*2) 100%,calc(var(--s)*2) calc(100% - var(--s)),var(--s) calc(100% - var(--s)),var(--s) calc(100% - var(--s)*2),0 calc(100% - var(--s)*2))}
 .cta-card .label{color:var(--grey-1);margin-bottom:21px}
-.cta-title{margin:0;font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1;letter-spacing:-.035em;max-width:18ch}
+.cta-title{margin:0;font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1;letter-spacing:-.035em;max-width:18ch;text-wrap:balance}
 .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(28px,3.5vw,49px)}
 .cta-card .btn-go{background:var(--px);color:var(--ink)}
 .cta-card .btn-go:hover{background:var(--paper);box-shadow:0 10px 30px -10px rgba(90,169,230,.8)}
