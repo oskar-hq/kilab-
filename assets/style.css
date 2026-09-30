@@ -115,13 +115,14 @@ svg rect{fill:var(--px)}
 /* ---------- Section frame: number, rule, pixel mark, heading ---------- */
 .showcase,.intro,.split,.finder,.flow{padding:clamp(56px,6.5vw,98px) 0}
 .sec-head{max-width:none;margin-bottom:clamp(35px,4vw,56px)}
+.sec-head:last-child{margin-bottom:0}   /* a section that is only a statement */
 .sec-rule{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding-bottom:12px;margin-bottom:clamp(21px,2.4vw,35px)}
 .sec-rule::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out) .1s}
 .sec-head.in .sec-rule::after,.no-js .sec-rule::after{transform:none}
 .sec-rule .label{color:var(--ink)}
 .sec-mark{display:block;flex:none}
 .sec-mark svg{display:block;width:100%;height:auto}
-.sec-head h2{margin:0;max-width:22ch;font-weight:500;font-size:clamp(26px,2.9vw,40px);line-height:1.08;letter-spacing:-.025em}
+.sec-head h2{margin:0;max-width:22ch;font-weight:500;font-size:clamp(26px,2.9vw,40px);line-height:1.08;letter-spacing:-.025em;text-wrap:balance}
 .sec-head p{margin-top:14px;max-width:56ch;font-size:15px;line-height:1.6;color:var(--body)}
 
 /* ---------- Packages ---------- */
@@ -144,12 +145,7 @@ svg rect{fill:var(--px)}
 
 /* problem finder */
 .finder-box{background:var(--tint);padding:clamp(21px,3vw,42px)}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px}
-.tabs button{transition:background .2s,color .2s;appearance:none;border:0;cursor:pointer;height:34px;padding:0 16px;border-radius:999px;background:var(--paper);color:var(--ink);font:400 11px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase}
-.tabs button:hover{background:var(--accent)}
-.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
 .pains{border:0;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.pains[hidden]{display:none}
 .pains label{transition:box-shadow .2s;display:flex;align-items:center;gap:14px;min-height:52px;padding:10px 16px;background:var(--paper);cursor:pointer;font-size:15px;line-height:1.3}
 .pains input,.other input{font:inherit}
 .pains input{position:absolute;opacity:0;width:1px;height:1px}
@@ -198,7 +194,7 @@ svg rect{fill:var(--px)}
 .cta-card{--s:10px;position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:42px;padding:clamp(35px,5vw,84px);background:var(--ink);color:var(--paper);
   clip-path:polygon(0 calc(var(--s)*2),var(--s) calc(var(--s)*2),var(--s) var(--s),calc(var(--s)*2) var(--s),calc(var(--s)*2) 0,calc(100% - var(--s)*2) 0,calc(100% - var(--s)*2) var(--s),calc(100% - var(--s)) var(--s),calc(100% - var(--s)) calc(var(--s)*2),100% calc(var(--s)*2),100% calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)*2),calc(100% - var(--s)) calc(100% - var(--s)),calc(100% - var(--s)*2) calc(100% - var(--s)),calc(100% - var(--s)*2) 100%,calc(var(--s)*2) 100%,calc(var(--s)*2) calc(100% - var(--s)),var(--s) calc(100% - var(--s)),var(--s) calc(100% - var(--s)*2),0 calc(100% - var(--s)*2))}
 .cta-card .label{color:var(--grey-1);margin-bottom:21px}
-.cta-title{margin:0;font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1;letter-spacing:-.035em;max-width:18ch}
+.cta-title{margin:0;font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1;letter-spacing:-.035em;max-width:18ch;text-wrap:balance}
 .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(28px,3.5vw,49px)}
 .cta-card .btn-go{background:var(--px);color:var(--ink)}
 .cta-card .btn-go:hover{background:var(--paper);box-shadow:0 10px 30px -10px rgba(90,169,230,.8)}

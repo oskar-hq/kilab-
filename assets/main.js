@@ -47,16 +47,16 @@
   /* ---------- Bitmaps: icons, section marks, pixel digits ---------- */
   // '#' = pixel on; '.' and '+' = off.
   const BITMAPS = {
-    blitz: ['.......####.', '......####..', '.....####...', '....####....', '...########.', '..########..',
-      '.....####...', '....####....', '...###......', '..##........', '.#..........', '............'],
-    pin: ['....####....', '..########..', '.####++####.', '.###++++###.', '.###++++###.', '.####++####.',
-      '..########..', '...######...', '....####....', '.....##.....', '............', '.##########.'],
     fenster: ['############', '#.#.#......#', '############', '#..........#', '#.####.###.#', '#.####.....#',
       '#.####.###.#', '#.####.....#', '#..........#', '#.########.#', '#..........#', '############'],
+    zahnrad: ['....####....', '.##.####.##.', '.##########.', '..########..', '####....####', '####....####',
+      '####....####', '####....####', '..########..', '.##########.', '.##.####.##.', '....####....'],
+    funke: ['............', '.........#..', '....#...###.', '....#....#..', '...###......', '..#####.....',
+      '#########...', '..#####.....', '...###......', '....#.......', '....#.......', '............'],
+    lupe: ['...####.....', '.##....##...', '.#......#...', '#........#..', '#........#..', '#........#..',
+      '#........#..', '.#......#...', '.##....###..', '...####.###.', '.........###', '..........##'],
     stapel: ['............', '....####....', '....####....', '............', '..########..', '..########..',
       '............', '############', '############', '............', '............', '............'],
-    haken: ['............', '............', '..........##', '.........###', '........###.', '##.....###..',
-      '###...###...', '.###.###....', '..#####.....', '...###......', '....#.......', '............'],
     liste: ['............', '###.########', '#.#.........', '###.########', '............', '###.########',
       '#.#.........', '###.########', '............', '###.#######.', '#.#.........', '###.#######.'],
     stufen: ['.........###', '.........###', '.........###', '......######', '......######', '......######',
@@ -436,47 +436,35 @@
   document.querySelectorAll('[data-mailto]').forEach(a => { a.href = mailto(a.dataset.mailto); });
   document.querySelectorAll('[data-contact-text]').forEach(a => { a.href = `mailto:${CONTACT}`; a.textContent = CONTACT; });
 
-  /* ---------- Website finder: pick wishes, get a pre-written enquiry ---------- */
+  /* ---------- Finder: tick what fits, get a pre-written, non-binding enquiry ---------- */
   const finder = document.getElementById('finder');
   if (finder) {
-    const tabs = [...finder.querySelectorAll('[role="tab"]')];
-    const sets = [...finder.querySelectorAll('.pains')];
     const other = document.getElementById('finder-other');
     const send = document.getElementById('finder-send');
     const count = document.getElementById('finder-count');
     const pxBox = document.getElementById('finder-px');
     const MAX = 6;
     for (let i = 0; i < MAX; i++) pxBox.appendChild(document.createElement('i'));
-    let branche = tabs[0].dataset.branche;
 
     const update = () => {
-      const picked = [...finder.querySelectorAll(`.pains[data-for="${branche}"] input:checked`)].map(i => i.value);
+      const picked = [...finder.querySelectorAll('.pains input:checked')].map(i => i.value);
       const free = other.value.trim();
       const n = picked.length + (free ? 1 : 0);
       [...pxBox.children].forEach((px, i) => px.classList.toggle('on', i < n));
-      count.textContent = n === 0 ? 'Noch nichts ausgewählt' : n === 1 ? '1 Wunsch ausgewählt' : `${n} Wünsche ausgewählt`;
+      count.textContent = n === 0 ? 'Noch nichts ausgewählt' : n === 1 ? '1 Punkt ausgewählt' : `${n} Punkte ausgewählt`;
       const lines = [
         'Hallo Ylva Labs,', '',
-        'wir interessieren uns für eine Website und ein kostenloses Erstgespräch.', '',
-        `Ausgangslage: ${branche}`, ''
+        'wir würden gern unverbindlich mit euch schauen, ob und wie ihr uns helfen könnt.', '',
+        'Das beschäftigt uns:'
       ];
-      if (n) {
-        lines.push('Darum geht es uns:');
-        picked.forEach(v => lines.push(`- ${v}`));
-        if (free) lines.push(`- ${free}`);
-        lines.push('');
-      }
-      lines.push('Betrieb:', 'Bestehende Website (falls vorhanden):', 'Ort:', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
-      send.href = mailto(`Website-Anfrage: ${branche}`, lines.join('\n'));
+      picked.forEach(v => lines.push(`- ${v}`));
+      if (free) lines.push(`- ${free}`);
+      if (!n) lines.push('- ');                           // nothing picked: leave a line to fill in
+      lines.push('', 'Unternehmen:', 'Branche:', 'Ort:', 'Ansprechpartner:in:', 'Telefon (für Rückruf):', '', 'Viele Grüße');
+      send.href = mailto('Unverbindliche Anfrage', lines.join('\n'));
       send.querySelector('.btn-text').textContent = n ? 'Anfrage mit Auswahl vorbereiten' : 'Anfrage vorbereiten';
     };
 
-    tabs.forEach(tab => tab.addEventListener('click', () => {
-      branche = tab.dataset.branche;
-      tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
-      sets.forEach(f => { f.hidden = f.dataset.for !== branche; });
-      update();
-    }));
     finder.addEventListener('change', update);
     other.addEventListener('input', update);
     update();
@@ -537,19 +525,25 @@
   }
 
   /* ---------- Sticky CTA on mobile, shown once the hero is out of view ---------- */
+  // Hidden again while the enquiry form or the contact block is on screen: it would only point at itself.
   const sticky = document.getElementById('sticky-cta');
   const heroCopy = document.querySelector('.hero-copy');
-  const contactSec = document.getElementById('kontakt');
+  const stops = ['anfrage', 'kontakt'].map(id => document.getElementById(id)).filter(Boolean);
   if (sticky && heroCopy) {
-    let pastHero = false, atContact = false;
+    let pastHero = false;
+    const atStop = new Set();
     const sync = () => {
-      const on = pastHero && !atContact;
+      const on = pastHero && !atStop.size;
       sticky.classList.toggle('show', on);
       sticky.setAttribute('aria-hidden', String(!on));
       sticky.querySelector('a').tabIndex = on ? 0 : -1;
     };
     new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting && e.boundingClientRect.top < 0; sync(); }).observe(heroCopy);
-    if (contactSec) new IntersectionObserver(([e]) => { atContact = e.isIntersecting; sync(); }).observe(contactSec);
+    const stopObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) atStop.add(e.target); else atStop.delete(e.target); });
+      sync();
+    });
+    stops.forEach(el => stopObs.observe(el));
   }
 
   /* ---------- Reveal: fade + 12px lift, once; section marks pop in with it ---------- */
