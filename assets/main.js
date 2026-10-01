@@ -1,9 +1,9 @@
 /* Ylva Labs – page behaviour.
-   Motion principle: calm by default. Three pictures live on their own, and only
+   Motion principle: calm by default. A few pictures live on their own, and only
    while they are on screen: the pixel organism in the hero, the waves of the
-   "So läuft's" section and the slogan in the footer. Every other canvas redraws
-   only on scroll, on hover, or during a short one-shot animation when it first
-   comes into view. */
+   "So läuft's" section, and the slogan and pixel stacks in the footer. Every other
+   canvas redraws only on scroll, on hover, or during a short one-shot animation
+   when it first comes into view. */
 (() => {
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -198,7 +198,7 @@
   /* Scene options:
        intro: s   plays once from page load for s seconds (the hero)
        once:  s   plays once for s seconds when it first comes into view
-       live       keeps moving while it is on screen (hero, flow, marquee; still for reduced motion)
+       live       keeps moving while it is on screen (hero, flow, marquee, rubble; still for reduced motion)
        scroll     redraws while the page scrolls (scroll-linked)
        layout(el) sizes or measures before the canvas is set up (on load and resize)
      draw(ctx, w, h, t, el, p): t = the scene's own clock (only advances while it
@@ -399,9 +399,11 @@
       }
     },
 
-    // Footer rubble: stacks of coloured pixels that rise once as the footer comes in.
+    // Footer rubble: stacks of coloured pixels. They rise as the footer comes in and
+    // then keep moving: a slow breeze drifts through them, so clumps swell and sink,
+    // and now and then the top pixel of a stack hops off and lands again.
     rubble: {
-      once: 1.2,
+      once: 1.2, live: true,
       draw(ctx, w, h, t, el, p) {
         const cols = Math.ceil(w / G), rows = Math.floor(h / G);
         const rise = 0.1 + 0.9 * ease(p);
@@ -409,10 +411,14 @@
           const n = hash(Math.floor(c / 3), 11);             // clumps of neighbouring columns
           if (n < 0.12) continue;
           const peak = Math.pow(hash(c, 7), 1.7) * (0.3 + n * 0.7);
-          const height = Math.round(rows * rise * peak) + (hash(c, 3) < 0.7 ? 1 + (hash(c, 4) * 3 | 0) : 0);
+          // the breeze: broad swells drifting to the right, plus a little play per stack
+          const sway = (vnoise(c * 0.06 - t * 0.3, 3.3, t * 0.15) - 0.5) * 1.6 + (vnoise(c * 0.31, 9.1, t * 0.9) - 0.5) * 0.6;
+          const height = Math.min(rows - 4, Math.round(rows * rise * peak * Math.max(0.15, 1 + sway)) + (hash(c, 3) < 0.7 ? 1 + (hash(c, 4) * 3 | 0) : 0));
+          const beat = t * 0.7 + hash(c, 80) * 9, b = Math.floor(beat);
+          const hop = hash(c, b + 300) < 0.006 ? Math.round(Math.sin(Math.PI * (beat - b)) * 4) : 0;
           for (let r = 0; r < height; r++) {
             if (hash(c, r + 50) < 0.12) continue;            // holes in the pile
-            fill(ctx, pick(c * 7, r), c * G, (rows - 1 - r) * G, G - 1);
+            fill(ctx, pick(c * 7, r), c * G, (rows - 1 - r - (r === height - 1 ? hop : 0)) * G, G - 1);
           }
         }
       }
