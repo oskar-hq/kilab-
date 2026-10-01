@@ -1,8 +1,9 @@
 /* Ylva Labs – page behaviour.
-   Motion principle: calm by default. Two things live on their own, and only while
-   they are on screen: the pixel organism in the hero and the slogan in the footer.
-   Every other canvas redraws only on scroll, on hover, or during a short one-shot
-   animation when it first comes into view. */
+   Motion principle: calm by default. Three pictures live on their own, and only
+   while they are on screen: the pixel organism in the hero, the waves of the
+   "So läuft's" section and the slogan in the footer. Every other canvas redraws
+   only on scroll, on hover, or during a short one-shot animation when it first
+   comes into view. */
 (() => {
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -197,7 +198,7 @@
   /* Scene options:
        intro: s   plays once from page load for s seconds (the hero)
        once:  s   plays once for s seconds when it first comes into view
-       live       keeps moving while it is on screen (hero, footer marquee; still for reduced motion)
+       live       keeps moving while it is on screen (hero, flow, marquee; still for reduced motion)
        scroll     redraws while the page scrolls (scroll-linked)
        layout(el) sizes or measures before the canvas is set up (on load and resize)
      draw(ctx, w, h, t, el, p): t = the scene's own clock (only advances while it
@@ -300,33 +301,41 @@
       }
     },
 
-    // Scattered pixels resolve into waves once, as the section comes into view.
+    // How it works, as a picture: on the left everything is still vague and the pixels
+    // dance out of line; step by step (one stage per step below) they find their waves,
+    // and on the right they only move the way they should. It lives while on screen;
+    // on first view everything starts out vague and the order settles in stage by stage.
     flow: {
-      once: 1.6,
+      once: 2.4, live: true,
       draw(ctx, w, h, t, el, p) {
         const S = G, s = S - 1, cols = Math.ceil(w / S), rows = Math.floor(h / S);
-        const mid = rows / 2, flick = 0;
-        const a = 0.9 - 0.62 * ease(p);                 // boundary moves right -> left
+        const mid = rows / 2;
+        // order 0..1 per column: four stages, each settling in a little after the one before
+        const st = [smooth(0, 0.5, p) * 0.45, smooth(0.25, 0.75, p) * 0.35, smooth(0.5, 1, p) * 0.2];
+        const order = x => st[0] * smooth(0.21, 0.29, x) + st[1] * smooth(0.46, 0.54, x) + st[2] * smooth(0.71, 0.79, x);
         const WAVES = [{ f: 2.2, p: 0.0, th: 2 }, { f: 1.6, p: 2.1, th: 1 }, { f: 2.9, p: 4.0, th: 1 }];
         ctx.fillStyle = ON;
         for (let c = 0; c < cols; c++) {
-          const x = c / cols;
-          const scatter = 1 - smooth(a - 0.12, a + 0.1, x);
-          if (scatter > 0) {
-            for (let r = 0; r < rows; r++) {
-              const n = hash(c * 3 + flick, r);
-              const band = Math.exp(-Math.pow((r - mid) / (rows * 0.42), 2));
-              if (n < scatter * 0.22 * band) fill(ctx, null, c * S, r * S, s);
-            }
-          }
-          const wv = smooth(a - 0.08, a + 0.22, x);
-          if (wv > 0) {
-            const amp = rows * 0.4 * smooth(a - 0.1, 1, x);
-            WAVES.forEach((W, k) => {
-              if (hash(c, k + 40) > wv) return;
-              const y = Math.round(mid + amp * Math.sin((x * W.f * 6.283) + t * (0.6 + k * 0.2) + W.p));
-              for (let i = 0; i < W.th; i++) fill(ctx, null, c * S, (y + i) * S, s);
-            });
+          const x = c / cols, wild = 1 - order(x);
+          const amp = rows * 0.4 * (0.3 + 0.7 * smooth(0.1, 1, x));   // the waves open up to the right
+          WAVES.forEach((W, k) => {
+            const y = mid + amp * Math.sin(x * W.f * 6.283 + t * (0.6 + k * 0.2) + W.p);
+            // out of line: every pixel wanders on its own, the vaguer the stage the further
+            let dy = (vnoise(c * 0.23 + k * 31.7, k * 3.1, t * (0.7 + 0.6 * wild)) - 0.5) * rows * 1.1 * wild ** 1.6;
+            const dx = Math.round((vnoise(c * 0.19 + k * 13.3, 7.7, t * 0.9) - 0.5) * 8 * wild);
+            // and now and then one hops right out of its line and back in
+            const beat = t * 0.9 + hash(c, k + 70) * 7, b = Math.floor(beat);
+            if (hash(c * 5 + k, b) < 0.12 * wild) dy += Math.sin(Math.PI * (beat - b)) * rows * 0.22 * (hash(c * 7 + k, b) < 0.5 ? -1 : 1);
+            const yy = Math.round(y + dy);
+            for (let i = 0; i < W.th; i++) fill(ctx, null, (c + dx) * S, (yy + i) * S, s);
+          });
+          // loose pixels while things are still vague: each wanders about its spot
+          if (wild > 0.05) for (let r = 0; r < rows; r++) {
+            const band = Math.exp(-Math.pow((r - mid) / (rows * 0.42), 2));
+            if (hash(c * 3, r) >= 0.15 * band * wild * wild) continue;
+            const ox = Math.round((vnoise(c * 0.5, r * 0.5, t * 1.1) - 0.5) * 6 * wild);
+            const oy = Math.round((vnoise(c * 0.5 + 50, r * 0.5, t * 1.1) - 0.5) * 6 * wild);
+            fill(ctx, null, (c + ox) * S, (r + oy) * S, s);
           }
         }
       }

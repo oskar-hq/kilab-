@@ -15,8 +15,8 @@ favicon.ico/.svg    Favicon (Bildmarke)
 site.webmanifest    Icons für Homescreen / Android
 assets/style.css    Design-Tokens, Layout und Animations-Ebenen L0–L3 (siehe Kommentar im CSS)
 assets/main.js      Seitenlogik + Pixel-Szenen (Hero, Ablauf, Kartenbilder, Footer). Dauerhaft bewegen sich nur
-                    der Pixel-Organismus im Hero und der Pixel-Schriftzug im Footer, beide nur solange sie zu
-                    sehen sind. Alles andere wird nur bei Scroll, Hover oder einer kurzen Einmal-Animation gezeichnet.
+                    der Pixel-Organismus im Hero, die Wellen bei „So läuft’s“ und der Pixel-Schriftzug im
+                    Footer, jeweils nur solange sie zu sehen sind. Alles andere wird nur bei Scroll, Hover oder einer kurzen Einmal-Animation gezeichnet.
 assets/icons/       Bildmarke (mark.svg), PNG-Icons, Open-Graph-Bild (og-image.png)
 assets/fonts/       Inter Tight, selbst gehostet (SIL OFL 1.1) – keine Google-Fonts-Anfragen
 .nojekyll           GitHub Pages liefert die Dateien unverändert aus
